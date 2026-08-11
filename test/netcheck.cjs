@@ -1,0 +1,17 @@
+const {chromium}=require('playwright-core');
+(async()=>{const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});
+const c=await b.newContext();const p=await c.newPage();const reqs=[];
+p.on('request',r=>reqs.push(r.url()));
+await p.goto('http://127.0.0.1:8123/',{waitUntil:'networkidle'});
+await p.click('section[data-screen="intro"] .btn'); await p.click('#skipfable');
+await p.click('section[data-screen="meet"] .actions .btn');
+await p.click('section[data-screen="first"] .actions .btn');
+await p.locator('.tierbtn').nth(0).click();
+await p.click('section[data-screen="play"] .actions .btn');
+await p.click('section[data-screen="reflect"] .actions .btn');
+await p.click('section[data-screen="done"] .quiet');
+console.log('total network requests across the whole loop:',reqs.length);
+reqs.forEach(u=>console.log('  '+u));
+const ext=reqs.filter(u=>!u.startsWith('http://127.0.0.1:8123'));
+console.log(ext.length===0?'ZERO third-party requests':'THIRD-PARTY: '+ext.join(', '));
+await b.close();})();

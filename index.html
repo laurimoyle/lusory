@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A shelf of games that ask you to do something the hard way, on purpose.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2072%2048'%3E%3Cg%20fill='none'%20stroke='%234A6636'%20stroke-width='4.5'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M8%2031%20Q%2026%2014%2052%2024'/%3E%3Cpath%20d='M12%2031%20Q%2030%2036%2049%2028'/%3E%3Ccircle%20cx='55'%20cy='25'%20r='3.4'/%3E%3Cpath%20d='M57%2022%20Q%2063%2012%2070%209'/%3E%3Cpath%20d='M40%2030%20L%2053%2039%20L%2063%2022'/%3E%3C/g%3E%3C/svg%3E">
+<title>Lusory — a field guide to unnecessary obstacles</title>
+<style>
+:root{
+  --paper:#EFEAD8;
+  --plate:#F6F2E3;
+  --ink:#24241B;
+  --leaf:#4A6636;
+  --leaf-tint:rgba(74,102,54,.09);
+  --hay:#7D5A18;
+  --rule:rgba(36,36,27,.24);
+  --rule-faint:rgba(36,36,27,.12);
+  --ink-soft:rgba(36,36,27,.74);
+  --margin:52px;
+  --tap:44px;
+  --disp:ui-serif,Georgia,'Iowan Old Style','Palatino Linotype','Book Antiqua',serif;
+  --body:ui-serif,Georgia,'Iowan Old Style',Cambria,'Times New Roman',serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--body);
+  font-size:17px;line-height:1.62;
+  color:var(--ink);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.14 0 0 0 0 0.14 0 0 0 0 0.10 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(180deg,#F1ECDB 0%,var(--paper) 22%,var(--paper) 100%);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+.wrap{max-width:29.5rem;margin:0 auto;padding:0 1.1rem 4.5rem}
+
+/* ---------- utility type ---------- */
+.eyebrow{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);font-weight:500}
+.small{font-size:.85rem;color:var(--ink-soft)}
+h1,h2,h3,.no{font-family:var(--disp);font-weight:400;line-height:1.15}
+h1{font-size:2.7rem;letter-spacing:-.01em}
+h2{font-size:1.55rem;margin-bottom:.35rem}
+h3{font-size:1.12rem}
+em{font-style:italic}
+a{color:inherit}
+
+/* ---------- no-script ---------- */
+noscript .ns{display:block;padding:2.2rem 0}
+noscript .ns p{margin-top:.8rem}
+
+/* ---------- header ---------- */
+header{padding:1.15rem 0 0}
+.masthead{max-width:29.5rem;margin:0 auto;padding:0 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.wordmark{font-family:var(--disp);font-size:1.25rem;background:none;border:0;cursor:pointer;color:var(--ink);
+  padding:.3rem 0;min-height:var(--tap);display:inline-flex;align-items:center}
+.navlinks{display:flex;gap:1.1rem}
+.navlinks button{background:none;border:0;cursor:pointer;font-family:var(--body);font-size:.78rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-soft);padding:.2rem .1rem;min-height:var(--tap);display:inline-flex;align-items:center}
+.navlinks button:hover{color:var(--ink)}
+body[data-nav="off"] .navlinks button[data-nav-shelf]{visibility:hidden}
+.headrule{max-width:29.5rem;margin:.55rem auto 0;padding:0 1.1rem}
+.headrule i{display:block;height:1.5px;background:var(--ink);transform-origin:left}
+
+/* ---------- the field margin (signature) ---------- */
+.plate{position:relative;padding-left:var(--margin)}
+.plate::before{content:"";position:absolute;left:26px;top:.35rem;bottom:.15rem;width:1px;background:var(--rule)}
+.no{position:absolute;left:0;top:.1rem;width:44px;text-align:center;color:var(--leaf);font-size:1.05rem}
+.no small{display:block;font-family:var(--body);font-size:.58rem;letter-spacing:.18em;color:var(--ink-soft);margin-bottom:.1rem}
+
+/* grasshopper mark */
+.mark{color:var(--leaf);display:inline-block}
+.mark svg{display:block}
+.mark-margin{position:absolute;left:2px;width:46px}
+
+/* marginalia — his voice */
+.marg{margin:1.1rem 0 1.1rem;padding-left:var(--margin);position:relative;font-style:italic;color:var(--leaf);font-size:.98rem;line-height:1.5}
+.marg::before{content:"";position:absolute;left:26px;top:.2rem;bottom:.2rem;width:2px;background:var(--leaf)}
+.marg .sig{display:block;font-size:.8rem;margin-top:.25rem}
+.marg .mark{position:absolute;left:0;top:0;width:22px}
+
+/* ---------- screens ---------- */
+section[data-screen]{display:none;padding-top:2.1rem}
+section[data-screen].on{display:block;animation:enter .22s ease-out}
+@keyframes enter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+.lede{font-size:1.06rem}
+.lede p+p{margin-top:.9rem}
+.footnote{margin-top:1.6rem;padding-top:.9rem;border-top:1px solid var(--rule-faint)}
+
+/* ---------- buttons ---------- */
+.actions{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;align-items:center;margin-top:1.8rem}
+.btn{font-family:var(--body);font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;
+  border:1.5px solid var(--ink);background:var(--plate);color:var(--ink);
+  padding:.5em 1.15em;min-height:var(--tap);display:inline-flex;align-items:center;justify-content:center;
+  border-radius:2px;cursor:pointer;transition:background .15s,color .15s}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.quiet{background:none;border:0;cursor:pointer;font-family:var(--body);font-size:.85rem;color:var(--ink-soft);
+  text-decoration:underline;text-underline-offset:3px;padding:.3rem 0;
+  min-height:var(--tap);display:inline-flex;align-items:center}
+.quiet:hover{color:var(--ink)}
+button:focus-visible{outline:2px dashed var(--leaf);outline-offset:3px}
+
+/* ---------- shelf ---------- */
+.tabs{display:flex;flex-wrap:wrap;gap:.2rem .9rem;margin:.8rem 0 1.5rem;border-bottom:1px solid var(--rule-faint)}
+.tab{background:none;border:0;cursor:pointer;font-family:var(--body);font-size:.75rem;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-soft);padding:.2rem 0 .5rem;border-bottom:2.5px solid transparent;
+  min-height:var(--tap);display:inline-flex;align-items:flex-end}
+.tab[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--leaf)}
+.group{margin:1.7rem 0 .4rem}
+.group .eyebrow{color:var(--hay)}
+.entry{display:block;width:100%;text-align:left;background:none;border:0;cursor:pointer;
+  padding:.85rem 0 .95rem;border-bottom:1px solid var(--rule-faint);color:var(--ink);font-family:var(--body);font-size:17px}
+.entry:hover .gname{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
+.gname{font-family:var(--disp);font-size:1.14rem;display:block}
+.ghook{font-style:italic;color:var(--ink-soft);font-size:.95rem;margin-top:.1rem;display:block}
+.gmeta{margin-top:.35rem;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft);display:block}
+.badge{color:var(--hay);font-weight:500}
+.shelf-foot{margin-top:2.2rem}
+
+/* ---------- game plate ---------- */
+.spec{margin-top:.4rem}
+.spec .ghook{font-size:1.02rem;margin:.15rem 0 1.2rem}
+.row{margin:1.05rem 0}
+.lab{font-size:.7rem;letter-spacing:.17em;text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:.15rem}
+.att{font-style:italic}
+.flagline{margin-top:1.2rem;color:var(--hay);font-size:.92rem;font-style:italic}
+.tierblock{margin-top:2rem;padding-top:1.3rem;border-top:1px solid var(--rule)}
+.tierbtns{display:grid;grid-template-columns:1fr;grid-auto-rows:1fr;gap:.6rem;margin:.9rem 0 .6rem}
+@media (min-width:34rem){.tierbtns{grid-template-columns:1fr 1fr 1fr}}
+.tierbtn{font-family:var(--body);font-size:1rem;line-height:1.45;text-align:left;width:100%;
+  border:1.5px solid var(--ink);background:var(--plate);color:var(--ink);
+  padding:.7rem .9rem;min-height:var(--tap);border-radius:2px;cursor:pointer;
+  display:block;transition:background .15s,color .15s}
+.tierbtn:hover{background:var(--ink);color:var(--paper)}
+.tierbtn .tname{display:block;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:.15rem}
+.tierbtn:hover .tname{color:var(--paper)}
+.tierbtn .tdesc{display:block}
+.care{margin-top:1.2rem;padding:.8rem .95rem;border:1px solid var(--rule-faint);border-radius:3px;background:var(--plate);font-size:.95rem}
+.care .lab{margin-bottom:.2rem}
+
+/* ---------- play ---------- */
+.playcard{background:var(--plate);border:1px solid var(--rule);border-radius:3px;padding:1.35rem 1.25rem;margin:1.3rem 0 1.6rem}
+.playcard .lab{color:var(--hay)}
+.wait{font-style:italic;color:var(--ink-soft)}
+
+/* ---------- reflect ---------- */
+.postures{margin:1.2rem 0 1.6rem}
+.posture{display:block;width:100%;text-align:left;background:none;cursor:pointer;color:var(--ink);font-family:var(--body);
+  border:0;border-left:2.5px solid var(--rule-faint);padding:.7rem 0 .8rem .95rem;margin:.35rem 0;
+  min-height:var(--tap);transition:border-color .15s,background .15s}
+.posture:hover{border-left-color:var(--rule)}
+.posture[aria-pressed="true"]{border-left-color:var(--leaf);background:var(--leaf-tint)}
+.pname{font-family:var(--disp);font-size:1.05rem;display:block}
+.pdesc{font-size:.92rem;color:var(--ink-soft);margin-top:.1rem;display:block}
+textarea{width:100%;min-height:7.5rem;font-family:var(--body);font-size:1rem;line-height:1.6;color:var(--ink);
+  background:var(--plate);border:1px solid var(--rule);border-radius:3px;padding:.85rem .95rem;resize:vertical}
+textarea:focus{outline:2px dashed var(--leaf);outline-offset:2px}
+textarea::placeholder{color:var(--ink-soft);font-style:italic}
+
+/* ---------- fable ---------- */
+.fableblock{border-left:2px solid var(--rule);padding-left:1rem;margin:1.25rem 0 1.6rem}
+.fableblock p{font-size:1rem}
+.fableblock .small{margin-top:.45rem}
+
+/* fable stage — the telling, in four drawings */
+#fablestage{position:relative;height:196px;background:var(--plate);border:1px solid var(--rule);border-radius:3px;margin:.9rem 0 .5rem;overflow:hidden}
+.scene{position:absolute;inset:0;opacity:0;transition:opacity .55s ease}
+.scene.on{opacity:1}
+.scene svg{width:100%;height:100%;display:block}
+.scene .st{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.scene .d{stroke-dasharray:1;stroke-dashoffset:1}
+.scene.on .d{animation:drawline 1.2s ease forwards}
+@keyframes drawline{to{stroke-dashoffset:0}}
+.scene .fig{opacity:0;transition:opacity .6s ease .8s}
+.scene.on .fig{opacity:1}
+.scene .note{opacity:0}
+.scene.on .note{opacity:1;transition:opacity .5s 1.2s;animation:floaty 2.6s ease-in-out 1.2s infinite alternate}
+@keyframes floaty{to{transform:translateY(-8px)}}
+.scene.on .walker{animation:trudge 1.9s ease-in-out infinite}
+@keyframes trudge{0%,100%{transform:translateX(0)}50%{transform:translateX(-9px)}}
+.scene .snow{opacity:0}
+.scene.on .snow{animation:fall 4.6s linear infinite}
+@keyframes fall{0%{transform:translateY(-12px);opacity:0}10%{opacity:.8}100%{transform:translateY(150px);opacity:0}}
+.doorleaf{transform-box:fill-box;transform-origin:100% 50%;transform:rotate(-26deg)}
+.scene.on .slam{animation:shut .7s 3.4s ease-in forwards}
+@keyframes shut{to{transform:rotate(0deg)}}
+.doorleaf.shut{transform:rotate(0deg)!important;animation:none!important}
+.fablecap{min-height:1.7em;text-align:center;font-size:.98rem;margin-bottom:.4rem}
+.skipfable{position:absolute;right:.5rem;bottom:.2rem;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-soft);background:none;border:0;cursor:pointer;font-family:var(--body);
+  min-height:var(--tap);padding:0 .4rem;display:inline-flex;align-items:center}
+.skipfable:hover{color:var(--ink)}
+
+/* ---------- idle motion: rare, randomized, never reactive ---------- */
+@keyframes bob{0%,100%{transform:none}50%{transform:translateY(-2px)}}
+@keyframes tilt{0%,100%{transform:none}45%{transform:rotate(-3.5deg)}}
+.idle-bob{animation:bob 1.2s ease-in-out}
+.idle-tilt{animation:tilt 1.3s ease-in-out}
+.idle-hop2{animation:hop .85s ease-out}
+
+/* ---------- about ---------- */
+.about h3{margin:1.7rem 0 .4rem}
+.about p+p{margin-top:.7rem}
+
+/* ---------- boot animation: one orchestrated moment ---------- */
+body[data-boot="1"] .headrule i{animation:draw .7s .1s ease-out backwards}
+@keyframes draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.hop-once{animation:hop .8s .3s ease-out backwards}
+@keyframes hop{0%{transform:translateY(0)}30%{transform:translateY(-9px)}55%{transform:translateY(0)}72%{transform:translateY(-3px)}100%{transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body data-nav="off" data-boot="1">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="hopper" viewBox="0 0 72 48">
+    <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 31 Q 26 14 52 24"/>
+      <path d="M12 31 Q 30 36 49 28"/>
+      <circle cx="55" cy="25" r="3.4"/>
+      <path d="M57 22 Q 63 12 70 9"/>
+      <path d="M55 21 Q 57 10 62 5"/>
+      <path d="M40 30 L 53 39 L 63 22"/>
+      <path d="M23 32 L 19 42"/>
+      <path d="M31 32 L 29 43"/>
+    </g>
+  </symbol>
+</svg>
+
+<header>
+  <div class="masthead">
+    <button class="wordmark" onclick="go(homeScreen())">Lusory</button>
+    <nav class="navlinks" aria-label="Main">
+      <button data-nav-shelf onclick="go(homeScreen())">Shelf</button>
+      <button onclick="go('about')">About</button>
+    </nav>
+  </div>
+  <div class="headrule"><i></i></div>
+</header>
+
+<main class="wrap">
+
+<noscript>
+  <div class="ns">
+    <h1>Lusory</h1>
+    <p class="lede">This shelf needs JavaScript to deal its games, and it has none of the other things JavaScript is usually for — no tracking, no accounts, no network calls of any kind.</p>
+    <p>Switch it on and come back, or play the first game from here as it is written:</p>
+    <p><strong>The Awe Route.</strong> Walk a familiar route. Finish it having found five things older than you, taller than you, or too big to own. Eyes up and out — nothing that fits in a pocket may be looked at. You are not going anywhere; you are being somewhere.</p>
+    <p class="small">Nothing here was counting anyway.</p>
+  </div>
+</noscript>
+
+<!-- ========== FIRST RUN 1/3 : what this is ========== -->
+<section data-screen="intro">
+  <p class="eyebrow boot-title">A field guide</p>
+  <h1 class="boot-title" style="margin:.3rem 0 1.3rem">Lusory</h1>
+  <div class="lede boot-title">
+    <p>A shelf of games. Each one asks you to do something the hard way, on purpose, for no profit anyone could bank.</p>
+    <p>A philosopher called this <em>"the voluntary attempt to overcome unnecessary obstacles"</em> — his definition of a game. We mean it as a way to spend the spare corners of a life.</p>
+    <p>There are no streaks here, no scores, no history. Leave for a month and nothing will have noticed, and everything will be where you left it.</p>
+  </div>
+  <div class="actions boot-title"><button class="btn" onclick="go('meet')">Continue</button></div>
+  <p class="small footnote boot-title">One date will be kept on this device — the day you last opened this. Nothing else, ever.</p>
+</section>
+
+<!-- ========== FIRST RUN 2/3 : introducing the grasshopper ========== -->
+<section data-screen="meet">
+  <p class="eyebrow">The old story</p>
+
+  <div id="fablestage" role="img" aria-label="The fable of the ant and the grasshopper, told in four drawings">
+
+    <div class="scene"><svg viewBox="0 0 320 170"><g class="st">
+      <path class="d" d="M14 140 H306" style="animation-delay:.05s"/>
+      <path class="d" d="M46 140 q3 -13 9 -15" style="animation-delay:.3s"/>
+      <path class="d" d="M120 140 q-2 -11 4 -16" style="animation-delay:.4s"/>
+      <path class="d" d="M226 140 q3 -12 8 -14" style="animation-delay:.5s"/>
+      <circle class="d" cx="268" cy="40" r="15" pathLength="1" style="animation-delay:.55s"/>
+      <path class="d" d="M268 16 v-8 M268 64 v8 M244 40 h-8 M292 40 h8 M251 23 l-6 -6 M285 23 l6 -6 M251 57 l-6 6 M285 57 l6 6" style="animation-delay:.8s"/>
+      <g class="fig" transform="translate(46,94) scale(1.15)"><use href="#hopper"/></g>
+      <g class="note" transform="translate(158,80)"><circle cx="0" cy="0" r="3.2"/><path d="M3 0 V-18 q7 2 6 8"/></g>
+      <g class="note" transform="translate(184,62)" style="animation-delay:1.8s"><circle cx="0" cy="0" r="3.2"/><path d="M3 0 V-18 q7 2 6 8"/></g>
+    </g></svg></div>
+
+    <div class="scene"><svg viewBox="0 0 320 170"><g class="st">
+      <path class="d" d="M14 140 H306" style="animation-delay:.05s"/>
+      <path class="d" d="M60 140 q3 -12 8 -14" style="animation-delay:.3s"/>
+      <path class="d" d="M250 140 q-2 -11 4 -15" style="animation-delay:.35s"/>
+      <g transform="translate(150,126)"><g class="walker">
+        <circle class="d" cx="0" cy="0" r="4.4" style="animation-delay:.5s"/>
+        <circle class="d" cx="11" cy="1" r="4.8" style="animation-delay:.6s"/>
+        <circle class="d" cx="23" cy="2" r="5.6" style="animation-delay:.7s"/>
+        <path class="d" d="M2 4 l-3 9 M9 5 l-2 9 M15 5 l2 9 M22 6 l3 9 M-3 -2 q-6 -6 -10 -6 M-2 -4 q-4 -8 -9 -10" style="animation-delay:.85s"/>
+        <path class="d" d="M28 0 l10 -3 M38 -3 q16 -12 30 -2 q8 7 -1 13 q-16 9 -27 -3 z" style="animation-delay:1s"/>
+      </g></g>
+    </g></svg></div>
+
+    <div class="scene"><svg viewBox="0 0 320 170"><g class="st">
+      <path class="d" d="M14 142 H306" style="animation-delay:.05s"/>
+      <path class="d" d="M0 34 q58 12 106 4 q22 -4 36 -14" style="animation-delay:.3s"/>
+      <path class="d" d="M64 40 q4 8 1 14 M112 38 q6 6 5 13" style="animation-delay:.7s"/>
+      <circle class="snow" cx="40" cy="18" r="2"/><circle class="snow" cx="96" cy="10" r="2" style="animation-delay:1.1s"/>
+      <circle class="snow" cx="150" cy="22" r="2" style="animation-delay:2.2s"/><circle class="snow" cx="204" cy="8" r="2" style="animation-delay:.6s"/>
+      <circle class="snow" cx="300" cy="16" r="2" style="animation-delay:1.7s"/>
+      <path class="d" d="M232 58 h58 v84" style="animation-delay:.45s"/>
+      <path class="d doorleaf" d="M238 60 h50 v80 h-50 z M244 100 h5" style="animation-delay:.6s"/>
+      <g class="fig" transform="translate(140,102) rotate(7) scale(1.02)"><use href="#hopper"/></g>
+    </g></svg></div>
+
+    <div class="scene"><svg viewBox="0 0 320 170"><g class="st">
+      <path class="d" d="M14 142 H306" style="animation-delay:.05s"/>
+      <circle class="snow" cx="60" cy="14" r="2"/><circle class="snow" cx="188" cy="10" r="2" style="animation-delay:1.4s"/>
+      <circle class="snow" cx="128" cy="20" r="2" style="animation-delay:2.4s"/>
+      <path class="d" d="M232 58 h58 v84" style="animation-delay:.2s"/>
+      <path class="d doorleaf slam" d="M238 60 h50 v80 h-50 z M244 100 h5" style="animation-delay:.3s"/>
+      <g class="fig" transform="translate(140,102) rotate(7) scale(1.02)"><use href="#hopper"/></g>
+    </g></svg></div>
+
+    <button class="skipfable" id="skipfable" onclick="skipFable()">Skip the telling</button>
+  </div>
+  <p class="fablecap" id="fablecap" aria-live="polite"></p>
+
+  <div class="fableblock" id="fabletext">
+    <span class="lab">The old story, in five lines</span>
+    <p>All summer the grasshopper sang while the ant hauled grain. Winter came. The grasshopper, starving, asked the ant for a little food. &ldquo;What did you do all summer?&rdquo; &ldquo;I sang.&rdquo; &ldquo;Then dance,&rdquo; said the ant, and shut the door.</p>
+    <p class="small">Aesop&rsquo;s moral: work first, sing later — if ever.</p>
+  </div>
+  <h2 style="margin:1.5rem 0 .3rem">That grasshopper lives here.</h2>
+  <p class="lede">The fable&rsquo;s loser is this shelf&rsquo;s one character — kept on because the whole app takes his side of the case.</p>
+
+  <div class="plate" id="meetmarg" style="margin-top:1.2rem">
+    <span class="mark mark-margin" id="meetmark" style="top:.2rem"><svg viewBox="0 0 72 48" width="46"><use href="#hopper"/></svg></span>
+    <p style="font-style:italic;color:var(--leaf);font-size:1.08rem">"That&rsquo;s the story. Aesop reported the ending and missed the point. Nobody ever asks about the summer."</p>
+    <p class="small" style="color:var(--leaf);margin-top:.4rem">— the grasshopper</p>
+  </div>
+  <div class="lede" style="margin-top:1.6rem">
+    <p>He keeps to the margins. He speaks rarely, and never about your progress — he doesn&rsquo;t believe in progress.</p>
+    <p>You can ignore him completely. He'd respect that.</p>
+  </div>
+  <p class="small" style="margin-top:1rem">A philosopher reopened the case in 1978. This shelf is the appeal.</p>
+  <div class="actions"><button class="btn" onclick="go('first')">Continue</button></div>
+</section>
+
+<!-- ========== FIRST RUN 3/3 : one game offered ========== -->
+<section data-screen="first">
+  <p class="eyebrow">To begin</p>
+  <h2 style="margin-top:.4rem">One game, to start</h2>
+  <p class="lede" style="margin:.6rem 0 1.4rem">Games go better one at a time. There are others; they can wait.</p>
+  <div id="firstcard"></div>
+  <div class="actions">
+    <button class="btn" onclick="go('game',1)">Read the rules</button>
+  </div>
+</section>
+
+<!-- ========== SHELF ========== -->
+<section data-screen="shelf">
+  <p class="eyebrow">The shelf</p>
+  <h2 style="margin-top:.4rem">Fifteen unnecessary obstacles</h2>
+  <div class="tabs" role="group" aria-label="Arrange the shelf">
+    <button class="tab" data-axis="type" aria-pressed="true" onclick="setAxis('type')">Temperament</button>
+    <button class="tab" data-axis="dom" aria-pressed="false" onclick="setAxis('dom')">What it grows</button>
+  </div>
+  <div id="returnnote"></div>
+  <div id="shelfbody"></div>
+  <p class="small shelf-foot">Nothing on this shelf is counting. Take one, or don't — it keeps no ledger either way.</p>
+</section>
+
+<!-- ========== GAME PLATE ========== -->
+<section data-screen="game"><div id="gamebody"></div></section>
+
+<!-- ========== PLAY ========== -->
+<section data-screen="play"><div id="playbody"></div></section>
+
+<!-- ========== REFLECT ========== -->
+<section data-screen="reflect">
+  <p class="eyebrow">Afterward</p>
+  <h2 style="margin-top:.4rem">Who were you in there?</h2>
+  <div class="postures" id="postures"></div>
+  <p class="small" style="margin:-.4rem 0 1.5rem">All four are honest answers. Noticing is the quieter game.</p>
+  <label class="lab" for="note">A line or two, if you like</label>
+  <textarea id="note" placeholder="For you, not for the app."></textarea>
+  <p class="small" style="margin-top:.5rem">This stays in the page and goes when the page goes. Copy it on the next screen if you want to keep it.</p>
+  <div class="actions"><button class="btn" onclick="finish()">Done</button></div>
+</section>
+
+<!-- ========== DONE ========== -->
+<section data-screen="done">
+  <p class="eyebrow">Closed</p>
+  <h2 style="margin-top:.4rem">Played.</h2>
+  <p class="lede" style="margin-top:.6rem">Nothing was recorded. The session was yours; keep any of it you like.</p>
+  <div id="sendoff"></div>
+  <div class="actions">
+    <button class="btn" id="copybtn" onclick="copyNote()" style="display:none">Copy my note</button>
+    <button class="quiet" onclick="go('shelf')">The whole shelf is here</button>
+  </div>
+</section>
+
+<!-- ========== ABOUT ========== -->
+<section data-screen="about" class="about">
+  <p class="eyebrow">About</p>
+  <h2 style="margin-top:.4rem">What this is</h2>
+  <p>Games, in the old strict sense: a goal, some rules that forbid the easy way, and your free agreement to play anyway. The philosopher Bernard Suits argued that this — not usefulness — is what a good life is made of. Josef Pieper said something near it about leisure: useless on purpose, and formative because of it.</p>
+  <h3>About the science, briefly</h3>
+  <p>These games draw on, and adapt, practices with peer-reviewed support — the research behind The Slow Taste, The Small Self, Small Kindnesses, Opening Up, The Moving Body, Talking to Strangers and The Long Exhale, among others. The honest summary of that research: effects are real and mostly small to moderate. This app's contribution isn't bigger effects; it's a form people freely return to.</p>
+  <p>One finding shaped the whole design: measuring an enjoyable activity tends to make it feel like work. So nothing you do here is counted, stored, ranked, or shown back to you — and no claim about this app will ever be built from watching you use it.</p>
+  <p>This is play, preventative and formative — not treatment. If you're in real difficulty, a clinician beats a game, and we'd rather you had the clinician.</p>
+  <h3>Privacy</h3>
+  <p>No account, no cloud, no analytics, and nothing sent anywhere. One date is kept on this device once you have played a game: the day you last opened this. Nothing else, ever. Your reflections stay in the page and evaporate when you close it.</p>
+  <div class="actions"><button class="quiet" id="aboutback" onclick="go(homeScreen())">Back to the shelf</button></div>
+</section>
+
+</main>
+<script>
+/* ================= data: the fifteen =================
+   `prac` carries the metaphor label, never the family name (WP6).
+   The metaphor <-> family <-> citation table is channel material. It is not
+   linked from here and not deployed with this app. */
+var GAMES=[
+{n:1,name:"The Awe Route",hook:"A familiar walk, eyes rationed.",dom:"Wonder",type:"The Explorer",prac:"The Small Self",
+ goal:"Finish the route having found five things older than you, taller than you, or too big to own.",
+ rule:"Eyes up and out. Nothing that fits in a pocket may be looked at. The phone stays in the pocket, unlooked-at, learning humility.",
+ att:"You're not going anywhere. You're being somewhere.",
+ g:"One block, one find.",b:"Fifteen minutes, five finds.",h:"Your daily commute — awe on hostile terrain.",
+ flag:"Also for two: walk it silently together, compare finds at the end."},
+{n:2,name:"The Slowest Bite",hook:"Losing the race is the game.",dom:"Attention",type:"The Kinesthete",prac:"The Slow Taste",
+ goal:"Be the last to finish one good thing to eat or drink.",
+ rule:"Attention stays on the senses. If the mind wanders, the bite starts over. One serving only — abundance is against the rules.",
+ att:"The trifler gulps. The true player tastes.",
+ g:"Two minutes, one raisin.",b:"Ten minutes, one small treat.",h:"A whole meal at half speed — or say nothing now and describe it tonight, in sensory words only.",
+ flag:"For two: alternate describing flavors. First to run out of words refills the kettle."},
+{n:3,name:"No-Delete",hook:"Forward is the only direction.",dom:"Interiority",type:"The Storyteller",prac:"Opening Up",
+ goal:"Reach the timer with the pen never having stopped.",
+ rule:"No deleting, no crossing out, no rereading. The sentence you wrote is the sentence you wrote.",
+ att:"The cheat edits. The true player keeps the ugly sentence and writes the next one.",
+ g:"Five minutes, anything.",b:"Ten minutes, something that actually happened.",h:"The thing you've been not-writing about.",
+ care:"A low mood for a few minutes afterward is common and passes. That's not a sign anything went wrong."},
+{n:4,name:"The Fable of Today",hook:"Your day, in the third person.",dom:"Interiority",type:"The Storyteller",prac:"The Third Person",
+ goal:"Land tonight's fable — a beginning, a middle, and a moral of exactly one sentence.",
+ rule:"Never “I.” The protagonist is she, he, the tired one, the grasshopper's friend.",
+ att:"The spoilsport says “it's just my day.” The true player finds out what the story was about.",
+ g:"One sentence: “There once was a person who…”",b:"Two minutes, with a moral.",h:"The day's worst moment, told kindly."},
+{n:5,name:"Untracked Miles",hook:"Come home tired and unable to prove it.",dom:"Embodiment",type:"The Kinesthete",prac:"The Moving Body",
+ goal:"Move — walk, swim, cycle, dance — and return with no record of it anywhere.",
+ rule:"Nothing that counts may come along. No steps, no distance, no route.",
+ att:"The cheat checks the watch afterward. You know if you did.",
+ g:"Ten untracked minutes.",b:"One outing, zero devices.",h:"Your usual tracked workout, untracked — feel what the number was hiding."},
+{n:6,name:"The Coin Walk",hook:"Heads left, tails right.",dom:"Adventure",type:"The Explorer",prac:"New Ground",
+ goal:"Find one thing you have never seen before. Then find your own way home.",
+ rule:"The coin chooses every corner, not you. No maps until the find is found.",
+ att:"Lost on purpose is not lost.",
+ g:"Three flips from home.",b:"Flip until the find.",h:"An unfamiliar neighborhood, on foot.",
+ flag:"Also for two, and very good with children.",
+ care:"Ordinary common sense: daylight, ground you know well enough, and tell someone your rough plan if you're going far."},
+{n:7,name:"The Kindness Heist",hook:"Do good. Don't get caught.",dom:"Generosity",type:"The Joker",prac:"Small Kindnesses",
+ goal:"One genuinely useful kind thing for a specific person, completed undetected.",
+ rule:"No credit may reach you — if thanked, the heist has failed. Still worth doing; the game just restarts. Nothing that means trespassing or leaving odd parcels about.",
+ att:"The trifler signs the note. The true player leaves nothing but the good.",
+ g:"Anonymous and kind, to a stranger.",b:"Someone you know, undetected.",h:"Someone you find difficult."},
+{n:8,name:"The Stranger Hunt",hook:"Today's mission: someone wearing a hat.",dom:"Courage",type:"The Explorer",prac:"Talking to Strangers",
+ goal:"Two minutes of real talk with someone who matches today's card.",
+ rule:"A real exchange, not a transaction — asking staff for help doesn't count. Public places, ordinary daylight, and anyone may decline. Including you.",
+ att:"The spoilsport says people don't want to be bothered. People keep disagreeing.",
+ g:"A smile and one remark.",b:"Two minutes with today's match.",h:"One question deeper than the weather."},
+{n:9,name:"The Question Ladder",hook:"For two. One phone between you.",dom:"Connection",type:"The Director",prac:"Fast Friends",
+ goal:"Reach the top rung together — ten exchanges, neither of you passing twice.",
+ rule:"Every question must need a personal answer. “What do you do” is a foul. One pass each is free and honorable.",
+ att:"The cheat asks deep and answers shallow.",
+ g:"Six rungs, light topics.",b:"Ten rungs.",h:"Twelve rungs, with the big closers.",
+ flag:"Duo game. The app holds the rungs and the clock; you two hold everything else."},
+{n:10,name:"Yes-And Supper",hook:"No vetoes at this table.",dom:"Connection",type:"The Joker",prac:"Yes, And",
+ goal:"Keep the shared story alive to the end of the meal.",
+ rule:"Every reply accepts what was just said and adds to it. “No,” “but,” and “actually” cost you your turn.",
+ att:"The spoilsport corrects the story. The true player makes the correction part of the story.",
+ g:"Ten minutes, silly topics only.",b:"A whole meal.",h:"A conversation that matters — with consent. This tier is for households, not ambushes.",
+ flag:"For a table. Two works; four sings."},
+{n:11,name:"Awkward on Purpose",hook:"The wince is the point on the board.",dom:"Courage",type:"The Competitor",prac:"Seeking Awkwardness",
+ goal:"One small thing you'd normally dodge, done today, awkwardness collected.",
+ rule:"The discomfort must be chosen, bounded, and harmless to others. Suffering you didn't choose doesn't count, and can't be made to.",
+ att:"Harder means, freely accepted, for the sake of the playing. The whole book in one move.",
+ g:"Sing a line badly where someone can hear.",b:"The slightly awkward errand you've been deferring.",h:"The opener you've been rehearsing all week."},
+{n:12,name:"The Pocket Vacation",hook:"One errand. The phone stays home.",dom:"Presence",type:"The Explorer",prac:"One Hour Less",
+ goal:"Complete a real errand and return, navigating by memory — and, if lost, by asking a human.",
+ rule:"The phone stays home. Not in a pocket, off. Home. Tell someone your loose plan if that eases the mind.",
+ att:"The trifler brings it “just in case.” There is no case.",
+ g:"Phone in a drawer, one hour, at home.",b:"One errand, phone at home.",h:"A half-day out of reach."},
+{n:13,name:"Every Angle",hook:"Twelve photographs of one humble thing.",dom:"Attention",type:"The Artist",prac:"Taking the Picture",
+ goal:"Twelve angles found, no two alike.",
+ rule:"The photos are never shared. Ever. The camera here is an attention instrument, not a broadcast tower.",
+ att:"The twelfth angle is the one you didn't know was there. That's the one you played for.",
+ g:"Five angles of anything.",b:"Twelve of one humble thing — a chair, an onion, a puddle.",h:"Twelve of something you pass daily without seeing."},
+{n:14,name:"Three Good Finds",hook:"Hunt the day before you sleep.",dom:"Gratitude",type:"The Collector",prac:"Counting Blessings",
+ goal:"Three good moments found and banked before sleep.",
+ rule:"Each through a different sense. One must be something you nearly missed.",
+ att:"A collector's joy — unkeepable specimens only.",
+ g:"One find, any sense.",b:"Three finds, three senses.",h:"Take one find and tell the story of how it almost never happened."},
+{n:15,name:"The Balloon Keeper",hook:"Five minutes of imaginary aviation.",dom:"Calm",type:"The Kinesthete",prac:"The Long Exhale",
+ goal:"The balloon must never touch the floor before the timer does.",
+ rule:"Two sips of air in through the nose lift it; one long slow exhale lets it drift down. That's the physics.",
+ att:"You can't win by breathing hard. Only by breathing well.",
+ g:"One minute, one balloon.",b:"Five minutes.",h:"For two — longest single hum-exhale, best of three. Giggling is a feature.",
+ flag:"Duo tier included. Bring a rival.",
+ care:"Stop if you feel dizzy. This is a toy, not a treatment — and if you have been medically advised against breath exercises, skip this one."}
+];
+
+var POSTURES=[
+ {k:"trifler",name:"The trifler",d:"Went through the motions. The goal never quite got your heart."},
+ {k:"cheat",name:"The cheat",d:"Wanted the finish more than the rules that made it worth finishing."},
+ {k:"spoilsport",name:"The spoilsport",d:"Declined the premise altogether. Some days do."},
+ {k:"player",name:"The true player",d:"Took the goal seriously, and took the rules' long way round, freely."}
+];
+
+/* ============ the one stored fact ============
+   Exactly one key. Read before written, so first-run derives from it.
+   Falls back to memory when localStorage throws (private mode, blocked). */
+var KEY="lusory.lastOpen", memo=null;
+function readLastOpen(){try{var v=localStorage.getItem(KEY);return v===null?memo:v;}catch(e){return memo;}}
+function writeLastOpen(v){memo=v;try{localStorage.setItem(KEY,v);}catch(e){}}
+function stamp(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function daysBetween(a,b){
+ var pa=a.split("-").map(Number), pb=b.split("-").map(Number);
+ return Math.round((Date.UTC(pb[0],pb[1]-1,pb[2])-Date.UTC(pa[0],pa[1]-1,pa[2]))/86400000);
+}
+
+var today=stamp(new Date());
+var lastOpen=readLastOpen();
+var firstRun=!lastOpen||!/^\d{4}-\d{2}-\d{2}$/.test(lastOpen);
+var gapDays=firstRun?0:Math.max(0,daysBetween(lastOpen,today));
+/* A returning visitor is stamped at load — "last open" means what it says, so a
+   daily visitor who never finishes a session is never mistaken for absent.
+   A first-run visitor is stamped only when the FIRST SESSION COMPLETES, so
+   quitting after the fable returns you to the fable, never to the ungated
+   shelf. Every pre-completion visit is therefore an introduction-day visit,
+   cap 2, exactly as the plan specifies. Still exactly one key. */
+var introStamped=false;
+if(!firstRun)writeLastOpen(today);
+
+/* ============ the grasshopper: budget + pools ============
+   Cap is one moment per visit; two on introduction day (intro + one
+   shelf marginalia, per the plan). The visit is the unit, not the
+   play-through, so replaying cannot farm him. Adjustment is always
+   toward less. */
+var hopperBudget=firstRun?2:1;
+var LONG_ABSENCE=7;  /* R9: the invariant supplies the number — "forgot they existed for a week" */
+var MARGINALIA=[
+ {game:5,line:"My favorite. Nothing to carry."},
+ {game:7,line:"I deny everything, in advance."},
+ {game:14,line:"I collect these too. Storage was never the point."},
+ {game:15,line:"I have strong opinions about jumping technique. Nobody asks."}
+];
+var SENDOFFS=[
+ "Almost entirely useless. Marvelous.",
+ "The ant would call that wasted time. The ant says that about everything.",
+ "Winter is coming, I'm told. It always is. Meanwhile.",
+ "I'd have played it worse. I usually do."
+];
+var RETURNS=[
+ "Were you gone? I've been watching this leaf. Riveting.",
+ "I don't count days. Counting is how the trouble starts.",
+ "You're back. I never doubted, because I never wondered."
+];
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+
+/* One allocation, decided at load, before any input.
+   Nothing the player does can change which slot the moment goes to. */
+var marginaliaPick=pick(MARGINALIA);
+var sendoffLine=null, returnLine=null, allowMarginalia=false;
+if(firstRun){ allowMarginalia=true; }
+else if(gapDays>=LONG_ABSENCE){
+ /* The return slot rolls like every other. Firing on every long-absence visit would
+    hand a weekly returner a moment 100% of the time while a daily visitor gets ~2/3
+    — rewarding absence and teaching "come back Sunday and he speaks", which is what
+    the Etkin test exists to catch. */
+ if(Math.random()<1/3) returnLine=pick(RETURNS); }
+else { var roll=Math.random();
+ if(roll<1/3){ sendoffLine=pick(SENDOFFS); }
+ else if(roll<2/3){ allowMarginalia=true; }
+ /* the remaining third is silence: the cap is a ceiling, not a quota */ }
+
+var meetSpent=false, shelfNoteSpent=false, returnSpent=false, sendoffHTML="";
+
+function hopperNote(line){
+ return '<div class="marg"><span class="mark"><svg viewBox="0 0 72 48" width="22" aria-hidden="true"><use href="#hopper"/></svg></span>'
+   +'"'+line+'"<span class="sig">— the grasshopper</span></div>';
+}
+
+/* ================= state machine ================= */
+var axis="type", currentGame=null, currentTier=null, chosenPosture=null, sessionDone=false, sessionActive=false;
+
+function render(screen,param){
+ document.body.dataset.boot="0";
+ /* The three first-run screens are unreachable once the introduction is behind
+    you — history from an earlier visit must not replay the introduction slot
+    to someone who is not on their introduction day. */
+ if((screen==="intro"||screen==="meet"||screen==="first")&&!firstRun) screen="shelf";
+ /* FINDING A: the shelf is structurally unreachable until the first session
+    completes. Gating individual controls left the wordmark open; gating the
+    destination cannot be bypassed by adding a control later. */
+ if(screen==="shelf"&&firstRun&&!sessionDone) screen="first";
+ document.querySelectorAll("section[data-screen]").forEach(function(s){s.classList.remove("on");});
+ if(screen==="meet"){ enterMeet(); }
+ else if(fableTimer&&!fableDone){ pauseFable(); }
+
+ if(screen==="game"){ var g=GAMES.filter(function(x){return x.n===param;})[0]; if(g)currentGame=g; if(!currentGame)screen="shelf"; }
+ if(screen==="game")renderGame();
+ if(screen==="shelf")renderShelf();
+ if(screen==="play"){ if(!currentGame||!currentTier){screen="shelf";renderShelf();} else renderPlay(); }
+ if(screen==="reflect")renderPostures();
+ if(screen==="done")renderDone();
+ if(screen==="about"){ var ab=document.getElementById("aboutback");
+  if(ab)ab.textContent=(homeScreen()==="first")?"Back":"Back to the shelf"; }
+ var el=document.querySelector('section[data-screen="'+screen+'"]');
+ (el||document.querySelector('section[data-screen="shelf"]')).classList.add("on");
+ window.scrollTo({top:0});
+ scheduleIdle();
+ return screen;
+}
+/* The introduction is a budgeted slot like any other: if there is nothing left
+   to spend, his line does not render. Belt and braces alongside the guard above. */
+function enterMeet(){
+ var marg=document.getElementById("meetmarg");
+ if(!meetSpent&&hopperBudget>0){
+  meetSpent=true;hopperBudget--;
+  if(!reducedMotion){
+   var m=document.getElementById("meetmark");
+   if(m){m.classList.add("hop-once");setTimeout(function(){m.classList.remove("hop-once");},1400);}
+  }
+ }
+ if(marg)marg.style.display=meetSpent?"":"none";
+ startFable();
+}
+function tierBtn(k,name,desc){
+ return '<button class="tierbtn" onclick="pickTier(\''+k+'\')">'
+  +'<span class="tname">'+name+'</span><span class="tdesc">'+desc+'</span></button>';
+}
+/* During the first run the shelf is not yet revealed, so back-links land on the
+   game offer rather than exposing all fifteen early. */
+function homeScreen(){ return (firstRun&&!sessionDone)?"first":"shelf"; }
+function go(screen,param){
+ var actual=render(screen,param);
+ try{history.pushState({s:actual,p:param===undefined?null:param},"");}catch(e){}
+}
+window.addEventListener("popstate",function(e){
+ if(e.state&&e.state.s){ render(e.state.s,e.state.p); }
+ else { render(firstRun&&!sessionDone?"intro":"shelf"); }
+});
+
+/* ================= renderers ================= */
+function entryHTML(g){
+ var badge=g.flag?' <span class="badge">· '+(g.flag.indexOf("Duo")===0?"duo":"together")+'</span>':"";
+ return '<button class="entry plate" onclick="go(\'game\','+g.n+')">'
+  +'<span class="no"><small>No.</small>'+g.n+'</span>'
+  +'<span class="gname">'+g.name+'</span>'
+  +'<span class="ghook">'+g.hook+'</span>'
+  +'<span class="gmeta">'+g.type+' · '+g.dom+' · '+g.prac+badge+'</span>'
+  +'</button>';
+}
+function renderShelf(){
+ var key=axis, groups={}, order=[];
+ GAMES.forEach(function(g){ if(!groups[g[key]]){groups[g[key]]=[];order.push(g[key]);} groups[g[key]].push(g); });
+ if(returnLine&&!returnSpent&&hopperBudget>0){
+  returnSpent=true;hopperBudget--;
+  document.getElementById("returnnote").innerHTML=hopperNote(returnLine);
+ }
+ if(allowMarginalia&&!shelfNoteSpent&&hopperBudget>0){ shelfNoteSpent=true;hopperBudget--; }
+ var html="";
+ order.forEach(function(k){
+  html+='<div class="group"><span class="eyebrow">'+k+'</span></div>';
+  groups[k].forEach(function(g){
+   html+=entryHTML(g);
+   if(shelfNoteSpent&&g.n===marginaliaPick.game){ html+=hopperNote(marginaliaPick.line); }
+  });
+ });
+ document.getElementById("shelfbody").innerHTML=html;
+ document.querySelectorAll(".tab").forEach(function(t){t.setAttribute("aria-pressed",t.dataset.axis===axis);});
+}
+function setAxis(a){axis=a;renderShelf();}
+
+function renderGame(){
+ var g=currentGame;
+ document.getElementById("gamebody").innerHTML=
+  '<div class="plate spec"><span class="no"><small>No.</small>'+g.n+'</span>'
+  +'<h2>'+g.name+'</h2><p class="ghook">'+g.hook+'</p>'
+  +'<div class="row"><span class="lab">The goal</span><p>'+g.goal+'</p></div>'
+  +'<div class="row"><span class="lab">The rule</span><p>'+g.rule+'</p></div>'
+  +'<div class="row"><span class="lab">The attitude</span><p class="att">'+g.att+'</p></div>'
+  +(g.flag?'<p class="flagline">'+g.flag+'</p>':"")
+  +(g.care?'<div class="care"><span class="lab">Before you go</span>'+g.care+'</div>':"")
+  +'<p class="gmeta" style="margin-top:1.1rem">'+g.type+' · '+g.dom+' · '+g.prac+'</p>'
+  +'</div>'
+  +'<div class="tierblock"><h3>How should the obstacle sit today?</h3>'
+  +'<div class="tierbtns">'
+  +tierBtn("g","Gentler",g.g)+tierBtn("b","Same",g.b)+tierBtn("h","Harder",g.h)
+  +'</div>'
+  +'<p class="small">Chosen fresh each time. Not remembered, not compared.</p></div>'
+  +'<div class="actions"><button class="quiet" onclick="go(homeScreen())">'
+  +(homeScreen()==="first"?"Back":"Back to the shelf")+'</button></div>';
+}
+function pickTier(t){
+ currentTier=t;
+ /* Only a genuinely new session clears the free-write. Re-reading the rules and
+    re-picking a tier mid-session must not destroy what you have written. */
+ if(!sessionActive){ sessionActive=true; chosenPosture=null; document.getElementById("note").value=""; }
+ go("play");
+}
+
+function renderPlay(){
+ var g=currentGame, tierName={g:"Gentler",b:"Same",h:"Harder"}[currentTier];
+ document.getElementById("playbody").innerHTML=
+  '<p class="eyebrow">Now playing · '+g.name+'</p>'
+  +'<div class="playcard"><span class="lab">'+tierName+'</span><p style="font-size:1.08rem;margin-top:.3rem">'+g[currentTier]+'</p></div>'
+  +'<p class="wait">The game happens out there. This screen will wait, and it isn’t counting.</p>'
+  +'<div class="actions"><button class="btn" onclick="go(\'reflect\')">I played it</button>'
+  +'<button class="quiet" onclick="go(\'game\','+g.n+')">Reread the rules</button>'
+  +'<button class="quiet" onclick="go(homeScreen())">I didn’t — back</button></div>';
+}
+
+function renderPostures(){
+ document.getElementById("postures").innerHTML=POSTURES.map(function(p){
+  return '<button class="posture" aria-pressed="'+(chosenPosture===p.k)+'" data-k="'+p.k+'" onclick="pickPosture(\''+p.k+'\')">'
+  +'<span class="pname">'+p.name+'</span><span class="pdesc">'+p.d+'</span></button>';}).join("");
+}
+function pickPosture(k){
+ chosenPosture=(chosenPosture===k)?null:k;
+ document.querySelectorAll(".posture").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.k===chosenPosture);});
+}
+function finish(){go("done");}
+
+function renderDone(){
+ sessionDone=true; sessionActive=false;
+ /* R1: the first completed session is what opens the shelf on later visits. */
+ if(firstRun&&!introStamped){ introStamped=true; writeLastOpen(today); }
+ document.body.dataset.nav="on";
+ var note=document.getElementById("note").value.trim();
+ document.getElementById("copybtn").style.display=note?"inline-flex":"none";
+ if(!sendoffHTML&&sendoffLine&&hopperBudget>0){ hopperBudget--; sendoffHTML=hopperNote(sendoffLine); }
+ document.getElementById("sendoff").innerHTML=sendoffHTML;
+}
+function legacyCopy(text){
+ try{
+  var t=document.createElement("textarea");
+  t.value=text;t.setAttribute("readonly","");
+  t.style.position="fixed";t.style.top="0";t.style.left="0";t.style.opacity="0";
+  document.body.appendChild(t);
+  t.focus();t.select();
+  if(t.setSelectionRange)t.setSelectionRange(0,text.length);
+  var ok=document.execCommand("copy");
+  document.body.removeChild(t);
+  return ok;
+ }catch(e){return false;}
+}
+function copyNote(){
+ var text=document.getElementById("note").value, btn=document.getElementById("copybtn");
+ function flash(msg,ms){btn.textContent=msg;setTimeout(function(){btn.textContent="Copy my note";},ms);}
+ function fallback(){ if(legacyCopy(text)) flash("Copied",1600); else flash("Select it by hand",2400); }
+ if(navigator.clipboard&&navigator.clipboard.writeText){
+  navigator.clipboard.writeText(text).then(function(){flash("Copied",1600);},fallback);
+ } else { fallback(); }
+}
+
+/* ---- the fable sequencer ---- */
+var rmQuery=window.matchMedia?matchMedia("(prefers-reduced-motion: reduce)"):null;
+var reducedMotion=rmQuery?rmQuery.matches:false;
+if(rmQuery&&rmQuery.addEventListener)rmQuery.addEventListener("change",function(e){reducedMotion=e.matches;});
+var FABLE=[
+ {sc:1,cap:"All summer the grasshopper sang…",dur:5200},
+ {sc:2,cap:"…while the ant hauled grain.",dur:4800},
+ {sc:3,cap:"Winter came. He asked for a little food.",dur:5000},
+ {sc:4,cap:"“What did you do all summer?” “I sang.”",dur:3200},
+ {sc:4,cap:"“Then dance,” said the ant — and shut the door.",dur:3800},
+ {sc:4,cap:"Aesop’s moral: work first, sing later — if ever.",dur:3600}
+];
+var fableTimer=null,fableIdx=0,fableDone=false;
+function showScene(n){
+ document.querySelectorAll("#fablestage .scene").forEach(function(el,i){el.classList.toggle("on",i===n-1);});
+}
+function stepFable(){
+ if(fableIdx>=FABLE.length){endFable();return;}
+ var f=FABLE[fableIdx];showScene(f.sc);
+ document.getElementById("fablecap").textContent=f.cap;
+ fableIdx++;fableTimer=setTimeout(stepFable,f.dur);
+}
+function startFable(){
+ if(fableDone)return;
+ if(reducedMotion){
+  fableDone=true;
+  document.getElementById("fablestage").style.display="none";
+  document.getElementById("fablecap").style.display="none";
+  return;
+ }
+ document.getElementById("fabletext").style.display="none";
+ stepFable();  /* resumes where navigation interrupted it, rather than truncating */
+}
+function pauseFable(){ clearTimeout(fableTimer); fableTimer=null; }
+function skipFable(){clearTimeout(fableTimer);endFable();}
+function endFable(){
+ fableDone=true;clearTimeout(fableTimer);
+ showScene(4);
+ var cap=document.getElementById("fablecap");
+ if(cap)cap.textContent="Aesop’s moral: work first, sing later — if ever.";
+ var sk=document.getElementById("skipfable");if(sk)sk.style.display="none";
+ document.querySelectorAll(".doorleaf.slam").forEach(function(e){e.classList.add("shut");});
+}
+
+/* ---- rare randomized idle motion ----
+   Never reactive: driven only by a timer, never by input. Never on a
+   learnable schedule. Absent by architecture on play and reflect,
+   which carry no mark at all. Silent under reduced motion. */
+var idleTimer=null;
+function scheduleIdle(){
+ clearTimeout(idleTimer);
+ if(reducedMotion)return;
+ /* R5: the interval is re-drawn on every screen entry, so a twitch can never
+    fire immediately after you come back from play or reflect and read as
+    coupled to what you just finished. The twitch is weather, not speech. */
+ idleTimer=setTimeout(function(){twitchMark();scheduleIdle();},50000+Math.random()*90000);
+}
+function twitchMark(){
+ var svgs=document.querySelectorAll("section.on .mark svg");
+ if(!svgs.length)return;
+ var m=svgs[Math.floor(Math.random()*svgs.length)].parentElement;
+ var r=Math.random(), cls=r<0.5?"idle-bob":(r<0.85?"idle-tilt":"idle-hop2");
+ m.classList.add(cls);
+ setTimeout(function(){m.classList.remove(cls);},1500);
+}
+
+/* ---- boot ---- */
+document.getElementById("firstcard").innerHTML=entryHTML(GAMES[0]);
+var startScreen=firstRun?"intro":"shelf";
+if(!firstRun)sessionDone=true;  /* a returning visitor is already past the reveal gate */
+if(!firstRun)document.body.dataset.nav="on";
+render(startScreen);
+try{history.replaceState({s:startScreen,p:null},"");}catch(e){}
+document.body.dataset.boot="1";
+scheduleIdle();
+</script>
+</body>
+</html>

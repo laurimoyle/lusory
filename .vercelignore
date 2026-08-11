@@ -1,0 +1,11 @@
+# Channel materials, provenance and tooling must never be served.
+# WP6: the translation table lives outside the app, not merely unlinked from it.
+# .gitignore does not affect what Vercel serves — this file does.
+docs/
+test/
+README.md
+package.json
+package-lock.json
+node_modules/
+*.tar.gz
+*.diff
