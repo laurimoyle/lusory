@@ -238,7 +238,14 @@ const b=await chromium.launch({executablePath:EXE});
  ok2(i.includes('everything will be where you left it')&&!i.includes('glad to see you'),'R3 no delight at return');
  const a=await p.textContent('section[data-screen="about"]');
  ok2(!/\b(savoring|expressive writing)\b/i.test(a),'R4 About names no research families');
- ok2(a.includes('The Slow Taste')&&a.includes('The Long Exhale'),'R4 About uses metaphor labels');
+ /* E3: the science sentence carries everyday verbs, neither family names nor
+    metaphor labels. The kindness/strangers overlap with shipped labels is fine —
+    those labels were chosen for being everyday phrases — so pin the label forms
+    that are unambiguously labels. */
+ ok2(a.includes('paying attention, giving thanks, being kind on purpose, writing things down, moving, talking to strangers, breathing slowly'),
+     'E3 About science sentence uses everyday words');
+ ok2(!/The Slow Taste|The Small Self|The Long Exhale|The Moving Body|Opening Up/.test(a),
+     'E3 About names no metaphor labels either');
  const care3=await p.evaluate(()=>GAMES[2].care);
  /* item 10 retracted by the architect: the original wording already satisfies the
     map's "normal and short" via "a few minutes ... and passes", and it keeps a
