@@ -431,6 +431,28 @@ const b=await chromium.launch({executablePath:EXE});
  ok(await scr(p)==='shelf','F and it goes there');
  await c.close();}
 
+/* G — the numeral column keeps its own space on every plate.
+   `.entry` is always `entry plate`, and its padding shorthand silently reset the
+   left padding `.plate` sets, so the "No. N" numeral and the margin rule printed
+   underneath the title on all fifteen shelf entries and on the first-run card.
+   Measured, not eyeballed: the title's left edge must clear the numeral's right. */
+{const c=await b.newContext({viewport:{width:390,height:844}});const p=await c.newPage();
+ await p.goto(URL,{waitUntil:'networkidle'});
+ await p.click('section[data-screen="intro"] .btn'); await p.click('#skipfable');
+ await p.click('section[data-screen="meet"] .actions .btn');
+ const clears=e=>{const n=e.querySelector('.no').getBoundingClientRect();
+   const g=e.querySelector('.gname').getBoundingClientRect(); return g.left>=n.right;};
+ ok(await p.evaluate(`(${clears})(document.querySelector('#firstcard .entry'))`),
+    'G first-run card: title clears the numeral');
+ await p.click('section[data-screen="first"] .actions .btn');
+ await p.locator('.tierbtn').nth(1).click();
+ await p.click('section[data-screen="play"] .actions .btn');
+ await p.click('section[data-screen="reflect"] .actions .btn');
+ await p.click('section[data-screen="done"] .quiet');
+ const bad=await p.evaluate(`[...document.querySelectorAll('section[data-screen="shelf"] .entry')].filter(e=>!(${clears})(e)).length`);
+ ok(bad===0,'G all fifteen shelf entries: title clears the numeral (overlapping: '+bad+')');
+ await c.close();}
+
 await b.close();
 console.log('\nRE-AUDIT ROUND ('+ps.length+')'); ps.forEach(x=>console.log('  ok  '+x));
 if(f.length){console.log('\nFAIL ('+f.length+')');f.forEach(x=>console.log('  XX  '+x));process.exit(1);}

@@ -112,6 +112,10 @@ button:focus-visible{outline:2px dashed var(--leaf);outline-offset:3px}
 .group .eyebrow{color:var(--hay)}
 .entry{display:block;width:100%;text-align:left;background:none;border:0;cursor:pointer;
   padding:.85rem 0 .95rem;border-bottom:1px solid var(--rule-faint);color:var(--ink);font-family:var(--body);font-size:17px}
+/* The padding shorthand above resets the left padding .plate sets, and the entry
+   is always `entry plate`. Restore the field margin so the numeral column keeps
+   its own space instead of printing underneath the title. */
+.entry.plate{padding-left:var(--margin)}
 .entry:hover .gname{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
 .gname{font-family:var(--disp);font-size:1.14rem;display:block}
 .ghook{font-style:italic;color:var(--ink-soft);font-size:.95rem;margin-top:.1rem;display:block}
