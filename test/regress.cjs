@@ -367,7 +367,11 @@ const b=await chromium.launch({executablePath:EXE});
 
 /* B — deploy exclusions */
 {const fs=require('fs');const ig=fs.readFileSync(__dirname+'/../.vercelignore','utf8');
- const need=['docs/','test/','README.md','package.json','package-lock.json'];
+ /* .github/ is on the list because Vercel serves the repo root minus this file:
+    the workflow was publicly readable at /.github/workflows/claude.yml until it
+    was added here. No secret in it, but "tooling must never be served" is this
+    file's own stated rule. */
+ const need=['docs/','test/','.github/','README.md','package.json','package-lock.json'];
  const missing=need.filter(x=>!ig.split('\n').map(l=>l.trim()).includes(x));
  ok(missing.length===0,'B .vercelignore excludes all required paths'+(missing.length?': missing '+missing.join(', '):''));
  const h=fs.readFileSync(__dirname+'/../index.html','utf8');

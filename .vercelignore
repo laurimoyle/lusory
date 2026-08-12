@@ -3,6 +3,7 @@
 # .gitignore does not affect what Vercel serves — this file does.
 docs/
 test/
+.github/
 README.md
 package.json
 package-lock.json
