@@ -38,6 +38,8 @@ node test/test.cjs             # 52 assertions: the loop, storage, budget, phone
 node test/regress.cjs          # 22 assertions: one per verification-pass finding
 node test/csp-test.cjs         # full loop under the production CSP headers (:8124)
 node test/netcheck.cjs         # proves zero third-party requests
+node test/attack.cjs           # hostile-input pass: storage, history abuse, idle motion
+node test/attack2.cjs          # probe pass: budget overrun trials + edge diagnostics
 ```
 
 Requires `npm i playwright-core` and a Chromium binary; set the path at the top of each file.

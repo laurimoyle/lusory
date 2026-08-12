@@ -35,7 +35,7 @@ const browser=await chromium.launch({executablePath:EXE});
  await page.click('#skipfable');
  await page.click('section[data-screen="meet"] .actions .btn');
  await page.click('section[data-screen="first"] .actions .btn');
- await page.locator('.tierbtns .btn').nth(1).click();
+ await page.locator('.tierbtn').nth(1).click();
  await page.click('section[data-screen="play"] .actions .btn');
  await page.click('section[data-screen="reflect"] .actions .btn');
  await page.click('section[data-screen="done"] .quiet');
@@ -71,7 +71,7 @@ const browser=await chromium.launch({executablePath:EXE});
  await page.click('#skipfable');
  await page.click('section[data-screen="meet"] .actions .btn');
  await page.click('section[data-screen="first"] .actions .btn');
- await page.locator('.tierbtns .btn').nth(0).click();
+ await page.locator('.tierbtn').nth(0).click();
  await page.click('section[data-screen="play"] .actions .btn');
  await page.click('section[data-screen="reflect"] .actions .btn');
  let total=await moments(page); // done screen
@@ -79,7 +79,7 @@ const browser=await chromium.launch({executablePath:EXE});
  total+=await moments(page);   // shelf
  for(let i=0;i<10;i++){
    await page.locator('#shelfbody .entry').nth(i%15).click();
-   await page.locator('.tierbtns .btn').nth(i%3).click();
+   await page.locator('.tierbtn').nth(i%3).click();
    await page.click('section[data-screen="play"] .actions .btn');
    await page.click('section[data-screen="reflect"] .actions .btn');
    total+=await moments(page);
@@ -105,7 +105,7 @@ const browser=await chromium.launch({executablePath:EXE});
  await page.click('#skipfable');
  await page.click('section[data-screen="meet"] .actions .btn');
  await page.click('section[data-screen="first"] .actions .btn');
- await page.locator('.tierbtns .btn').nth(0).click();
+ await page.locator('.tierbtn').nth(0).click();
  await page.click('section[data-screen="play"] .actions .btn');
  await page.click('section[data-screen="reflect"] .actions .btn');
  say(await screen(page)==='done','A3 full loop completes with setItem throwing');
@@ -164,7 +164,7 @@ for(const seed of seeds){
  await page.click('#skipfable');
  await page.click('section[data-screen="meet"] .actions .btn');
  await page.click('section[data-screen="first"] .actions .btn');
- await page.locator('.tierbtns .btn').nth(0).click();
+ await page.locator('.tierbtn').nth(0).click();
  await page.click('section[data-screen="play"] .actions .btn');
  const t0=Date.now();
  await page.evaluate(()=>{const n=document.getElementById('note');n.value='A'.repeat(1000000);n.dispatchEvent(new Event('input'));});
@@ -194,7 +194,7 @@ for(const seed of seeds){
  say(await page.locator('#fabletext').isVisible(),'A7 text fallback reachable');
  await page.click('section[data-screen="meet"] .actions .btn');
  await page.click('section[data-screen="first"] .actions .btn');
- await page.locator('.tierbtns .btn').nth(2).click();
+ await page.locator('.tierbtn').nth(2).click();
  await page.click('section[data-screen="play"] .actions .btn');
  await page.locator('.posture').nth(0).click();
  await page.click('section[data-screen="reflect"] .actions .btn');
@@ -221,27 +221,35 @@ for(const seed of seeds){
  const hist2=await page.evaluate(()=>history.length);
  info('A8 history entries added by two dblclicks: '+(hist2-hist1)+' (2 expected)');
  say(hist2-hist1<=2,'A8 double-click does not duplicate history entries ('+(hist2-hist1)+')');
- await page.locator('.tierbtns .btn').nth(0).dblclick();
+ await page.locator('.tierbtn').nth(0).dblclick();
  say(await screen(page)==='play','A8 dblclick on tier still reaches play');
  say(errs.length===0,'A8 no errors: '+errs.slice(0,2).join(' | '));
  await ctx.close();
 }
 
-/* ===== A9: rapid back/forward abuse + back past first entry ===== */
+/* ===== A9: rapid back/forward abuse, on a seeded in-document history =====
+   Harness repair (R15): the test context opens on about:blank, so unbounded
+   history.back() could walk clean out of the document — a harness artifact,
+   not an app defect. Seed spare in-document entries first; the app must then
+   recover to a rendered screen however hard back is abused. */
 {
  let {ctx,page,errs}=await newPage(browser);
  await page.goto(URL,{waitUntil:'networkidle'});
+ await page.evaluate(()=>{for(let i=0;i<10;i++)history.pushState({s:'intro',p:null},'');});
  await page.click('section[data-screen="intro"] .btn');
  await page.click('#skipfable');
  await page.click('section[data-screen="meet"] .actions .btn');
  await page.click('section[data-screen="first"] .actions .btn');
- await page.locator('.tierbtns .btn').nth(0).click();
+ await page.locator('.tierbtn').nth(0).click();
  await page.click('section[data-screen="play"] .actions .btn');
  for(let i=0;i<12;i++){ await page.goBack().catch(()=>{}); }
+ await page.waitForTimeout(120);
  const s=await screen(page);
  info('A9 after 12 rapid backs: screen='+s+' url='+page.url());
- say(s!==null,'A9 never lands on a blank screen after back abuse (screen='+s+')');
+ say(page.url().startsWith(URL),'A9 back abuse stays inside the document ('+page.url()+')');
+ say(s!==null,'A9 recovers to a rendered in-document screen after back abuse (screen='+s+')');
  for(let i=0;i<12;i++){ await page.goForward().catch(()=>{}); }
+ await page.waitForTimeout(120);
  const s2=await screen(page);
  say(s2!==null,'A9 forward abuse leaves a rendered screen (screen='+s2+')');
  say(errs.length===0,'A9 no errors: '+errs.slice(0,2).join(' | '));
@@ -277,30 +285,114 @@ for(const seed of seeds){
  await ctx.close();
 }
 
-/* ===== A12: idle motion never reactive ===== */
+/* ===== A12: input may postpone motion, never provoke it (R15) ===== */
 {
+ /* (i) tap and hover on the mark, sampled ~40ms after each input event:
+    no class, attribute, or inline style is ADDED in response to input.
+    (Removals are allowed — clearing runs on its own schedule.) */
  let {ctx,page,errs}=await newPage(browser);
  await page.goto(URL,{waitUntil:'networkidle'});
  await page.click('section[data-screen="intro"] .btn');
  await page.click('#skipfable');
- const mark=page.locator('section[data-screen="meet"] .mark').first();
- const before=await mark.getAttribute('class');
- for(let i=0;i<15;i++){ await mark.click({force:true}); await mark.hover(); }
- await page.waitForTimeout(400);
- const after=await mark.getAttribute('class');
- say(before===after,'A12 tapping/hovering the mark changes nothing ("'+before+'" -> "'+after+'")');
- say(errs.length===0,'A12 no errors');
+ await page.waitForTimeout(1700); /* let the entry hop-once clear so the baseline is at rest */
+ await page.evaluate(()=>{
+   const m=document.getElementById('meetmark');
+   const snap=()=>({attrs:[...m.attributes].map(a=>a.name),classes:[...m.classList],style:[...m.style]});
+   window.__a12={base:snap(),samples:[]};
+   ['click','mouseover'].forEach(ev=>m.addEventListener(ev,()=>{
+     setTimeout(()=>window.__a12.samples.push({ev,snap:snap()}),40);
+   },{once:true}));
+ });
+ const mark=page.locator('#meetmark');
+ await mark.hover(); await mark.click({force:true});
+ await page.waitForTimeout(300);
+ const r=await page.evaluate(()=>window.__a12);
+ const added=r.samples.map(s=>({ev:s.ev,
+   attrs:s.snap.attrs.filter(a=>!r.base.attrs.includes(a)),
+   classes:s.snap.classes.filter(c=>!r.base.classes.includes(c)),
+   style:s.snap.style.filter(x=>!r.base.style.includes(x))}));
+ say(r.samples.length>=2&&added.every(a=>!a.attrs.length&&!a.classes.length&&!a.style.length),
+     'A12 tap+hover add no class/attribute/inline style within 50ms of input: '+JSON.stringify(added));
+ say(errs.length===0,'A12(i) no errors');
  await ctx.close();
 }
+{
+ /* (ii) the entry hop-once clears on its own ~1400ms schedule — absent input,
+    and equally with taps/hovers hammering the window — and never re-arms. */
+ const watchHop=async(page,withInput)=>{
+   await page.click('section[data-screen="intro"] .btn'); /* enters meet, arms hop-once */
+   const armed=await page.evaluate(()=>document.getElementById('meetmark').classList.contains('hop-once'));
+   const mark=page.locator('#meetmark');
+   const t0=Date.now(); let cleared=-1;
+   while(Date.now()-t0<2600&&cleared<0){
+     if(withInput){ await mark.click({force:true}); await mark.hover(); }
+     if(!await page.evaluate(()=>document.getElementById('meetmark').classList.contains('hop-once')))
+       cleared=Date.now()-t0;
+     else await page.waitForTimeout(60);
+   }
+   let rearmed=false; const t1=Date.now();
+   while(Date.now()-t1<1500&&!rearmed){
+     if(withInput){ await mark.click({force:true}); await mark.hover(); }
+     rearmed=await page.evaluate(()=>document.getElementById('meetmark').classList.contains('hop-once'));
+     await page.waitForTimeout(100);
+   }
+   return {armed,cleared,rearmed};
+ };
+ {let {ctx,page,errs}=await newPage(browser);
+  await page.goto(URL,{waitUntil:'networkidle'});
+  const q=await watchHop(page,false);
+  say(q.armed&&q.cleared>=0&&q.cleared<=2400,'A12 absent input, hop-once clears on its own ~1400ms schedule: '+JSON.stringify(q));
+  say(!q.rearmed,'A12 absent input, hop-once never re-arms');
+  say(errs.length===0,'A12(ii-quiet) no errors');
+  await ctx.close();}
+ {let {ctx,page,errs}=await newPage(browser);
+  await page.goto(URL,{waitUntil:'networkidle'});
+  const q=await watchHop(page,true);
+  say(q.armed&&q.cleared>=0&&q.cleared<=2400,'A12 with taps/hovers during the window, hop-once still clears: '+JSON.stringify(q));
+  say(!q.rearmed,'A12 under input, hop-once never re-arms');
+  say(errs.length===0,'A12(ii-input) no errors');
+  await ctx.close();}
+}
 
-/* ===== A13: storage API grep at runtime ===== */
+/* ===== A13: phase-aware storage audit (R15) =====
+   Before the first session completes NOTHING is stored — across first load,
+   navigation, and reload — which is what makes the destination gate hold
+   (a quitter is returned to the introduction, never the ungated shelf).
+   After the first completed session: exactly one key, lusory.lastOpen.
+   The key list is compared whole and verbatim, so any future second key
+   fails here loudly instead of being silently tolerated. */
 {
  let {ctx,page,errs}=await newPage(browser);
+ const audit=p=>p.evaluate(()=>({ls:Object.keys(localStorage),ss:Object.keys(sessionStorage),cookie:document.cookie}));
+ const empty=st=>st.ls.length===0&&st.ss.length===0&&st.cookie==='';
  await page.goto(URL,{waitUntil:'networkidle'});
- const st=await page.evaluate(()=>({ls:Object.keys(localStorage),ss:Object.keys(sessionStorage),cookie:document.cookie}));
- say(st.ls.length===1&&st.ls[0]==='lusory.lastOpen','A13 one localStorage key: '+JSON.stringify(st.ls));
- say(st.ss.length===0,'A13 no sessionStorage: '+JSON.stringify(st.ss));
- say(st.cookie==='','A13 no cookies: '+JSON.stringify(st.cookie));
+ let st=await audit(page);
+ say(empty(st),'A13 first load stores nothing: '+JSON.stringify(st));
+ await page.click('section[data-screen="intro"] .btn');
+ await page.click('#skipfable');
+ await page.click('section[data-screen="meet"] .actions .btn');
+ await page.evaluate(()=>go('shelf'));
+ say(await screen(page)!=='shelf','A13 destination gate still refuses the shelf pre-completion');
+ await page.click('section[data-screen="first"] .actions .btn');
+ await page.locator('.tierbtn').nth(1).click();
+ await page.click('section[data-screen="play"] .actions .btn');
+ st=await audit(page);
+ say(empty(st),'A13 pre-completion navigation stores nothing: '+JSON.stringify(st));
+ await page.reload({waitUntil:'networkidle'});
+ st=await audit(page);
+ say(empty(st),'A13 pre-completion reload still stores nothing: '+JSON.stringify(st));
+ say(await screen(page)==='intro','A13 the quitter is returned to the introduction (gate pinned by absence of storage)');
+ await page.click('section[data-screen="intro"] .btn');
+ await page.click('#skipfable');
+ await page.click('section[data-screen="meet"] .actions .btn');
+ await page.click('section[data-screen="first"] .actions .btn');
+ await page.locator('.tierbtn').nth(1).click();
+ await page.click('section[data-screen="play"] .actions .btn');
+ await page.click('section[data-screen="reflect"] .actions .btn');
+ st=await audit(page);
+ say(JSON.stringify(st.ls)==='["lusory.lastOpen"]','A13 after first completion: exactly ["lusory.lastOpen"], got '+JSON.stringify(st.ls));
+ say(st.ss.length===0&&st.cookie==='','A13 completion adds no sessionStorage or cookies: '+JSON.stringify({ss:st.ss,cookie:st.cookie}));
+ say(errs.length===0,'A13 no errors during the storage audit: '+errs.slice(0,2).join(' | '));
  await ctx.close();
 }
 

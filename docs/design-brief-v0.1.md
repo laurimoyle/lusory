@@ -171,7 +171,7 @@ is weak, this is the one place a player can lose something they wanted.
 | Shelf numerals printing under the titles | fixed | found while capturing screens for this brief |
 | Tier payoff clauses on games 1, 5, 14 | open | owner copy task; ask 02 |
 | Copy-my-note on iOS Safari + Android Chrome | open | ask 07 |
-| `test/attack.cjs`, `test/attack2.cjs` | stale | assert against pre-sign-off behaviour; superseded by `regress.cjs` |
+| `test/attack.cjs`, `test/attack2.cjs` | current | A13/A12/A9 rewritten against ruled behaviour (R15); harness repaired; included in the suite |
 
 **The defect found while writing this.** Every shelf entry renders as `entry plate`, where
 `.plate` supplies the 52px field margin — but `.entry`'s padding shorthand sits later in
