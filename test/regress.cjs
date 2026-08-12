@@ -69,7 +69,7 @@ const b=await chromium.launch({executablePath:EXE});
  const txt=await p.locator('.tierbtn').allTextContents();
  ok(txt[0].includes('One block, one find'),'M3 Gentler shows its obstacle');
  ok(txt[1].includes('Fifteen minutes, five finds'),'M3 Same shows its obstacle');
- ok(txt[2].includes('commute'),'M3 Harder shows its obstacle');
+ ok(txt[2].includes('The same route you take every day.'),'M3 Harder shows its obstacle');
  const bx=await Promise.all((await p.locator('.tierbtn').all()).map(t=>t.boundingBox()));
  ok(new Set(bx.map(x=>Math.round(x.width))).size===1&&new Set(bx.map(x=>Math.round(x.height))).size===1,
     'M3 tiers still equal weight: '+bx.map(x=>Math.round(x.width)+'x'+Math.round(x.height)).join(' '));
