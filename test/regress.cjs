@@ -374,6 +374,12 @@ const b=await chromium.launch({executablePath:EXE});
  const need=['docs/','test/','.github/','README.md','package.json','package-lock.json'];
  const missing=need.filter(x=>!ig.split('\n').map(l=>l.trim()).includes(x));
  ok(missing.length===0,'B .vercelignore excludes all required paths'+(missing.length?': missing '+missing.join(', '):''));
+ /* /build.sh was served alongside /.github/workflows/claude.yml until R16
+    retired it: vercel.json now pins buildCommand/outputDirectory to null
+    (plain static serve) and the script is deleted, not merely ignored. */
+ ok(!fs.existsSync(__dirname+'/../build.sh'),'B build.sh stays retired (R16): deleted, never served');
+ const vj=JSON.parse(fs.readFileSync(__dirname+'/../vercel.json','utf8'));
+ ok(vj.buildCommand===null&&vj.outputDirectory===null,'B vercel.json pins buildCommand and outputDirectory to null');
  const h=fs.readFileSync(__dirname+'/../index.html','utf8');
  ok(!/docs\/channel/i.test(h),'B shipped source does not name the channel path (view-source is public)');
  await b.close();}
