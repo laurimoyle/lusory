@@ -16,11 +16,14 @@ for(let t=0;t<12;t++){
  await page.click('#skipfable');
  await page.click('section[data-screen="meet"] .actions .btn');
  await page.click('section[data-screen="first"] .actions .btn');
- await page.locator('.tierbtns .btn').nth(1).click();
+ await page.locator('.tierbtn').nth(1).click();
  await page.click('section[data-screen="play"] .actions .btn');
  await page.click('section[data-screen="reflect"] .actions .btn');
  await page.click('section[data-screen="done"] .quiet');
  await page.reload({waitUntil:'networkidle'});          // <- second visit, SAME DAY
+ /* Harness repair (R15): seed in-document history so 12 backs cannot walk out
+    of the document to about:blank (which crashed the hopperBudget evaluate). */
+ await page.evaluate(()=>{for(let i=0;i<6;i++)history.pushState({s:'shelf',p:null},'');});
  const shelfM=await page.evaluate(()=>document.querySelector('section.on').querySelectorAll('.marg').length);
  let n=0,reached=false;
  while(n++<12){ await page.goBack(); await page.waitForTimeout(40); if(await screen(page)==='meet'){reached=true;break;} }
@@ -59,7 +62,7 @@ for(const [label,steps] of Object.entries({
   if(s==='skip')  await page.click('#skipfable');
   if(s==='meet')  await page.click('section[data-screen="meet"] .actions .btn');
   if(s==='first') await page.click('section[data-screen="first"] .actions .btn');
-  if(s==='tier')  await page.locator('.tierbtns .btn').nth(0).click();
+  if(s==='tier')  await page.locator('.tierbtn').nth(0).click();
   if(s==='play')  await page.click('section[data-screen="play"] .actions .btn');
  }
  if(label==='midreflect') await page.fill('#note','a note the user typed');
@@ -127,13 +130,13 @@ for(const [label,steps] of Object.entries({
  await page.click('#skipfable');
  await page.click('section[data-screen="meet"] .actions .btn');
  await page.click('section[data-screen="first"] .actions .btn');
- await page.locator('.tierbtns .btn').nth(0).click();
+ await page.locator('.tierbtn').nth(0).click();
  await page.click('section[data-screen="play"] .actions .btn');
  await page.fill('#note','something I wanted to keep');
  await page.click('section[data-screen="reflect"] .actions .btn'); // done
  await page.goBack(); await page.goBack(); await page.waitForTimeout(60); // play
  await page.click('section[data-screen="play"] .actions button.quiet'); // reread rules -> game
- await page.locator('.tierbtns .btn').nth(2).click();
+ await page.locator('.tierbtn').nth(2).click();
  await page.click('section[data-screen="play"] .actions .btn');
  log('B8 note after re-picking a tier: '+JSON.stringify(await page.inputValue('#note')));
  await ctx.close();

@@ -69,7 +69,7 @@ const b=await chromium.launch({executablePath:EXE});
  const txt=await p.locator('.tierbtn').allTextContents();
  ok(txt[0].includes('One block, one find'),'M3 Gentler shows its obstacle');
  ok(txt[1].includes('Fifteen minutes, five finds'),'M3 Same shows its obstacle');
- ok(txt[2].includes('commute'),'M3 Harder shows its obstacle');
+ ok(txt[2].includes('The same route you take every day.'),'M3 Harder shows its obstacle');
  const bx=await Promise.all((await p.locator('.tierbtn').all()).map(t=>t.boundingBox()));
  ok(new Set(bx.map(x=>Math.round(x.width))).size===1&&new Set(bx.map(x=>Math.round(x.height))).size===1,
     'M3 tiers still equal weight: '+bx.map(x=>Math.round(x.width)+'x'+Math.round(x.height)).join(' '));
@@ -374,6 +374,12 @@ const b=await chromium.launch({executablePath:EXE});
  const need=['docs/','test/','.github/','README.md','package.json','package-lock.json'];
  const missing=need.filter(x=>!ig.split('\n').map(l=>l.trim()).includes(x));
  ok(missing.length===0,'B .vercelignore excludes all required paths'+(missing.length?': missing '+missing.join(', '):''));
+ /* /build.sh was served alongside /.github/workflows/claude.yml until R16
+    retired it: vercel.json now pins buildCommand/outputDirectory to null
+    (plain static serve) and the script is deleted, not merely ignored. */
+ ok(!fs.existsSync(__dirname+'/../build.sh'),'B build.sh stays retired (R16): deleted, never served');
+ const vj=JSON.parse(fs.readFileSync(__dirname+'/../vercel.json','utf8'));
+ ok(vj.buildCommand===null&&vj.outputDirectory===null,'B vercel.json pins buildCommand and outputDirectory to null');
  const h=fs.readFileSync(__dirname+'/../index.html','utf8');
  ok(!/docs\/channel/i.test(h),'B shipped source does not name the channel path (view-source is public)');
  await b.close();}
