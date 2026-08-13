@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>accounts spike</title>
+<style>
+  body { font: 15px/1.5 monospace; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; }
+  fieldset { margin: 0 0 1rem; }
+  label { display: block; margin: .4rem 0; }
+  input, textarea, button { font: inherit; }
+  input, textarea { width: 100%; box-sizing: border-box; }
+  #log { white-space: pre-wrap; border: 1px solid #999; padding: .5rem; min-height: 6rem; }
+  ul { padding-left: 1.2rem; }
+</style>
+</head>
+<body>
+
+<h1>accounts spike</h1>
+<p>Harness only. No design, no copy, nothing from the game. Exists to exercise
+the endpoints against the branch preview and is never merged.</p>
+
+<fieldset>
+  <legend>1 &middot; request a code</legend>
+  <label>email <input id="email" type="email" autocomplete="off"></label>
+  <button id="request">POST /api/auth/request</button>
+</fieldset>
+
+<fieldset>
+  <legend>2 &middot; verify</legend>
+  <label>code <input id="code" autocomplete="off"></label>
+  <button id="verify">POST /api/auth/verify</button>
+</fieldset>
+
+<fieldset>
+  <legend>3 &middot; notes</legend>
+  <label>body <textarea id="note" rows="2"></textarea></label>
+  <button id="save">POST /api/notes</button>
+  <button id="list">GET /api/notes</button>
+  <ul id="notes"></ul>
+</fieldset>
+
+<fieldset>
+  <legend>4 &middot; session</legend>
+  <button id="signout">POST /api/auth/signout</button>
+</fieldset>
+
+<fieldset>
+  <legend>5 &middot; intake (asked once, at signup)</legend>
+  <label>came_for <input id="came_for" autocomplete="off"></label>
+  <label>heard_from <input id="heard_from" autocomplete="off"></label>
+  <button id="intake">POST /api/intake</button>
+  <p>Both blank sends no request at all — watch the network log.</p>
+</fieldset>
+
+<h2>log</h2>
+<div id="log"></div>
+
+<script>
+(function () {
+  var logEl = document.getElementById('log');
+  function say(line) { logEl.textContent += line + '\n'; }
+  function val(id) { return document.getElementById(id).value; }
+
+  // Every call is same-origin and relative. The page has no idea what is
+  // behind /api and never learns.
+  async function call(path, options) {
+    var opts = options || {};
+    var init = { method: opts.method || 'GET', credentials: 'same-origin' };
+    if (opts.body) {
+      init.headers = { 'Content-Type': 'application/json' };
+      init.body = JSON.stringify(opts.body);
+    }
+    var started = Date.now();
+    var res = await fetch(path, init);
+    var text = await res.text();
+    say(init.method + ' ' + path + ' -> ' + res.status + ' (' + (Date.now() - started) + 'ms) ' + text);
+    try { return JSON.parse(text); } catch (e) { return null; }
+  }
+
+  document.getElementById('request').onclick = function () {
+    call('/api/auth/request', { method: 'POST', body: { email: val('email') } });
+  };
+
+  document.getElementById('verify').onclick = function () {
+    call('/api/auth/verify', { method: 'POST', body: { email: val('email'), code: val('code') } });
+  };
+
+  document.getElementById('save').onclick = function () {
+    call('/api/notes', { method: 'POST', body: { body: val('note') } });
+  };
+
+  document.getElementById('list').onclick = async function () {
+    var out = await call('/api/notes');
+    var ul = document.getElementById('notes');
+    ul.textContent = '';
+    ((out && out.notes) || []).forEach(function (n) {
+      var li = document.createElement('li');
+      li.textContent = n.created_on + ' — ' + n.body;
+      ul.appendChild(li);
+    });
+  };
+
+  document.getElementById('signout').onclick = function () {
+    call('/api/auth/signout', { method: 'POST' });
+  };
+
+  document.getElementById('intake').onclick = function () {
+    var cameFor = val('came_for').trim();
+    var heardFrom = val('heard_from').trim();
+    if (!cameFor && !heardFrom) {
+      say('both blank — no request sent');
+      return;
+    }
+    var payload = {};
+    if (cameFor) payload.came_for = cameFor;
+    if (heardFrom) payload.heard_from = heardFrom;
+    call('/api/intake', { method: 'POST', body: payload });
+  };
+})();
+</script>
+
+</body>
+</html>
