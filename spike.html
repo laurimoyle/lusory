@@ -31,6 +31,10 @@ the endpoints against the branch preview and is never merged.</p>
   <legend>2 &middot; verify</legend>
   <label>code <input id="code" autocomplete="off"></label>
   <button id="verify">POST /api/auth/verify</button>
+  <button id="oracle">POST /api/spike-otp</button>
+  <p>The oracle mints a code without sending mail, so the loop is not held up
+  by the mailer's few-per-hour limit. Branch only, one permitted address,
+  404 for anything else, deleted before release.</p>
 </fieldset>
 
 <fieldset>
@@ -85,6 +89,11 @@ the endpoints against the branch preview and is never merged.</p>
 
   document.getElementById('verify').onclick = function () {
     call('/api/auth/verify', { method: 'POST', body: { email: val('email'), code: val('code') } });
+  };
+
+  document.getElementById('oracle').onclick = async function () {
+    var out = await call('/api/spike-otp', { method: 'POST', body: { email: val('email') } });
+    if (out && out.code) document.getElementById('code').value = out.code;
   };
 
   document.getElementById('save').onclick = function () {

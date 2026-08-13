@@ -131,6 +131,27 @@ Both questions are skippable, and skipping is a real answer to have given.
 If both are left blank, the page sends no request at all — not an empty
 one.
 
+### `POST /api/spike-otp` — the test oracle. **Branch only.**
+
+| | |
+|---|---|
+| Browser sends | an address |
+| We return | a sign-in code, minted without sending any mail |
+| We write | nothing |
+
+This is not part of the product. It exists so the loop can be tested without
+waiting on the mailer's few-per-hour limit, and it is listed here rather than
+left quiet because an endpoint that hands out sign-in codes is exactly the
+kind of thing an inventory is for.
+
+It answers for **one** address, pinned as a SHA-256 digest so that no address
+appears anywhere in the repository. Every other address — including a near
+miss — gets a `404`, the same answer an absent route gives, so it does not
+announce itself to anyone probing.
+
+**It is deleted before release.** While it exists, anyone who learns the one
+permitted address can sign in as it. It must never reach a production deploy.
+
 ## What is never collected
 
 Not "collected and discarded" — never asked for in the first place.
@@ -163,6 +184,8 @@ Named here so they are not mistaken for settled.
 - **Deletion and export.** A player must be able to take their notes and to
   delete the account outright. Neither endpoint exists yet. Both are
   required before release.
+- **Deleting `/api/spike-otp`.** The test oracle above. Removing it is a
+  release blocker, not a tidy-up.
 - **The code in the email.** The provider's stock template sends a link
   rather than a six-digit code. A link means the player's browser would
   talk to the provider directly, which the architecture does not allow, so

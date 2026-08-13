@@ -16,6 +16,13 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
 
 const assert = require('assert');
 
+// The spike oracle answers for exactly one address, pinned as a digest. The
+// tests point that digest at a synthetic address so that no real one appears
+// here either.
+const ORACLE_EMAIL = 'oracle@example.com';
+process.env.SPIKE_OTP_SHA256 =
+  require('crypto').createHash('sha256').update(ORACLE_EMAIL).digest('hex');
+
 let pass = 0;
 const failures = [];
 function check(name, fn) {
@@ -76,6 +83,7 @@ const verifyH = require('../api/auth/verify.js');
 const signoutH = require('../api/auth/signout.js');
 const notesH = require('../api/notes.js');
 const intakeH = require('../api/intake.js');
+const oracleH = require('../api/spike-otp.js');
 
 const EMAIL = 'someone@example.com';
 const CODE = '123456';
@@ -330,6 +338,93 @@ check('an expired cookie is rejected', () => {
     assert.match(res.headers['set-cookie'], /Max-Age=0/);
     assert.match(res.headers['set-cookie'], /HttpOnly/);
     assert.strictEqual(sent.length, 0);
+  });
+
+  // --- the spike oracle (branch only, deleted before release) ------------
+  await acheck('oracle: any other address gets 404 and nothing happens', async () => {
+    reset([]);
+    const res = mockRes();
+    await oracleH(mockReq('POST', { email: 'someone.else@example.com' }), res);
+    assert.strictEqual(res.code, 404, 'a refused address must look like an absent route');
+    assert.strictEqual(res.json().error, 'not found');
+    assert.strictEqual(sent.length, 0, 'reached Supabase for an address it must ignore');
+  });
+
+  await acheck('oracle: a near-miss address is still 404', async () => {
+    reset([]);
+    const res = mockRes();
+    await oracleH(mockReq('POST', { email: 'oracle@example.com.evil.test' }), res);
+    assert.strictEqual(res.code, 404);
+    assert.strictEqual(sent.length, 0);
+  });
+
+  await acheck('oracle: no address at all is 404', async () => {
+    reset([]);
+    const res = mockRes();
+    await oracleH(mockReq('POST', {}), res);
+    assert.strictEqual(res.code, 404);
+    assert.strictEqual(sent.length, 0);
+  });
+
+  await acheck('oracle: the permitted address gets a code, minted without mail', async () => {
+    reset([{ status: 200, json: { properties: { email_otp: '654321', action_link: 'https://x.invalid' } } }]);
+    const res = mockRes();
+    await oracleH(mockReq('POST', { email: ORACLE_EMAIL }), res);
+    assert.strictEqual(res.code, 200);
+    assert.strictEqual(res.json().code, '654321');
+    assert.match(sent[0].url, /admin\/generate_link$/, 'did not use the admin mint');
+    assert.ok(!sent.some(s => /\/auth\/v1\/otp$/.test(s.url)), 'sent an email after all');
+  });
+
+  await acheck('oracle: creates the user once if there is not one yet', async () => {
+    reset([
+      { status: 422, json: {} },
+      { status: 200, json: {} },
+      { status: 200, json: { properties: { email_otp: '112233' } } },
+    ]);
+    const res = mockRes();
+    await oracleH(mockReq('POST', { email: ORACLE_EMAIL }), res);
+    assert.strictEqual(res.code, 200);
+    assert.strictEqual(res.json().code, '112233');
+    assert.match(sent[1].url, /admin\/users$/);
+    assert.strictEqual(sent[1].body.email_confirm, true);
+  });
+
+  await acheck('oracle: the minted code is never logged', async () => {
+    reset([{ status: 200, json: { properties: { email_otp: '987654' } } }]);
+    await oracleH(mockReq('POST', { email: ORACLE_EMAIL }), mockRes());
+    const all = logged.join('\n');
+    assert.ok(!all.includes('987654'), 'the code reached a log line');
+    assert.ok(!all.includes(ORACLE_EMAIL), 'the address reached a log line');
+    assert.deepStrictEqual(logged, ['lusory:spike-otp:minted']);
+  });
+
+  await acheck('oracle: GET is refused', async () => {
+    reset([]);
+    const res = mockRes();
+    await oracleH(mockReq('GET'), res);
+    assert.strictEqual(res.code, 405);
+    assert.strictEqual(sent.length, 0);
+  });
+
+  check('oracle: no email address appears anywhere in the shipped api/', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const dir = path.join(__dirname, '..', 'api');
+    const files = [];
+    (function walk(d) {
+      for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+        const full = path.join(d, e.name);
+        if (e.isDirectory()) walk(full); else if (e.name.endsWith('.js')) files.push(full);
+      }
+    })(dir);
+    assert.ok(files.length >= 6, `expected the function set, found ${files.length}`);
+    for (const f of files) {
+      const src = fs.readFileSync(f, 'utf8');
+      // Allow the shape-check regex and doc mentions; catch actual addresses.
+      const found = src.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g);
+      assert.strictEqual(found, null, `${path.basename(f)} contains an address: ${found}`);
+    }
   });
 
   // --- the logs ----------------------------------------------------------
