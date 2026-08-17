@@ -176,16 +176,23 @@ textarea::placeholder{color:var(--ink-soft);font-style:italic}
 .scene .fig{opacity:0;transition:opacity .6s ease .8s}
 .scene.on .fig{opacity:1}
 .scene .note{opacity:0}
-.scene.on .note{opacity:1;transition:opacity .5s 1.2s;animation:floaty 2.6s ease-in-out 1.2s infinite alternate}
-@keyframes floaty{to{transform:translateY(-8px)}}
-.scene.on .walker{animation:trudge 1.9s ease-in-out infinite}
-@keyframes trudge{0%,100%{transform:translateX(0)}50%{transform:translateX(-9px)}}
+.scene.on .note{animation:notefade 1.25s ease-out var(--note-delay,1.05s) both}
+.scene.on .note-rise{animation:noterise 1.25s ease-out var(--note-delay,1.05s) both}
+@keyframes notefade{0%{opacity:0}35%{opacity:1}100%{opacity:.75}}
+@keyframes noterise{from{transform:translateY(4px)}to{transform:translateY(-7px)}}
+.scene.on .story-singer{animation:storysing 1.45s ease-in-out .75s both;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes storysing{0%,100%{transform:none}35%{transform:rotate(-3deg) translateY(-2px)}68%{transform:rotate(2deg)}}
+.scene.on .walker{animation:carrygrain 1.35s ease-out .7s both}
+@keyframes carrygrain{0%{transform:translateX(10px)}55%{transform:translateX(-5px) translateY(-1px)}100%{transform:translateX(-9px)}}
+.scene.on .winter-hopper{animation:winterstep 1.35s ease-out 1.05s both;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes winterstep{0%{transform:translateX(-6px) rotate(-2deg)}48%{transform:translateX(1px) rotate(2deg)}100%{transform:none}}
 .scene .snow{opacity:0}
-.scene.on .snow{animation:fall 4.6s linear infinite}
-@keyframes fall{0%{transform:translateY(-12px);opacity:0}10%{opacity:.8}100%{transform:translateY(150px);opacity:0}}
+.scene.on .snow{animation:fall 2.25s ease-in .3s both}
+@keyframes fall{0%{transform:translateY(-12px);opacity:0}14%{opacity:.75}100%{transform:translateY(118px);opacity:0}}
 .doorleaf{transform-box:fill-box;transform-origin:100% 50%;transform:rotate(-26deg)}
-.scene.on .slam{animation:shut .7s 3.4s ease-in forwards}
+.scene.on.closing .slam{animation:shut .65s .35s ease-in forwards}
 @keyframes shut{to{transform:rotate(0deg)}}
+.scene.on.moral .slam,
 .doorleaf.shut{transform:rotate(0deg)!important;animation:none!important}
 .fablecap{min-height:1.7em;text-align:center;font-size:.98rem;margin-bottom:.4rem}
 .skipfable{position:absolute;right:.5rem;bottom:.2rem;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
@@ -282,9 +289,9 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
       <path class="d" d="M226 140 q3 -12 8 -14" style="animation-delay:.5s"/>
       <circle class="d" cx="268" cy="40" r="15" pathLength="1" style="animation-delay:.55s"/>
       <path class="d" d="M268 16 v-8 M268 64 v8 M244 40 h-8 M292 40 h8 M251 23 l-6 -6 M285 23 l6 -6 M251 57 l-6 6 M285 57 l6 6" style="animation-delay:.8s"/>
-      <g class="fig" transform="translate(46,94) scale(1.15)"><use href="#hopper"/></g>
-      <g class="note" transform="translate(158,80)"><circle cx="0" cy="0" r="3.2"/><path d="M3 0 V-18 q7 2 6 8"/></g>
-      <g class="note" transform="translate(184,62)" style="animation-delay:1.8s"><circle cx="0" cy="0" r="3.2"/><path d="M3 0 V-18 q7 2 6 8"/></g>
+      <g class="fig" transform="translate(46,94) scale(1.15)"><g class="story-singer"><use href="#hopper"/></g></g>
+      <g class="note" transform="translate(158,80)"><g class="note-rise"><circle cx="0" cy="0" r="3.2"/><path d="M3 0 V-18 q7 2 6 8"/></g></g>
+      <g class="note" transform="translate(184,62)" style="--note-delay:1.8s"><g class="note-rise"><circle cx="0" cy="0" r="3.2"/><path d="M3 0 V-18 q7 2 6 8"/></g></g>
     </g></svg></div>
 
     <div class="scene"><svg viewBox="0 0 320 170"><g class="st">
@@ -309,7 +316,7 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
       <circle class="snow" cx="300" cy="16" r="2" style="animation-delay:1.7s"/>
       <path class="d" d="M232 58 h58 v84" style="animation-delay:.45s"/>
       <path class="d doorleaf" d="M238 60 h50 v80 h-50 z M244 100 h5" style="animation-delay:.6s"/>
-      <g class="fig" transform="translate(140,102) rotate(7) scale(1.02)"><use href="#hopper"/></g>
+      <g class="fig" transform="translate(140,102) rotate(7) scale(1.02)"><g class="winter-hopper"><use href="#hopper"/></g></g>
     </g></svg></div>
 
     <div class="scene"><svg viewBox="0 0 320 170"><g class="st">
@@ -768,20 +775,24 @@ var rmQuery=window.matchMedia?matchMedia("(prefers-reduced-motion: reduce)"):nul
 var reducedMotion=rmQuery?rmQuery.matches:false;
 if(rmQuery&&rmQuery.addEventListener)rmQuery.addEventListener("change",function(e){reducedMotion=e.matches;});
 var FABLE=[
- {sc:1,cap:"All summer the grasshopper sang…",dur:5200},
- {sc:2,cap:"…while the ant hauled grain.",dur:4800},
- {sc:3,cap:"Winter came. He asked for a little food.",dur:5000},
- {sc:4,cap:"“What did you do all summer?” “I sang.”",dur:3200},
- {sc:4,cap:"“Then dance,” said the ant — and shut the door.",dur:3800},
- {sc:4,cap:"Aesop’s moral: work first, sing later — if ever.",dur:3600}
+ {sc:1,cap:"All summer the grasshopper sang…",dur:3200},
+ {sc:2,cap:"…while the ant hauled grain.",dur:3000},
+ {sc:3,cap:"Winter came. He asked for a little food.",dur:3400},
+ {sc:4,cap:"“What did you do all summer?” “I sang.”",dur:2500},
+ {sc:4,beat:"closing",cap:"“Then dance,” said the ant — and shut the door.",dur:3000},
+ {sc:4,beat:"moral",cap:"Aesop’s moral: work first, sing later — if ever.",dur:3400}
 ];
 var fableTimer=null,fableIdx=0,fableDone=false;
-function showScene(n){
- document.querySelectorAll("#fablestage .scene").forEach(function(el,i){el.classList.toggle("on",i===n-1);});
+function showScene(n,beat){
+ document.querySelectorAll("#fablestage .scene").forEach(function(el,i){
+  el.classList.toggle("on",i===n-1);
+  el.classList.toggle("closing",i===n-1&&beat==="closing");
+  el.classList.toggle("moral",i===n-1&&beat==="moral");
+ });
 }
 function stepFable(){
  if(fableIdx>=FABLE.length){endFable();return;}
- var f=FABLE[fableIdx];showScene(f.sc);
+ var f=FABLE[fableIdx];showScene(f.sc,f.beat);
  document.getElementById("fablecap").textContent=f.cap;
  fableIdx++;fableTimer=setTimeout(stepFable,f.dur);
 }
