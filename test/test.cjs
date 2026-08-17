@@ -30,6 +30,18 @@ ok(k.length===0,'WP4 nothing written at first load: '+JSON.stringify(k));
 
 await page.click('section[data-screen="intro"] .btn');
 ok(await screen(page)==='meet','WP2 intro -> meet');
+const fableSpec=await page.evaluate(()=>({
+ scenes:document.querySelectorAll('#fablestage .scene').length,
+ beats:FABLE.map(x=>x.beat||''),
+ captions:FABLE.map(x=>x.cap).join(' '),
+ duration:FABLE.reduce((n,x)=>n+x.dur,0),
+ fallback:document.getElementById('fabletext').textContent
+}));
+ok(fableSpec.scenes===4,'WP2 fable uses four seasonal drawings');
+ok(fableSpec.beats.includes('closing')&&fableSpec.beats.includes('song'),'WP2 door-close and returning-song beats are explicit');
+ok(/Spring returned/.test(fableSpec.captions)&&/sang again/.test(fableSpec.captions),'WP2 animated telling continues through spring and summer');
+ok(/Spring returned/.test(fableSpec.fallback)&&/sang again/.test(fableSpec.fallback),'WP2 text fallback carries the same continued ending');
+ok(fableSpec.duration<=18000,'WP2 full telling stays brisk ('+fableSpec.duration+'ms)');
 await page.click('#skipfable');
 await page.click('section[data-screen="meet"] .actions .btn');
 ok(await screen(page)==='first','WP2 meet -> first');
@@ -133,7 +145,7 @@ await s3.ctx.close();
 let s4=await newPage(browser,{reducedMotion:'reduce'});
 await s4.page.goto(URL,{waitUntil:'networkidle'});
 await s4.page.click('section[data-screen="intro"] .btn');
-ok(await s4.page.locator('#fabletext').isVisible(),'WP2 reduced-motion shows the five-line text fallback');
+ok(await s4.page.locator('#fabletext').isVisible(),'WP2 reduced-motion shows the complete text fallback');
 ok(await s4.page.locator('#fablestage').isHidden(),'WP5 reduced-motion hides the animated telling');
 const anims=await s4.page.evaluate(()=>[...document.querySelectorAll('*')]
   .filter(e=>getComputedStyle(e).animationName!=='none').length);
