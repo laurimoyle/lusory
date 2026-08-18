@@ -165,28 +165,49 @@ textarea::placeholder{color:var(--ink-soft);font-style:italic}
 .fableblock .small{margin-top:.45rem}
 
 /* fable stage — the telling, in four drawings */
-#fablestage{position:relative;height:196px;background:var(--plate);border:1px solid var(--rule);border-radius:3px;margin:.9rem 0 .5rem;overflow:hidden}
+#fablestage{position:relative;width:100%;height:auto;aspect-ratio:1200/736;background:var(--plate);border:1px solid var(--rule);border-radius:3px;margin:.9rem 0 .5rem;overflow:hidden}
 .scene{position:absolute;inset:0;opacity:0;transition:opacity .55s ease}
 .scene.on{opacity:1}
 .scene svg{width:100%;height:100%;display:block}
 .scene .st{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.scene .d{stroke-dasharray:1;stroke-dashoffset:1}
-.scene.on .d{animation:drawline 1.2s ease forwards}
-@keyframes drawline{to{stroke-dashoffset:0}}
-.scene .fig{opacity:0;transition:opacity .6s ease .8s}
-.scene.on .fig{opacity:1}
-.scene .note{opacity:0}
-.scene.on .note{opacity:1;transition:opacity .5s 1.2s;animation:floaty 2.6s ease-in-out 1.2s infinite alternate}
-@keyframes floaty{to{transform:translateY(-8px)}}
-.scene.on .walker{animation:trudge 1.9s ease-in-out infinite}
-@keyframes trudge{0%,100%{transform:translateX(0)}50%{transform:translateX(-9px)}}
-.scene .snow{opacity:0}
-.scene.on .snow{animation:fall 4.6s linear infinite}
-@keyframes fall{0%{transform:translateY(-12px);opacity:0}10%{opacity:.8}100%{transform:translateY(150px);opacity:0}}
-.doorleaf{transform-box:fill-box;transform-origin:100% 50%;transform:rotate(-26deg)}
-.scene.on .slam{animation:shut .7s 3.4s ease-in forwards}
-@keyframes shut{to{transform:rotate(0deg)}}
-.doorleaf.shut{transform:rotate(0deg)!important;animation:none!important}
+.f-ink{fill:none;stroke:#181715;stroke-linecap:round;stroke-linejoin:round}
+.f-ghost{fill:none;stroke:#181715;stroke-linecap:round;opacity:.42}
+.f-green{fill:none;stroke:#181715;stroke-linecap:round;stroke-linejoin:round}
+.f-gold{fill:#657758;stroke:#181715;stroke-linecap:round;stroke-linejoin:round}
+.fable-ant-march{transform:translateX(300px)}
+.scene.on .fable-ant-march{animation:fable-ant-march 2.35s ease-in-out .2s both}
+.scene.on .fable-ant-bob{animation:fable-ant-bob .38s ease-in-out 6 alternate;transform-box:fill-box;transform-origin:center}
+.scene.on .fable-hopper-play{animation:fable-hopper-play .82s ease-in-out 4 alternate;transform-box:fill-box;transform-origin:50% 92%}
+.scene.on .fable-bow{animation:fable-bow-play .5s ease-in-out 6 alternate;transform-box:fill-box;transform-origin:center}
+.fable-note,.fable-leaf,.fable-snow,.fable-impact,.final-note{opacity:0}
+.scene.on .fable-note{animation:fable-note-rise 1.65s ease-out var(--delay,.45s) both}
+.scene.on .fable-leaf{animation:fable-leaf-fall 2.25s ease-in var(--delay,.15s) both}
+.scene.on .fable-shiver{animation:fable-shiver .18s linear 12 alternate;transform-box:fill-box;transform-origin:center}
+.scene.on .fable-snow{animation:fable-snow-fall 2.1s linear var(--delay,.1s) both}
+.fable-door{transform:scaleX(.13);transform-box:fill-box;transform-origin:left center}
+.scene.on.closing .fable-door{animation:fable-door-slam .58s cubic-bezier(.7,0,.25,1) .25s forwards}
+.scene.on.closing .fable-house-shake{animation:fable-house-shake .34s linear .78s both;transform-box:fill-box;transform-origin:center}
+.scene.on.closing .fable-impact{animation:fable-impact .42s linear .72s both}
+.scene.on .fable-sun-rise{animation:fable-sun-rise 1.8s ease-out .15s both}
+.scene.on .fable-sprout{animation:fable-sprout 2s ease-out .35s both;transform-box:fill-box;transform-origin:50% 100%}
+.scene.on.song .fable-spring-hop{animation:fable-spring-hop .78s ease-in-out 4 alternate;transform-box:fill-box;transform-origin:50% 100%}
+.scene.on.song .final-note{animation:fable-final-song 1.85s ease-out var(--delay,.05s) both}
+.scene.on.ending .final-note{opacity:.78}
+@keyframes fable-ant-march{from{transform:translateX(300px)}to{transform:translateX(-210px)}}
+@keyframes fable-ant-bob{to{transform:translateY(-7px) rotate(-1deg)}}
+@keyframes fable-hopper-play{to{transform:rotate(2.5deg) translateY(-5px)}}
+@keyframes fable-bow-play{from{transform:translate(-8px,-3px) rotate(-8deg)}to{transform:translate(9px,5px) rotate(8deg)}}
+@keyframes fable-note-rise{0%{opacity:0;transform:translate(0,10px) scale(.75)}18%{opacity:1}75%{opacity:.8}100%{opacity:0;transform:translate(24px,-78px) scale(1.12)}}
+@keyframes fable-leaf-fall{0%{opacity:0;transform:translate(-20px,-150px) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(80px,320px) rotate(280deg)}}
+@keyframes fable-shiver{to{transform:translateX(5px) rotate(.8deg)}}
+@keyframes fable-snow-fall{0%{opacity:0;transform:translateY(-180px)}15%{opacity:.9}100%{opacity:0;transform:translate(45px,360px)}}
+@keyframes fable-door-slam{from{transform:scaleX(.13)}to{transform:scaleX(1)}}
+@keyframes fable-house-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}58%{transform:translateX(5px)}}
+@keyframes fable-impact{0%,100%{opacity:0}20%,72%{opacity:1}}
+@keyframes fable-sun-rise{from{transform:translateY(170px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fable-sprout{from{transform:scaleY(.05);opacity:0}to{transform:scaleY(1);opacity:1}}
+@keyframes fable-spring-hop{to{transform:translateY(-11px) rotate(2deg)}}
+@keyframes fable-final-song{0%{opacity:0;transform:translate(0,12px) scale(.7)}20%{opacity:1}100%{opacity:0;transform:translate(40px,-100px) scale(1.18)}}
 .fablecap{min-height:1.7em;text-align:center;font-size:.98rem;margin-bottom:.4rem}
 .skipfable{position:absolute;right:.5rem;bottom:.2rem;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
   color:var(--ink-soft);background:none;border:0;cursor:pointer;font-family:var(--body);
@@ -231,6 +252,44 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
       <path d="M31 32 L 29 43"/>
     </g>
   </symbol>
+  <defs>
+    <g id="fable-ant">
+      <g class="f-ink" stroke-width="8">
+        <ellipse cx="0" cy="0" rx="24" ry="18" fill="#181715"/>
+        <ellipse cx="-39" cy="2" rx="22" ry="17" fill="#181715"/>
+        <circle cx="31" cy="-4" r="16" fill="#181715"/>
+        <path d="M39 -17 C50 -34 61 -38 70 -40 M33 -19 C37 -36 44 -45 52 -51" stroke-width="4"/>
+        <path d="M-18 12 L-38 37 M-3 14 L-8 44 M13 11 L31 37 M-46 12 L-61 35 M-34 15 L-39 43 M25 8 L46 29" stroke-width="5"/>
+      </g>
+      <ellipse class="f-gold" cx="3" cy="-42" rx="17" ry="30" stroke-width="5" transform="rotate(-25 3 -42)"/>
+    </g>
+    <g id="fable-hopper">
+      <g class="f-green" stroke-width="8">
+        <ellipse cx="0" cy="0" rx="62" ry="29" transform="rotate(-7)"/>
+        <circle cx="73" cy="-20" r="25"/>
+        <circle cx="81" cy="-25" r="4" fill="#181715" stroke="none"/>
+        <path d="M87 -41 C103 -61 119 -66 136 -68 M77 -44 C82 -62 91 -75 102 -84" stroke-width="5"/>
+        <path d="M-30 18 C-67 50 -84 72 -108 91 M-6 25 C-33 64 -50 88 -73 110"/>
+        <path d="M26 23 C64 46 88 54 122 51 M45 15 C82 27 103 26 132 20" stroke-width="6"/>
+        <path d="M-53 -4 C-82 -19 -105 -22 -132 -18" stroke-width="5"/>
+      </g>
+      <g class="f-green" stroke-width="6">
+        <ellipse cx="41" cy="5" rx="18" ry="24" transform="rotate(24 41 5)"/>
+        <path d="M52 -11 L82 -54 M76 -59 L89 -49"/>
+        <path d="M55 2 C68 13 76 20 89 34" stroke-width="5"/>
+      </g>
+      <g class="fable-bow f-green" stroke-width="4">
+        <path d="M25 -35 L101 33"/>
+        <path d="M30 -41 L106 27" opacity=".45"/>
+      </g>
+    </g>
+    <g id="fable-house">
+      <path class="f-ink" d="M86 880 C80 765 113 630 211 564 C299 506 407 555 445 649 C478 729 477 821 467 880" stroke-width="17" fill="#f4f0e5"/>
+      <path class="f-ghost" d="M103 870 C104 752 135 653 218 594 C300 537 389 580 425 659" stroke-width="4"/>
+      <path class="f-ink" d="M209 880 L209 706 C209 652 243 622 287 622 C332 622 365 653 365 706 L365 880" stroke-width="14" fill="#181715"/>
+      <path class="f-ghost" d="M130 615 C174 607 214 610 246 620 M364 604 C396 617 419 638 437 664" stroke-width="5"/>
+    </g>
+  </defs>
 </svg>
 
 <header>
@@ -273,62 +332,100 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
 <section data-screen="meet">
   <p class="eyebrow">The old story</p>
 
-  <div id="fablestage" role="img" aria-label="The fable of the ant and the grasshopper, told in four drawings">
+  <div id="fablestage" role="img" aria-label="The fable of the ant and the grasshopper, continued through spring and summer in four drawings">
 
-    <div class="scene"><svg viewBox="0 0 320 170"><g class="st">
-      <path class="d" d="M14 140 H306" style="animation-delay:.05s"/>
-      <path class="d" d="M46 140 q3 -13 9 -15" style="animation-delay:.3s"/>
-      <path class="d" d="M120 140 q-2 -11 4 -16" style="animation-delay:.4s"/>
-      <path class="d" d="M226 140 q3 -12 8 -14" style="animation-delay:.5s"/>
-      <circle class="d" cx="268" cy="40" r="15" pathLength="1" style="animation-delay:.55s"/>
-      <path class="d" d="M268 16 v-8 M268 64 v8 M244 40 h-8 M292 40 h8 M251 23 l-6 -6 M285 23 l6 -6 M251 57 l-6 6 M285 57 l6 6" style="animation-delay:.8s"/>
-      <g class="fig" transform="translate(46,94) scale(1.15)"><use href="#hopper"/></g>
-      <g class="note" transform="translate(158,80)"><circle cx="0" cy="0" r="3.2"/><path d="M3 0 V-18 q7 2 6 8"/></g>
-      <g class="note" transform="translate(184,62)" style="animation-delay:1.8s"><circle cx="0" cy="0" r="3.2"/><path d="M3 0 V-18 q7 2 6 8"/></g>
-    </g></svg></div>
+    <div class="scene"><svg viewBox="0 160 1200 736" preserveAspectRatio="xMidYMid slice">
+      <circle cx="978" cy="232" r="87" fill="#657758" opacity=".64"/>
+      <path class="f-ink" d="M95 889 C346 871 538 901 747 884 C892 873 1012 893 1104 878" stroke-width="13"/>
+      <use href="#fable-house"/>
+      <g class="fable-ant-march"><g class="fable-ant-bob"><use href="#fable-ant" transform="translate(650 845) scale(.9)"/></g></g>
+      <g class="fable-hopper-play"><use href="#fable-hopper" transform="translate(850 760) scale(1.08)"/></g>
+      <g class="f-green" stroke-width="7">
+        <path class="fable-note" style="--delay:.25s" d="M1003 650 L1003 592 L1034 582 M1003 650 C979 637 975 667 995 671 C1015 673 1019 657 1003 650"/>
+        <path class="fable-note" style="--delay:.8s" d="M1070 700 L1070 650 L1097 641 M1070 700 C1048 689 1043 716 1062 721 C1081 722 1087 707 1070 700"/>
+        <path class="fable-note" style="--delay:1.35s" d="M951 704 L951 665 M951 704 C932 694 926 717 944 722 C962 723 967 710 951 704"/>
+      </g>
+      <g class="f-green" stroke-width="6">
+        <path d="M735 884 C731 838 735 810 747 785 M747 839 C765 820 777 815 795 814 M741 823 C725 809 712 804 699 805"/>
+        <path d="M1060 879 C1056 839 1060 816 1071 795 M1068 838 C1087 820 1099 817 1113 819"/>
+      </g>
+    </svg></div>
 
-    <div class="scene"><svg viewBox="0 0 320 170"><g class="st">
-      <path class="d" d="M14 140 H306" style="animation-delay:.05s"/>
-      <path class="d" d="M60 140 q3 -12 8 -14" style="animation-delay:.3s"/>
-      <path class="d" d="M250 140 q-2 -11 4 -15" style="animation-delay:.35s"/>
-      <g transform="translate(150,126)"><g class="walker">
-        <circle class="d" cx="0" cy="0" r="4.4" style="animation-delay:.5s"/>
-        <circle class="d" cx="11" cy="1" r="4.8" style="animation-delay:.6s"/>
-        <circle class="d" cx="23" cy="2" r="5.6" style="animation-delay:.7s"/>
-        <path class="d" d="M2 4 l-3 9 M9 5 l-2 9 M15 5 l2 9 M22 6 l3 9 M-3 -2 q-6 -6 -10 -6 M-2 -4 q-4 -8 -9 -10" style="animation-delay:.85s"/>
-        <path class="d" d="M28 0 l10 -3 M38 -3 q16 -12 30 -2 q8 7 -1 13 q-16 9 -27 -3 z" style="animation-delay:1s"/>
-      </g></g>
-    </g></svg></div>
+    <div class="scene"><svg viewBox="0 160 1200 736" preserveAspectRatio="xMidYMid slice">
+      <circle cx="983" cy="244" r="76" fill="#657758" opacity=".54"/>
+      <path class="f-ink" d="M95 889 C347 874 536 899 752 886 C893 877 1017 896 1104 882" stroke-width="13"/>
+      <use href="#fable-house"/>
+      <g transform="translate(288 736) scale(.9)"><use href="#fable-ant"/></g>
+      <g class="f-gold" stroke-width="4" opacity=".92">
+        <ellipse cx="263" cy="821" rx="13" ry="25" transform="rotate(-35 263 821)"/>
+        <ellipse cx="302" cy="821" rx="13" ry="25" transform="rotate(20 302 821)"/>
+        <ellipse cx="338" cy="822" rx="13" ry="25" transform="rotate(-12 338 822)"/>
+      </g>
+      <g class="fable-shiver"><use href="#fable-hopper" transform="translate(868 785) scale(.9) rotate(7)"/></g>
+      <g class="f-green" stroke-width="7" fill="#657758">
+        <path class="fable-leaf" style="--delay:.1s" d="M676 442 C699 421 725 430 733 454 C711 469 688 464 676 442Z"/>
+        <path class="fable-leaf" style="--delay:.55s" d="M850 393 C872 373 898 382 906 406 C884 420 861 416 850 393Z"/>
+        <path class="fable-leaf" style="--delay:1s" d="M1018 461 C1040 441 1066 450 1074 474 C1052 488 1029 484 1018 461Z"/>
+      </g>
+      <path class="f-ghost" d="M957 774 C980 776 1001 771 1023 758" stroke-width="5"/>
+    </svg></div>
 
-    <div class="scene"><svg viewBox="0 0 320 170"><g class="st">
-      <path class="d" d="M14 142 H306" style="animation-delay:.05s"/>
-      <path class="d" d="M0 34 q58 12 106 4 q22 -4 36 -14" style="animation-delay:.3s"/>
-      <path class="d" d="M64 40 q4 8 1 14 M112 38 q6 6 5 13" style="animation-delay:.7s"/>
-      <circle class="snow" cx="40" cy="18" r="2"/><circle class="snow" cx="96" cy="10" r="2" style="animation-delay:1.1s"/>
-      <circle class="snow" cx="150" cy="22" r="2" style="animation-delay:2.2s"/><circle class="snow" cx="204" cy="8" r="2" style="animation-delay:.6s"/>
-      <circle class="snow" cx="300" cy="16" r="2" style="animation-delay:1.7s"/>
-      <path class="d" d="M232 58 h58 v84" style="animation-delay:.45s"/>
-      <path class="d doorleaf" d="M238 60 h50 v80 h-50 z M244 100 h5" style="animation-delay:.6s"/>
-      <g class="fig" transform="translate(140,102) rotate(7) scale(1.02)"><use href="#hopper"/></g>
-    </g></svg></div>
+    <div class="scene"><svg viewBox="0 160 1200 736" preserveAspectRatio="xMidYMid slice">
+      <circle cx="988" cy="235" r="68" fill="#657758" opacity=".32"/>
+      <path d="M0 818 C173 793 357 816 522 805 C724 793 898 820 1200 791 L1200 1200 L0 1200Z" fill="#f4f0e5" stroke="#181715" stroke-width="11" stroke-linejoin="round"/>
+      <g class="fable-house-shake"><use href="#fable-house"/></g>
+      <g class="f-ink" stroke-width="7" fill="#181715">
+        <circle cx="286" cy="705" r="25"/>
+        <path d="M279 682 C273 664 265 655 255 648 M294 682 C302 665 312 656 323 652" fill="none" stroke-width="4"/>
+        <circle cx="278" cy="701" r="3" fill="#f4f0e5" stroke="none"/><circle cx="295" cy="701" r="3" fill="#f4f0e5" stroke="none"/>
+      </g>
+      <g class="fable-door">
+        <path d="M211 880 L211 704 C211 653 243 625 287 625 C331 625 363 654 363 704 L363 880Z" fill="#657758" stroke="#181715" stroke-width="15" stroke-linejoin="round"/>
+        <circle cx="338" cy="758" r="9" fill="#f4f0e5" stroke="#181715" stroke-width="5"/>
+        <path class="f-ghost" d="M235 853 L235 704 C235 671 255 651 286 651" stroke-width="4"/>
+      </g>
+      <g class="fable-impact f-ink" stroke-width="7"><path d="M390 680 L430 655 M400 722 L446 716 M392 764 L432 785"/></g>
+      <g class="fable-shiver"><use href="#fable-hopper" transform="translate(560 782) scale(.83) rotate(9)"/></g>
+      <path class="f-green" d="M470 750 C444 735 425 715 409 690" stroke-width="7"/>
+      <g fill="#f4f0e5" stroke="#181715" stroke-width="3" opacity=".9">
+        <g class="fable-snow" style="--delay:.1s"><circle cx="539" cy="281" r="8"/><circle cx="705" cy="359" r="6"/><circle cx="1006" cy="251" r="9"/></g>
+        <g class="fable-snow" style="--delay:.65s"><circle cx="612" cy="195" r="7"/><circle cx="823" cy="302" r="9"/><circle cx="1094" cy="382" r="6"/></g>
+        <g class="fable-snow" style="--delay:1.15s"><circle cx="455" cy="345" r="6"/><circle cx="922" cy="188" r="7"/><circle cx="1143" cy="278" r="8"/></g>
+      </g>
+    </svg></div>
 
-    <div class="scene"><svg viewBox="0 0 320 170"><g class="st">
-      <path class="d" d="M14 142 H306" style="animation-delay:.05s"/>
-      <circle class="snow" cx="60" cy="14" r="2"/><circle class="snow" cx="188" cy="10" r="2" style="animation-delay:1.4s"/>
-      <circle class="snow" cx="128" cy="20" r="2" style="animation-delay:2.4s"/>
-      <path class="d" d="M232 58 h58 v84" style="animation-delay:.2s"/>
-      <path class="d doorleaf slam" d="M238 60 h50 v80 h-50 z M244 100 h5" style="animation-delay:.3s"/>
-      <g class="fig" transform="translate(140,102) rotate(7) scale(1.02)"><use href="#hopper"/></g>
-    </g></svg></div>
+    <div class="scene"><svg viewBox="0 160 1200 736" preserveAspectRatio="xMidYMid slice">
+      <g class="fable-sun-rise"><circle cx="976" cy="238" r="91" fill="#657758" opacity=".64"/></g>
+      <path class="f-ink" d="M95 889 C348 870 534 899 752 884 C901 873 1016 895 1105 879" stroke-width="13"/>
+      <use href="#fable-house"/>
+      <path d="M211 880 L211 704 C211 653 243 625 287 625 C331 625 363 654 363 704 L363 880Z" fill="#657758" stroke="#181715" stroke-width="15" stroke-linejoin="round"/>
+      <circle cx="338" cy="758" r="9" fill="#f4f0e5" stroke="#181715" stroke-width="5"/>
+      <circle cx="335" cy="638" r="42" fill="#f4f0e5" stroke="#181715" stroke-width="11"/>
+      <circle cx="333" cy="644" r="19" fill="#181715"/>
+      <path class="f-ink" d="M325 626 C318 612 309 604 300 600 M341 626 C348 611 357 604 366 600" stroke-width="4"/>
+      <g class="fable-sprout f-green" stroke-width="7">
+        <path d="M492 887 C491 833 504 799 528 773 M510 823 C482 801 465 796 446 801 M514 811 C542 789 561 785 583 790"/>
+        <path d="M1040 883 C1039 833 1052 802 1074 779 M1054 827 C1028 807 1010 805 990 811 M1058 816 C1083 795 1102 793 1121 798"/>
+        <path d="M716 887 C715 850 724 827 739 808 M727 846 C710 834 695 832 681 836"/>
+      </g>
+      <g fill="#657758" stroke="#181715" stroke-width="4"><circle cx="447" cy="806" r="13"/><circle cx="582" cy="794" r="12"/><circle cx="991" cy="815" r="13"/><circle cx="1120" cy="801" r="12"/></g>
+      <g class="fable-spring-hop"><use href="#fable-hopper" transform="translate(814 753) scale(1.15)"/></g>
+      <g class="f-green" stroke-width="7">
+        <path class="final-note" style="--delay:.05s" d="M986 649 L986 586 L1020 575 M986 649 C960 636 955 669 977 674 C999 676 1006 657 986 649"/>
+        <path class="final-note" style="--delay:.6s" d="M1061 711 L1061 655 L1091 644 M1061 711 C1038 698 1032 728 1053 733 C1073 735 1080 718 1061 711"/>
+        <path class="final-note" style="--delay:1.15s" d="M925 683 L925 638 M925 683 C904 671 898 699 917 704 C936 706 943 690 925 683"/>
+      </g>
+      <path class="f-ghost" d="M770 907 C854 887 948 891 1018 906" stroke-width="5"/>
+    </svg></div>
 
     <button class="skipfable" id="skipfable" onclick="skipFable()">Skip the telling</button>
   </div>
   <p class="fablecap" id="fablecap" aria-live="polite"></p>
 
   <div class="fableblock" id="fabletext">
-    <span class="lab">The old story, in five lines</span>
-    <p>All summer the grasshopper sang while the ant hauled grain. Winter came. The grasshopper, starving, asked the ant for a little food. &ldquo;What did you do all summer?&rdquo; &ldquo;I sang.&rdquo; &ldquo;Then dance,&rdquo; said the ant, and shut the door.</p>
-    <p class="small">Aesop&rsquo;s moral: work first, sing later — if ever.</p>
+    <span class="lab">The story, continued</span>
+    <p>All summer the grasshopper sang while the ant gathered grain. Autumn passed. Winter came, and the hungry grasshopper asked the ant for a little food. &ldquo;What did you do all summer?&rdquo; &ldquo;I sang.&rdquo; &ldquo;Then dance,&rdquo; said the ant, and shut the door. Snow passed. Spring returned, then summer — and the grasshopper sang again.</p>
+    <p class="small">Aesop stopped at the door. The seasons did not.</p>
   </div>
   <h2 style="margin:1.5rem 0 .3rem">That grasshopper lives here.</h2>
   <p class="lede">The fable&rsquo;s loser is this shelf&rsquo;s one character — kept on because the whole app takes his side of the case.</p>
@@ -768,20 +865,26 @@ var rmQuery=window.matchMedia?matchMedia("(prefers-reduced-motion: reduce)"):nul
 var reducedMotion=rmQuery?rmQuery.matches:false;
 if(rmQuery&&rmQuery.addEventListener)rmQuery.addEventListener("change",function(e){reducedMotion=e.matches;});
 var FABLE=[
- {sc:1,cap:"All summer the grasshopper sang…",dur:5200},
- {sc:2,cap:"…while the ant hauled grain.",dur:4800},
- {sc:3,cap:"Winter came. He asked for a little food.",dur:5000},
- {sc:4,cap:"“What did you do all summer?” “I sang.”",dur:3200},
- {sc:4,cap:"“Then dance,” said the ant — and shut the door.",dur:3800},
- {sc:4,cap:"Aesop’s moral: work first, sing later — if ever.",dur:3600}
+ {sc:1,cap:"All summer the grasshopper sang…",dur:2600},
+ {sc:2,cap:"…while the ant gathered grain. Autumn came.",dur:2500},
+ {sc:3,cap:"Winter came. He asked for a little food.",dur:2600},
+ {sc:3,cap:"“What did you do all summer?” “I sang.”",dur:2000},
+ {sc:3,beat:"closing",cap:"“Then dance,” said the ant — and shut the door.",dur:1800},
+ {sc:4,cap:"Snow passed. Spring returned.",dur:2600},
+ {sc:4,beat:"song",cap:"Then summer — and the grasshopper sang again.",dur:3000}
 ];
 var fableTimer=null,fableIdx=0,fableDone=false;
-function showScene(n){
- document.querySelectorAll("#fablestage .scene").forEach(function(el,i){el.classList.toggle("on",i===n-1);});
+function showScene(n,beat){
+ document.querySelectorAll("#fablestage .scene").forEach(function(el,i){
+  el.classList.toggle("on",i===n-1);
+  el.classList.toggle("closing",i===n-1&&beat==="closing");
+  el.classList.toggle("song",i===n-1&&beat==="song");
+  el.classList.toggle("ending",i===n-1&&beat==="ending");
+ });
 }
 function stepFable(){
  if(fableIdx>=FABLE.length){endFable();return;}
- var f=FABLE[fableIdx];showScene(f.sc);
+ var f=FABLE[fableIdx];showScene(f.sc,f.beat);
  document.getElementById("fablecap").textContent=f.cap;
  fableIdx++;fableTimer=setTimeout(stepFable,f.dur);
 }
@@ -800,11 +903,10 @@ function pauseFable(){ clearTimeout(fableTimer); fableTimer=null; }
 function skipFable(){clearTimeout(fableTimer);endFable();}
 function endFable(){
  fableDone=true;clearTimeout(fableTimer);
- showScene(4);
+ showScene(4,"ending");
  var cap=document.getElementById("fablecap");
- if(cap)cap.textContent="Aesop’s moral: work first, sing later — if ever.";
+ if(cap)cap.textContent="Then summer — and the grasshopper sang again.";
  var sk=document.getElementById("skipfable");if(sk)sk.style.display="none";
- document.querySelectorAll(".doorleaf.slam").forEach(function(e){e.classList.add("shut");});
 }
 
 /* ---- rare randomized idle motion ----
