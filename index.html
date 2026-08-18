@@ -118,6 +118,10 @@ button:focus-visible{outline:2px dashed var(--leaf);outline-offset:3px}
 .gmeta{margin-top:.35rem;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft);display:block}
 .badge{color:var(--hay);font-weight:500}
 .shelf-foot{margin-top:2.2rem}
+.chooser{display:grid;gap:.85rem;margin-top:1.25rem}
+.chooser .entry{background:var(--plate);border:1px solid var(--rule-faint);border-radius:3px}
+.chooser .entry:hover{border-color:var(--rule)}
+.shelf-tools{margin:.2rem 0 1.35rem}
 
 /* ---------- game plate ---------- */
 .spec{margin-top:.4rem}
@@ -308,10 +312,10 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
 <noscript>
   <div class="ns">
     <h1>Lusory</h1>
-    <p class="lede">This shelf needs JavaScript to deal its games, and it has none of the other things JavaScript is usually for — no tracking, no accounts, no network calls of any kind.</p>
+    <p class="lede">This shelf needs JavaScript to deal its games. It does not build a player history; it sends only an anonymous tally when a game is chosen.</p>
     <p>Switch it on and come back, or play the first game from here as it is written:</p>
     <p><strong>The Awe Route.</strong> Walk a familiar route. Finish it having found five things older than you, taller than you, or too big to own. Eyes up and out — nothing that fits in a pocket may be looked at. You are not going anywhere; you are being somewhere.</p>
-    <p class="small">Nothing here was counting anyway.</p>
+    <p class="small">How you play is never counted.</p>
   </div>
 </noscript>
 
@@ -325,7 +329,7 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
     <p>There are no streaks here, no scores, no history. Leave for a month and nothing will have noticed, and everything will be where you left it.</p>
   </div>
   <div class="actions boot-title"><button class="btn" onclick="go('meet')">Continue</button></div>
-  <p class="small footnote boot-title">One date will be kept on this device — the day you last opened this. Nothing else, ever.</p>
+  <p class="small footnote boot-title">One date is kept on this device. Game choices add to anonymous weekly totals; they are never tied to you.</p>
 </section>
 
 <!-- ========== FIRST RUN 2/3 : introducing the grasshopper ========== -->
@@ -443,15 +447,13 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <div class="actions"><button class="btn" onclick="go('first')">Continue</button></div>
 </section>
 
-<!-- ========== FIRST RUN 3/3 : one game offered ========== -->
+<!-- ========== FIRST RUN 3/3 + RETURNING RANDOMIZER ========== -->
 <section data-screen="first">
-  <p class="eyebrow">To begin</p>
-  <h2 style="margin-top:.4rem">One game, to start</h2>
-  <p class="lede" style="margin:.6rem 0 1.4rem">Games go better one at a time. There are others; they can wait.</p>
-  <div id="firstcard"></div>
-  <div class="actions">
-    <button class="btn" onclick="go('game',1)">Read the rules</button>
-  </div>
+  <p class="eyebrow" id="chooserlabel">To begin</p>
+  <h2 id="choosertitle" style="margin-top:.4rem">Three games, to start</h2>
+  <p class="lede" id="chooserlede" style="margin:.6rem 0 1rem">Choose the one that catches today. If none do, deal three others.</p>
+  <div class="chooser" id="firstcards"></div>
+  <div class="actions"><button class="quiet" onclick="dealOffers()">Show me three others</button></div>
 </section>
 
 <!-- ========== SHELF ========== -->
@@ -462,9 +464,10 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
     <button class="tab" data-axis="type" aria-pressed="true" onclick="setAxis('type')">Temperament</button>
     <button class="tab" data-axis="dom" aria-pressed="false" onclick="setAxis('dom')">What it grows</button>
   </div>
+  <div class="shelf-tools"><button class="quiet" onclick="startChooser('randomizer')">Three at random</button></div>
   <div id="returnnote"></div>
   <div id="shelfbody"></div>
-  <p class="small shelf-foot">Nothing on this shelf is counting. Take one, or don't — it keeps no ledger either way.</p>
+  <p class="small shelf-foot">Take one, or don't. The shelf keeps no record of who chose what.</p>
 </section>
 
 <!-- ========== GAME PLATE ========== -->
@@ -489,7 +492,7 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
 <section data-screen="done">
   <p class="eyebrow">Closed</p>
   <h2 style="margin-top:.4rem">Played.</h2>
-  <p class="lede" style="margin-top:.6rem">Nothing was recorded. The session was yours; keep any of it you like.</p>
+  <p class="lede" style="margin-top:.6rem">Nothing about how you played was recorded. The session was yours; keep any of it you like.</p>
   <div id="sendoff"></div>
   <div class="actions">
     <button class="btn" id="copybtn" onclick="copyNote()" style="display:none">Copy my note</button>
@@ -505,10 +508,10 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <p>That makes them games in the old, strict sense — a goal, some rules against the shortcut, and your free agreement to play anyway. The philosopher Bernard Suits called this <em>"the voluntary attempt to overcome unnecessary obstacles"</em> and argued that it, not usefulness, is what a good life is made of. Josef Pieper said something near it about leisure: useless on purpose, and formative because of it.</p>
   <h3>About the science, briefly</h3>
   <p>These games draw on, and adapt, practices with peer-reviewed support — paying attention, giving thanks, being kind on purpose, writing things down, moving, talking to strangers, breathing slowly. The honest summary of that research: effects are real and mostly small to moderate. This app's contribution isn't bigger effects; it's a form people freely return to.</p>
-  <p>One finding shaped the whole design: measuring an enjoyable activity tends to make it feel like work. So nothing you do here is counted, stored, ranked, or shown back to you — and no claim about this app will ever be built from watching you use it.</p>
+  <p>One finding shaped the whole design: measuring an enjoyable activity tends to make it feel like work. So Lusory never scores, ranks, times, praises, or shows your activity back to you. The only product signal is an anonymous aggregate count of which games are chosen.</p>
   <p>This is play, preventative and formative — not treatment. If you're in real difficulty, a clinician beats a game, and we'd rather you had the clinician.</p>
   <h3>Privacy</h3>
-  <p>No account, no cloud, no analytics, and nothing sent anywhere. One date is kept on this device once you have played a game: the day you last opened this. Nothing else, ever. Your reflections stay in the page and evaporate when you close it.</p>
+  <p>No player profile or individual activity history is created. One date is kept on this device once you have played a game: the day you last opened this. When you choose a game, Lusory sends its number and whether it came from the first deal, the randomizer, or the shelf; the server adds one to a weekly total and keeps no raw event, player ID, email, session ID, referrer, or fingerprint. These totals never personalize anyone&rsquo;s shelf. Your reflections stay in the page and evaporate when you close it.</p>
   <div class="actions"><button class="quiet" id="aboutback" onclick="go(homeScreen())">Back to the shelf</button></div>
 </section>
 
@@ -595,7 +598,7 @@ var GAMES=[
  goal:"Three good moments found and banked before sleep.",
  rule:"Each through a different sense. One must be something you nearly missed.",
  att:"A collector's joy — unkeepable specimens only.",
- g:"One find, any sense.",b:"Three finds, three senses.",h:"Take one find and tell how it nearly didn't happen."},
+ g:"One find, any sense.",b:"Three finds, three senses.",h:"Five finds, through at least three senses."},
 {n:15,name:"The Balloon Keeper",hook:"Five minutes of imaginary aviation.",dom:"Calm",type:"The Kinesthete",prac:"The Long Exhale",
  goal:"The balloon must never touch the floor before the timer does.",
  rule:"Two sips of air in through the nose lift it; one long slow exhale lets it drift down. That's the physics.",
@@ -688,13 +691,14 @@ function hopperNote(line){
 
 /* ================= state machine ================= */
 var axis="type", currentGame=null, currentTier=null, chosenPosture=null, sessionDone=false, sessionActive=false;
+var chooserSource="first", offerBag=[], currentOffers=[], selectionSource="shelf", firstChoiceReported=false;
 
 function render(screen,param){
  document.body.dataset.boot="0";
  /* The three first-run screens are unreachable once the introduction is behind
     you — history from an earlier visit must not replay the introduction slot
     to someone who is not on their introduction day. */
- if((screen==="intro"||screen==="meet"||screen==="first")&&!firstRun) screen="shelf";
+ if((screen==="intro"||screen==="meet")&&!firstRun) screen="shelf";
  /* FINDING A: the shelf is structurally unreachable until the first session
     completes. Gating individual controls left the wordmark open; gating the
     destination cannot be bypassed by adding a control later. */
@@ -704,6 +708,7 @@ function render(screen,param){
  else if(fableTimer&&!fableDone){ pauseFable(); }
 
  if(screen==="game"){ var g=GAMES.filter(function(x){return x.n===param;})[0]; if(g)currentGame=g; if(!currentGame)screen="shelf"; }
+ if(screen==="first")renderFirst();
  if(screen==="game")renderGame();
  if(screen==="shelf")renderShelf();
  if(screen==="play"){ if(!currentGame||!currentTier){screen="shelf";renderShelf();} else renderPlay(); }
@@ -738,6 +743,7 @@ function tierBtn(k,name,desc){
 /* During the first run the shelf is not yet revealed, so back-links land on the
    game offer rather than exposing all fifteen early. */
 function homeScreen(){ return (firstRun&&!sessionDone)?"first":"shelf"; }
+function choiceBackScreen(){return (firstRun&&!sessionDone)||selectionSource==="randomizer"?"first":"shelf";}
 function go(screen,param){
  var actual=render(screen,param);
  try{history.pushState({s:actual,p:param===undefined?null:param},"");}catch(e){}
@@ -748,15 +754,49 @@ window.addEventListener("popstate",function(e){
 });
 
 /* ================= renderers ================= */
-function entryHTML(g){
+function entryHTML(g,source,metaAxis){
  var badge=g.flag?' <span class="badge">· '+(g.flag.indexOf("Duo")===0?"duo":"together")+'</span>':"";
- return '<button class="entry plate" onclick="go(\'game\','+g.n+')">'
+ var meta=metaAxis==="type"?[g.dom,g.prac]:metaAxis==="dom"?[g.type,g.prac]:[g.type,g.dom];
+ return '<button class="entry plate" onclick="chooseGame('+g.n+',\''+(source||"shelf")+'\')">'
   +'<span class="no"><small>No.</small>'+g.n+'</span>'
   +'<span class="gname">'+g.name+'</span>'
   +'<span class="ghook">'+g.hook+'</span>'
-  +'<span class="gmeta">'+g.type+' · '+g.dom+' · '+g.prac+badge+'</span>'
+  +'<span class="gmeta">'+meta.join(' · ')+badge+'</span>'
   +'</button>';
 }
+function shuffle(a){
+ for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}
+ return a;
+}
+function dealOffers(){
+ if(offerBag.length<3)offerBag=shuffle(GAMES.slice());
+ currentOffers=offerBag.splice(0,3);
+ renderFirst();
+}
+function renderFirst(){
+ if(!firstRun&&chooserSource==="first")chooserSource="randomizer";
+ var returning=chooserSource==="randomizer";
+ document.getElementById("chooserlabel").textContent=returning?"A fresh deal":"To begin";
+ document.getElementById("choosertitle").textContent=returning?"Three games at random":"Three games, to start";
+ document.getElementById("chooserlede").textContent=returning
+  ?"Choose one, or deal again. The shelf remains exactly where it was."
+  :"Choose the one that catches today. If none do, deal three others.";
+ if(!currentOffers.length)dealOffers();
+ document.getElementById("firstcards").innerHTML=currentOffers.map(function(g){return entryHTML(g,chooserSource);}).join("");
+}
+function startChooser(source){
+ chooserSource=source||"randomizer";offerBag=[];currentOffers=[];go("first");
+}
+function recordChoice(n,source){
+ var isFirst=source==="first"&&!firstChoiceReported;
+ if(isFirst)firstChoiceReported=true;
+ if(!window.fetch)return;
+ try{
+  fetch("/api/choice",{method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({game:n,source:source,first:isFirst}),keepalive:true}).catch(function(){});
+ }catch(e){}
+}
+function chooseGame(n,source){selectionSource=source||"shelf";recordChoice(n,selectionSource);go("game",n);}
 function renderShelf(){
  var key=axis, groups={}, order=[];
  GAMES.forEach(function(g){ if(!groups[g[key]]){groups[g[key]]=[];order.push(g[key]);} groups[g[key]].push(g); });
@@ -769,7 +809,7 @@ function renderShelf(){
  order.forEach(function(k){
   html+='<div class="group"><span class="eyebrow">'+k+'</span></div>';
   groups[k].forEach(function(g){
-   html+=entryHTML(g);
+   html+=entryHTML(g,"shelf",axis);
    if(shelfNoteSpent&&g.n===marginaliaPick.game){ html+=hopperNote(marginaliaPick.line); }
   });
  });
@@ -790,13 +830,13 @@ function renderGame(){
   +(g.care?'<div class="care"><span class="lab">Before you go</span>'+g.care+'</div>':"")
   +'<p class="gmeta" style="margin-top:1.1rem">'+g.type+' · '+g.dom+' · '+g.prac+'</p>'
   +'</div>'
-  +'<div class="tierblock"><h3>How should the obstacle sit today?</h3>'
-  +'<div class="tierbtns">'
+  +'<div class="tierblock"><h3>Which door fits today?</h3>'
+  +'<div class="tierbtns" role="group" aria-label="Choose how the obstacle should sit today">'
   +tierBtn("g","Gentler",g.g)+tierBtn("b","Same",g.b)+tierBtn("h","Harder",g.h)
   +'</div>'
-  +'<p class="small">Chosen fresh each time. Not remembered, not compared.</p></div>'
-  +'<div class="actions"><button class="quiet" onclick="go(homeScreen())">'
-  +(homeScreen()==="first"?"Back":"Back to the shelf")+'</button></div>';
+  +'<p class="small">Three equal doors. Chosen fresh each time; not remembered or compared.</p></div>'
+  +'<div class="actions"><button class="quiet" onclick="go(choiceBackScreen())">'
+  +(choiceBackScreen()==="first"?"Back to the three":"Back to the shelf")+'</button></div>';
 }
 function pickTier(t){
  currentTier=t;
@@ -814,7 +854,7 @@ function renderPlay(){
   +'<p class="wait">The game happens out there. This screen will wait, and it isn’t counting.</p>'
   +'<div class="actions"><button class="btn" onclick="go(\'reflect\')">I played it</button>'
   +'<button class="quiet" onclick="go(\'game\','+g.n+')">Reread the rules</button>'
-  +'<button class="quiet" onclick="go(homeScreen())">I didn’t — back</button></div>';
+  +'<button class="quiet" onclick="go(choiceBackScreen())">I didn’t — back</button></div>';
 }
 
 function renderPostures(){
@@ -932,7 +972,6 @@ function twitchMark(){
 }
 
 /* ---- boot ---- */
-document.getElementById("firstcard").innerHTML=entryHTML(GAMES[0]);
 var startScreen=firstRun?"intro":"shelf";
 if(!firstRun)sessionDone=true;  /* a returning visitor is already past the reveal gate */
 if(!firstRun)document.body.dataset.nav="on";

@@ -47,11 +47,15 @@ await page.click('section[data-screen="meet"] .actions .btn');
 ok(await screen(page)==='first','WP2 meet -> first');
 
 const shelfLinksOnFirst=await page.locator('section[data-screen="first"] .quiet').count();
-ok(shelfLinksOnFirst===0,'WP1 no shelf escape on first-run game offer');
-const firstCard=await page.locator('#firstcard .gname').textContent();
-ok(firstCard==='The Awe Route','WP1 Awe Route is the only game offered ('+firstCard+')');
+ok(shelfLinksOnFirst===1,'WP1 first-run offer has only the deal-again action');
+const firstDeal=await page.locator('#firstcards .gname').allTextContents();
+ok(firstDeal.length===3&&new Set(firstDeal).size===3,'WP1 first deal contains three unique games: '+firstDeal.join(' | '));
+await page.click('section[data-screen="first"] .actions .quiet');
+const secondDeal=await page.locator('#firstcards .gname').allTextContents();
+ok(secondDeal.length===3&&new Set(secondDeal).size===3,'WP1 second deal contains three unique games');
+ok(secondDeal.every(name=>!firstDeal.includes(name)),'WP1 deal does not repeat before all fifteen are seen');
 
-await page.click('section[data-screen="first"] .actions .btn');
+await page.locator('#firstcards .entry').first().click();
 ok(await screen(page)==='game','WP2 first -> game');
 const k1=await keys(page);
 ok(k1.length===0,'WP4 R1: nothing written until the first session completes: '+JSON.stringify(k1));
@@ -100,6 +104,10 @@ await page.click('section[data-screen="done"] .quiet');
 ok(await screen(page)==='shelf','WP2 done -> shelf');
 ok(await page.locator('.navlinks').isVisible(),'WP1 shelf reachable + nav revealed after first session');
 ok(await page.locator('#shelfbody .entry').count()===15,'WP2 fifteen games on the shelf');
+ok(await page.locator('.shelf-tools .quiet').textContent()==='Three at random','WP2 shelf offers the reusable three-game randomizer');
+const firstGroup=await page.locator('#shelfbody .group').first().textContent();
+const firstMeta=await page.locator('#shelfbody .entry .gmeta').first().textContent();
+ok(!firstMeta.includes(firstGroup.trim()),'WP2 shelf entry omits metadata repeated by its group heading');
 const margCount=await page.locator('#shelfbody .marg, #returnnote .marg').count();
 ok(margCount<=1,'WP5 at most one marginalia note per visit: '+margCount);
 
@@ -117,6 +125,12 @@ ok(errs.length===0,'no console/page errors + no external requests: '+errs.slice(
 await page.reload({waitUntil:'networkidle'});
 ok(await screen(page)==='shelf','WP1 returning visitor lands on shelf');
 ok(await page.evaluate(()=>hopperBudget<=1),'WP5 ordinary visit budget starts at 1');
+await page.click('.shelf-tools .quiet');
+ok(await screen(page)==='first','WP2 randomizer reopens the three-game chooser');
+ok(await page.locator('#firstcards .entry').count()===3,'WP2 returning randomizer deals three games');
+await page.locator('#firstcards .entry').first().click();
+await page.click('#gamebody .actions .quiet');
+ok(await screen(page)==='first','WP2 randomizer game returns to the same chooser');
 await ctx.close();
 
 /* ---------- 6. MID-SESSION REFRESH ---------- */
@@ -135,7 +149,7 @@ await s3.page.click('section[data-screen="intro"] .btn');
 await s3.page.evaluate(()=>localStorage.clear());
 await s3.page.click('#skipfable');
 await s3.page.click('section[data-screen="meet"] .actions .btn');
-await s3.page.click('section[data-screen="first"] .actions .btn');
+await s3.page.locator('#firstcards .entry').first().click();
 await s3.page.locator('.tierbtn').first().click();
 ok(await screen(s3.page)==='play','WP2 survives localStorage cleared mid-session');
 ok(s3.errs.length===0,'no errors after storage cleared: '+s3.errs.slice(0,2).join(' | '));
@@ -159,7 +173,7 @@ for(const width of [360,390,430,820]){
   await s.page.click('section[data-screen="intro"] .btn');
   await s.page.click('#skipfable');
   await s.page.click('section[data-screen="meet"] .actions .btn');
-  await s.page.click('section[data-screen="first"] .actions .btn');
+  await s.page.locator('#firstcards .entry').first().click();
   await s.page.locator('.tierbtn').first().click();
   await s.page.click('section[data-screen="play"] .actions .btn');
   await s.page.click('section[data-screen="reflect"] .actions .btn');

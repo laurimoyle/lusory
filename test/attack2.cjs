@@ -15,7 +15,7 @@ for(let t=0;t<12;t++){
  await page.click('section[data-screen="intro"] .btn');
  await page.click('#skipfable');
  await page.click('section[data-screen="meet"] .actions .btn');
- await page.click('section[data-screen="first"] .actions .btn');
+ await page.locator('#firstcards .entry').first().click();
  await page.locator('.tierbtn').nth(1).click();
  await page.click('section[data-screen="play"] .actions .btn');
  await page.click('section[data-screen="reflect"] .actions .btn');
@@ -61,7 +61,7 @@ for(const [label,steps] of Object.entries({
   if(s==='intro') await page.click('section[data-screen="intro"] .btn');
   if(s==='skip')  await page.click('#skipfable');
   if(s==='meet')  await page.click('section[data-screen="meet"] .actions .btn');
-  if(s==='first') await page.click('section[data-screen="first"] .actions .btn');
+  if(s==='first') await page.locator('#firstcards .entry').first().click();
   if(s==='tier')  await page.locator('.tierbtn').nth(0).click();
   if(s==='play')  await page.click('section[data-screen="play"] .actions .btn');
  }
@@ -129,7 +129,7 @@ for(const [label,steps] of Object.entries({
  await page.click('section[data-screen="intro"] .btn');
  await page.click('#skipfable');
  await page.click('section[data-screen="meet"] .actions .btn');
- await page.click('section[data-screen="first"] .actions .btn');
+ await page.locator('#firstcards .entry').first().click();
  await page.locator('.tierbtn').nth(0).click();
  await page.click('section[data-screen="play"] .actions .btn');
  await page.fill('#note','something I wanted to keep');
