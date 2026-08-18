@@ -17,11 +17,5 @@
         { "key": "Permissions-Policy", "value": "geolocation=(), microphone=(), camera=(), interest-cohort=()" }
       ]
     }
-  ],
-  "crons": [
-    {
-      "path": "/api/cron/choice-report",
-      "schedule": "0 14 * * 1"
-    }
   ]
 }

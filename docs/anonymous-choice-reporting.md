@@ -20,15 +20,10 @@ Counts may inform shelf curation but may never personalize an individual's shelf
 
 ## Weekly report
 
-Vercel calls `/api/cron/choice-report` at 14:00 UTC each Monday. The route reports the
-previous complete Monday–Monday week through an owner-only email and requires:
+An owner-only scheduled task reads the aggregate table each Monday morning (Eastern) and
+self-delivers the previous complete Monday–Monday week through the owner's connected Gmail.
+It shows first choices separately from all choices and includes the source split. The task
+is read-only and explicitly excludes `players`, `notes`, `intake`, and individual identifiers.
 
-- `CRON_SECRET`
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `RESEND_API_KEY`
-- `REPORT_TO_EMAIL`
-- optionally `REPORT_FROM_EMAIL`
-
-The report shows first choices separately from all choices and includes the source split.
-It contains aggregate counts only.
+Email delivery is intentionally outside the deployed app. The app therefore needs no cron
+route, mail vendor, recipient address, or additional delivery credentials.

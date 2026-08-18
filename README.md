@@ -35,7 +35,7 @@ These are build failures, not style notes. Full text in `docs/invariants.md`.
 ```bash
 node test/serve.cjs &          # static server on :8123
 node test/test.cjs             # the loop, chooser, storage, budget, phone widths
-node test/choice-reporting.cjs # endpoint privacy boundary + weekly email format
+node test/choice-reporting.cjs # endpoint validation + privacy boundary
 node test/regress.cjs          # 22 assertions: one per verification-pass finding
 node test/csp-test.cjs         # full loop under the production CSP headers (:8124)
 node test/netcheck.cjs         # proves zero browser-side third-party requests
