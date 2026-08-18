@@ -474,7 +474,7 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
     <p>You can ignore him completely. He'd respect that.</p>
   </div>
   <p class="small" style="margin-top:1rem">A philosopher reopened the case in 1978. This shelf is the appeal.</p>
-  <div class="actions"><button class="btn" onclick="go('first')">Continue</button></div>
+  <div class="actions"><button class="btn" id="meetcontinue" onclick="leaveIntroduction()">Continue</button></div>
 </section>
 
 <!-- ========== FIRST RUN 3/3 + RETURNING RANDOMIZER ========== -->
@@ -580,7 +580,7 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <h3>Privacy</h3>
   <p>No player profile or individual activity history is created. One date is kept on this device once you have played a game: the day you last opened this. When you choose a game, Lusory sends its number and whether it came from the first deal, the randomizer, or the shelf; the server adds one to a weekly total and keeps no raw event, player ID, session ID, referrer, or fingerprint. These totals never personalize anyone&rsquo;s shelf.</p>
   <p>If you explicitly join the update list, Lusory keeps your email and consent. The referral question and usability-test answers are stored in separate anonymous pools, with no shared identifier linking them to your email, game choices, or each other. The usability test records answers you submit, never a clickstream or replay. Your private reflection on a game stays in the page and evaporates when you close it.</p>
-  <div class="actions"><button class="quiet" onclick="go('join')">Occasional updates</button><button class="quiet" id="aboutback" onclick="go(homeScreen())">Back to the shelf</button></div>
+  <div class="actions"><button class="quiet" id="introreplay" type="button" onclick="replayIntroduction()" hidden>Replay the introduction</button><button class="quiet" onclick="go('join')">Occasional updates</button><button class="quiet" id="aboutback" onclick="go(homeScreen())">Back to the shelf</button></div>
 </section>
 
 </main>
@@ -796,13 +796,14 @@ function hopperNote(line){
 /* ================= state machine ================= */
 var axis="type", currentGame=null, currentTier=null, chosenPosture=null, sessionDone=false, sessionActive=false;
 var chooserSource="first", offerBag=[], currentOffers=[], selectionSource="shelf", firstChoiceReported=false;
+var replayingIntro=false;
 
 function render(screen,param){
  document.body.dataset.boot="0";
  /* The three first-run screens are unreachable once the introduction is behind
     you — history from an earlier visit must not replay the introduction slot
     to someone who is not on their introduction day. */
- if((screen==="intro"||screen==="meet")&&!firstRun) screen="shelf";
+ if((screen==="intro"||screen==="meet")&&!firstRun&&!replayingIntro) screen="shelf";
  /* FINDING A: the shelf is structurally unreachable until the first session
     completes. Gating individual controls left the wordmark open; gating the
     destination cannot be bypassed by adding a control later. */
@@ -818,8 +819,9 @@ function render(screen,param){
  if(screen==="play"){ if(!currentGame||!currentTier){screen="shelf";renderShelf();} else renderPlay(); }
  if(screen==="reflect")renderPostures();
  if(screen==="done")renderDone();
- if(screen==="about"){ var ab=document.getElementById("aboutback");
-  if(ab)ab.textContent=(homeScreen()==="first")?"Back":"Back to the shelf"; }
+ if(screen==="about"){ var ab=document.getElementById("aboutback"), replay=document.getElementById("introreplay");
+  if(ab)ab.textContent=(homeScreen()==="first")?"Back":"Back to the shelf";
+  if(replay)replay.hidden=firstRun&&!sessionDone; }
  var el=document.querySelector('section[data-screen="'+screen+'"]');
  (el||document.querySelector('section[data-screen="shelf"]')).classList.add("on");
  window.scrollTo({top:0});
@@ -830,6 +832,8 @@ function render(screen,param){
    to spend, his line does not render. Belt and braces alongside the guard above. */
 function enterMeet(){
  var marg=document.getElementById("meetmarg");
+ var next=document.getElementById("meetcontinue");
+ if(next)next.textContent=replayingIntro?"Back to About":"Continue";
  if(!meetSpent&&hopperBudget>0){
   meetSpent=true;hopperBudget--;
   if(!reducedMotion){
@@ -848,6 +852,23 @@ function tierBtn(k,name,desc){
    game offer rather than exposing all fifteen early. */
 function homeScreen(){ return (firstRun&&!sessionDone)?"first":"shelf"; }
 function choiceBackScreen(){return (firstRun&&!sessionDone)||selectionSource==="randomizer"?"first":"shelf";}
+function resetFable(){
+ pauseFable();fableIdx=0;fableDone=false;
+ var stage=document.getElementById("fablestage"),cap=document.getElementById("fablecap");
+ var text=document.getElementById("fabletext"),skip=document.getElementById("skipfable");
+ if(stage)stage.style.display="";if(cap){cap.style.display="";cap.textContent="";}
+ if(text)text.style.display="";if(skip)skip.style.display="";
+ document.querySelectorAll("#fablestage .scene").forEach(function(el){
+  el.classList.remove("on","closing","song","ending");
+ });
+}
+function replayIntroduction(){
+ replayingIntro=true;resetFable();go("intro");
+}
+function leaveIntroduction(){
+ if(replayingIntro){replayingIntro=false;go("about");return;}
+ go("first");
+}
 function go(screen,param){
  var actual=render(screen,param);
  try{history.pushState({s:actual,p:param===undefined?null:param},"");}catch(e){}
