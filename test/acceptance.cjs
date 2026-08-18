@@ -10,7 +10,7 @@ console.log('\n--- storage backends, enumerated at runtime (WP4 / acceptance 3) 
 {const c=await b.newContext();const p=await c.newPage();await p.goto(URL,{waitUntil:'networkidle'});
  await p.click('section[data-screen="intro"] .btn');await p.click('#skipfable');
  await p.click('section[data-screen="meet"] .actions .btn');
- await p.click('section[data-screen="first"] .actions .btn');
+ await p.locator('#firstcards .entry').first().click();
  await p.locator('.tierbtn').nth(1).click();
  await p.click('section[data-screen="play"] .actions .btn');
  await p.fill('#note','a note');
@@ -37,7 +37,9 @@ console.log('\n--- non-goals: no PWA / manifest / notifications (WP8) ---');
  say('no Notification API',!/Notification|requestPermission/i.test(h));
  say('no beforeinstallprompt',!/beforeinstallprompt/i.test(h));
  say('no link/fetch to the translation table',!/(href|src)=["'][^"']*(science-axis|translation-table|docs\/)/i.test(h)
-       && !/fetch\(|XMLHttpRequest/i.test(h));
+       && !/fetch\([^)]*(science-axis|translation-table|docs\/)/i.test(h));
+ say('the only browser report is the disclosed same-origin choice call',/fetch\("\/api\/choice"/.test(h)
+       && !/fetch\(["']https?:/i.test(h));
  say('translation table not named in shipped source',!/science-axis-translation-table/i.test(h));
  const ig=fs.readFileSync(__dirname+'/../.vercelignore','utf8');
  say('translation table excluded from the deploy (.vercelignore)',/^docs\/$/m.test(ig));
@@ -71,7 +73,7 @@ console.log('\n--- localStorage cleared mid-session + absurd input (pass 1) ---'
  await p.click('section[data-screen="intro"] .btn');
  await p.evaluate(()=>localStorage.clear());
  await p.click('#skipfable');await p.click('section[data-screen="meet"] .actions .btn');
- await p.click('section[data-screen="first"] .actions .btn');
+ await p.locator('#firstcards .entry').first().click();
  await p.locator('.tierbtn').nth(0).click();
  await p.click('section[data-screen="play"] .actions .btn');
  const big='x'.repeat(1000000);
@@ -90,7 +92,7 @@ console.log('\n--- loop time + on-screen keyboard (acceptance 2 / WP7) ---');
  const t0=Date.now();
  await p.click('section[data-screen="intro"] .btn');await p.click('#skipfable');
  await p.click('section[data-screen="meet"] .actions .btn');
- await p.click('section[data-screen="first"] .actions .btn');
+ await p.locator('#firstcards .entry').first().click();
  await p.locator('.tierbtn').nth(1).click();
  await p.click('section[data-screen="play"] .actions .btn');
  await p.locator('.posture').nth(3).click();
@@ -112,7 +114,7 @@ console.log('\n--- tier symmetry, RE-MEASURED after the obstacle-text change (it
  await p.goto(URL,{waitUntil:'networkidle'});
  await p.click('section[data-screen="intro"] .btn');await p.click('#skipfable');
  await p.click('section[data-screen="meet"] .actions .btn');
- await p.click('section[data-screen="first"] .actions .btn');
+ await p.locator('#firstcards .entry').first().click();
  const bx=await Promise.all((await p.locator('.tierbtn').all()).map(t=>t.boundingBox()));
  const dims=bx.map(x=>Math.round(x.width)+'x'+Math.round(x.height));
  const styles=await p.evaluate(()=>[...document.querySelectorAll('.tierbtn')].map(e=>{const s=getComputedStyle(e);

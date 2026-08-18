@@ -1,6 +1,6 @@
 # Brief for the UX/UI pass — Lusory v0.1
 
-**Status:** v1, 2026-08-11. Written against the signed-off round-2 build.
+**Status:** v1.1, amended 2026-08-17 after the first-deal and aggregate-choice ruling.
 **Classification:** internal working doc. Lives in `docs/`, so `.vercelignore` keeps it off
 the served site. Illustrated version (with the nine screens captured at 390px):
 https://claude.ai/code/artifact/8511acec-87d6-4024-b48a-75614608a499
@@ -10,11 +10,11 @@ https://claude.ai/code/artifact/8511acec-87d6-4024-b48a-75614608a499
 ## §0 Read first — the constraints are the product, not the budget
 
 Lusory is an anti-engagement app. No streaks, scores, badges, progress, notifications,
-accounts, or analytics — not as a v1 shortcut but permanently, as its argument. The
+or individual analytics — not as a v1 shortcut but permanently, as its argument. The
 research it draws on includes a finding that measuring an enjoyable activity tends to make
-it feel like work, so the app refuses to measure you. Its own copy says so: *"Nothing you
-do here is counted, stored, ranked, or shown back to you — and no claim about this app will
-ever be built from watching you use it."*
+it feel like work, so the app refuses to measure the player. A narrow owner ruling permits
+anonymous weekly counts of game selections by source. No raw event or player identifier
+exists, and the counts may never personalize an individual's shelf.
 
 Most of the standard UX toolkit is therefore unavailable, and several moves that would
 raise any normal product's metrics are build failures here. A progress bar is not a polish
@@ -42,7 +42,8 @@ shelf, about. See the illustrated version for captures.
 
 One structural note invisible in screenshots: **the shelf is unreachable until a first
 session completes** — refused at the destination, including a direct call to the shelf
-route, not hidden behind a disabled button. A new player is given one game, not fifteen.
+route, not hidden behind a disabled button. A new player is dealt three games at a time;
+they may deal again without repeats until one catches. The full fifteen remain gated.
 
 ## §3 The design system in place
 
@@ -79,7 +80,7 @@ Not preferences. A proposal violating one cannot ship in this architecture.
 | Single file, no build, no dependencies | Component libraries, icon packs, CSS frameworks | architecture |
 | `default-src 'self'` | Every CDN asset. **Google Fonts cannot load.** A custom face must be inlined as a data URI or not used | `vercel.json` |
 | `img-src 'self' data:` | Remote imagery. Illustration must be inline SVG or data URI, and it lands in page weight | `vercel.json` |
-| `connect-src 'none'` | Analytics, A/B tests, error reporting, feature flags. **No design decision here can be validated by instrumentation** | `vercel.json` |
+| `connect-src 'self'` | Browser calls may reach Lusory's own origin only. The sole reporting call increments an anonymous weekly choice counter | `vercel.json` + endpoint tests |
 | One `localStorage` key | Preferences, dismissed-tip flags, onboarding state, theme choice, saved notes | test + grep |
 | 44px minimum tap targets | Dense toolbars, small icon buttons | `test.cjs` |
 | 390 / 430 / 820px, no horizontal overflow | Layouts needing a wide viewport | `test.cjs` |
@@ -192,19 +193,18 @@ real width, not by reading the CSS.
   wellness app has failed, however clean the result.
 - **Every proposal ships in one file with no dependencies** — inline CSS, inline SVG, data
   URIs; redlines and pasteable code, not component specs.
-- **Nothing new is stored and nothing new is counted.** A proposal needing a second
-  `localStorage` key is out of scope by definition.
+- **No individual history is stored or counted.** A proposal needing a second
+  `localStorage` key, a raw event, or a player-linked counter is out of scope by definition.
+  Anonymous weekly game/source totals are the only permitted product signal.
 - **The three tiers read as three doors, not three rungs.**
 - **Leaving still feels clean.** The last screen should make closing the app easy, not tug.
 - **Accessibility holds at 100**, tap targets stay ≥44px, reduced-motion still silences
   everything.
 
-**The standing signal.** One background measure, aggregate-only, and it checks the
-character rather than the player: *if sessions containing a grasshopper moment predict
-faster re-opens, he has become dopamine furniture* and his budget tightens. The correct
-direction of adjustment is always toward less. He is working when people quote him
-occasionally and forget him mostly; he has failed when anyone opens the app to see what
-he will say. Hold your own proposals to the same test.
+**The standing signal.** The earlier proposal to correlate grasshopper appearances with
+re-opens is retired because it requires session linkage. The only permitted signal is the
+weekly aggregate game-choice count. The grasshopper's adjustment still runs toward less:
+he is working when people quote him occasionally and forget him mostly.
 
 ---
 

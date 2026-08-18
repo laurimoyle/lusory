@@ -11,7 +11,7 @@ These are build failures, not style notes. Full text in `docs/invariants.md`.
 
 - No streaks, scores, badges, stored progress, or user-facing metrics of any kind.
 - One stored fact only: last-open date, for the grasshopper's indifference.
-- Local-first; no telemetry as evidence.
+- Local-first; no individual telemetry. Game selections increment anonymous weekly aggregate counters only.
 - Difficulty prompt is symmetric (harder/same/gentler), fresh each session, never ranked.
 - Grasshopper: max one moment per session (two on introduction day), five sanctioned
   slots only, never reactive, never in reflection or safety text.
@@ -23,8 +23,8 @@ These are build failures, not style notes. Full text in `docs/invariants.md`.
 | Invariant | Enforcement |
 |---|---|
 | One stored fact | A single `localStorage` key, `lusory.lastOpen`. One `getItem`, one `setItem`, memory fallback when storage throws. Verified by grep and by browser test. |
-| No metrics | The free-write never leaves the DOM; nothing a player does is written anywhere. No counters, no timers shown. |
-| No telemetry | `connect-src 'none'` in `vercel.json` makes a network call fail in the browser, not merely fail review. The whole loop makes exactly **one** request: the page. |
+| No player metrics | The free-write never leaves the DOM; no player history is created and no counters or timers are shown. |
+| Aggregate choice signal | `connect-src 'self'` permits one disclosed same-origin call. The server increments a week/game/source counter and stores no raw event or player identifier. |
 | Symmetric difficulty | Each tier button carries its own obstacle text, so the choice reads as three variants rather than three rank words. Equal width and height, nothing preselected, never persisted. |
 | Grasshopper budget | A per-visit counter gates every slot. The visit is the unit, not the play-through, so replaying cannot farm him. A third of ordinary visits are silent. |
 | Never reactive | Idle motion is timer-only (50–140s, randomised). The settle-hop is a one-shot JS latch, not a CSS rule that re-arms on navigation. The mark does not exist in the DOM on play or reflect. |
@@ -34,10 +34,11 @@ These are build failures, not style notes. Full text in `docs/invariants.md`.
 
 ```bash
 node test/serve.cjs &          # static server on :8123
-node test/test.cjs             # 52 assertions: the loop, storage, budget, phone widths
+node test/test.cjs             # the loop, chooser, storage, budget, phone widths
+node test/choice-reporting.cjs # endpoint validation + privacy boundary
 node test/regress.cjs          # 22 assertions: one per verification-pass finding
 node test/csp-test.cjs         # full loop under the production CSP headers (:8124)
-node test/netcheck.cjs         # proves zero third-party requests
+node test/netcheck.cjs         # proves zero browser-side third-party requests
 node test/attack.cjs           # hostile-input pass: storage, history abuse, idle motion
 node test/attack2.cjs          # probe pass: budget overrun trials + edge diagnostics
 ```

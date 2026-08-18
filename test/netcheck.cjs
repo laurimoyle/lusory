@@ -5,7 +5,7 @@ p.on('request',r=>reqs.push(r.url()));
 await p.goto('http://127.0.0.1:8123/',{waitUntil:'networkidle'});
 await p.click('section[data-screen="intro"] .btn'); await p.click('#skipfable');
 await p.click('section[data-screen="meet"] .actions .btn');
-await p.click('section[data-screen="first"] .actions .btn');
+await p.locator('#firstcards .entry').first().click();
 await p.locator('.tierbtn').nth(0).click();
 await p.click('section[data-screen="play"] .actions .btn');
 await p.click('section[data-screen="reflect"] .actions .btn');

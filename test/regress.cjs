@@ -9,7 +9,7 @@ async function np(b,o={}){const c=await b.newContext(Object.assign({viewport:{wi
 async function firstSession(p){
   await p.click('section[data-screen="intro"] .btn'); await p.click('#skipfable');
   await p.click('section[data-screen="meet"] .actions .btn');
-  await p.click('section[data-screen="first"] .actions .btn');
+  await p.locator('#firstcards .entry').first().click();
   await p.locator('.tierbtn').nth(1).click();
   await p.click('section[data-screen="play"] .actions .btn');
   await p.click('section[data-screen="reflect"] .actions .btn');
@@ -65,7 +65,7 @@ const b=await chromium.launch({executablePath:EXE});
 {const {c,p}=await np(b); await p.goto(URL,{waitUntil:'networkidle'});
  await p.click('section[data-screen="intro"] .btn'); await p.click('#skipfable');
  await p.click('section[data-screen="meet"] .actions .btn');
- await p.click('section[data-screen="first"] .actions .btn');
+ await p.locator('#firstcards .entry').first().click();
  const txt=await p.locator('.tierbtn').allTextContents();
  ok(txt[0].includes('One block, one find'),'M3 Gentler shows its obstacle');
  ok(txt[1].includes('Fifteen minutes, five finds'),'M3 Same shows its obstacle');
@@ -105,7 +105,7 @@ const b=await chromium.launch({executablePath:EXE});
 {const {c,p}=await np(b); await p.goto(URL,{waitUntil:'networkidle'});
  await p.click('section[data-screen="intro"] .btn'); await p.click('#skipfable');
  await p.click('section[data-screen="meet"] .actions .btn');
- await p.click('section[data-screen="first"] .actions .btn');
+ await p.locator('#firstcards .entry').first().click();
  await p.click('section[data-screen="game"] .actions .quiet');
  ok(await scr(p)==='first','MIN2 game-plate back-link does not expose the shelf early');
  await c.close();}
@@ -114,7 +114,7 @@ const b=await chromium.launch({executablePath:EXE});
 {const {c,p}=await np(b); await p.goto(URL,{waitUntil:'networkidle'});
  await p.click('section[data-screen="intro"] .btn'); await p.click('#skipfable');
  await p.click('section[data-screen="meet"] .actions .btn');
- await p.click('section[data-screen="first"] .actions .btn');
+ await p.locator('#firstcards .entry').first().click();
  await p.locator('.tierbtn').nth(1).click();
  await p.click('section[data-screen="play"] .actions .btn');
  await p.fill('#note','a note I am still writing');
@@ -155,7 +155,7 @@ async function np(b,o={}){const c=await b.newContext(Object.assign({viewport:{wi
   const p=await c.newPage();return {c,p};}
 async function intro(p){await p.click('section[data-screen="intro"] .btn');await p.click('#skipfable');
   await p.click('section[data-screen="meet"] .actions .btn');}
-async function finishSession(p){await p.click('section[data-screen="first"] .actions .btn');
+async function finishSession(p){await p.locator('#firstcards .entry').first().click();
   await p.locator('.tierbtn').nth(1).click();await p.click('section[data-screen="play"] .actions .btn');
   await p.click('section[data-screen="reflect"] .actions .btn');}
 const b=await chromium.launch({executablePath:EXE});
@@ -179,14 +179,16 @@ const b=await chromium.launch({executablePath:EXE});
  ok2(bud.first===true&&bud.budget===2,'R1 pre-completion revisit is still intro day (cap 2): '+JSON.stringify(bud));
  await c.close();}
 
-/* Item 11 — the Awe Route is the only game reachable on first run, from EVERY path */
+/* Item 11 amended — three games are offered, while the full shelf stays gated */
 {const {c,p}=await np(b); await p.goto(URL,{waitUntil:'networkidle'});
  await intro(p);
  const paths=[];
- await p.click('section[data-screen="first"] .actions .btn');
+ const deal=await p.locator('#firstcards .gname').allTextContents();
+ ok2(deal.length===3&&new Set(deal).size===3,'11 three unique games are offered: '+deal.join(' | '));
+ await p.locator('#firstcards .entry').first().click();
  await p.click('section[data-screen="game"] .actions .quiet');
  paths.push('game-plate back -> '+await scr(p));
- await p.click('section[data-screen="first"] .actions .btn');
+ await p.locator('#firstcards .entry').first().click();
  await p.locator('.tierbtn').nth(0).click();
  await p.click('section[data-screen="play"] .actions .quiet:last-of-type');
  paths.push('play back -> '+await scr(p));
@@ -356,7 +358,7 @@ const b=await chromium.launch({executablePath:EXE});
 {const c=await b.newContext();const p=await c.newPage();await p.goto(URL,{waitUntil:'networkidle'});
  await p.click('section[data-screen="intro"] .btn');await p.click('#skipfable');
  await p.click('section[data-screen="meet"] .actions .btn');
- await p.click('section[data-screen="first"] .actions .btn');
+ await p.locator('#firstcards .entry').first().click();
  await p.locator('.tierbtn').nth(1).click();
  await p.click('section[data-screen="play"] .actions .btn');
  await p.click('section[data-screen="reflect"] .actions .btn');
@@ -431,7 +433,7 @@ const b=await chromium.launch({executablePath:EXE});
  ok((await p.textContent('#aboutback')).trim()==='Back','F About exit reads "Back" during first run');
  await p.click('#aboutback');
  ok(await scr(p)==='first','F About exit lands where its label promises');
- await p.click('section[data-screen="first"] .actions .btn');
+ await p.locator('#firstcards .entry').first().click();
  await p.locator('.tierbtn').nth(1).click();
  await p.click('section[data-screen="play"] .actions .btn');
  await p.click('section[data-screen="reflect"] .actions .btn');
@@ -452,9 +454,9 @@ const b=await chromium.launch({executablePath:EXE});
  await p.click('section[data-screen="meet"] .actions .btn');
  const clears=e=>{const n=e.querySelector('.no').getBoundingClientRect();
    const g=e.querySelector('.gname').getBoundingClientRect(); return g.left>=n.right;};
- ok(await p.evaluate(`(${clears})(document.querySelector('#firstcard .entry'))`),
-    'G first-run card: title clears the numeral');
- await p.click('section[data-screen="first"] .actions .btn');
+ ok(await p.evaluate(`([...document.querySelectorAll('#firstcards .entry')].every(${clears}))`),
+    'G all first-run cards: titles clear their numerals');
+ await p.locator('#firstcards .entry').first().click();
  await p.locator('.tierbtn').nth(1).click();
  await p.click('section[data-screen="play"] .actions .btn');
  await p.click('section[data-screen="reflect"] .actions .btn');
