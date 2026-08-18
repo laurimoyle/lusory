@@ -23,6 +23,7 @@
   --body:ui-serif,Georgia,'Iowan Old Style',Cambria,'Times New Roman',serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{
   font-family:var(--body);
@@ -349,6 +350,38 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   </div>
 </noscript>
 
+<!-- ========== TEMPORARY BETA GATE ========== -->
+<section data-screen="beta">
+  <p class="eyebrow boot-title">Private beta</p>
+  <h1 class="boot-title" style="margin:.3rem 0 1.1rem">Before the shelf opens</h1>
+  <p class="lede boot-title">Leave an email for beta invitations, then tell us where you found this link. There is no login, password, or player profile.</p>
+  <form id="betaform" class="formcard boot-title" onsubmit="submitBeta(event)">
+    <label class="field" for="betaemail"><span class="lab">Email</span>
+      <input id="betaemail" name="email" type="email" autocomplete="email" maxlength="254" required>
+    </label>
+    <label class="field" for="betasource"><span class="lab">Where did you find the beta link?</span>
+      <select id="betasource" name="source" required>
+        <option value="">Choose one</option>
+        <option value="reddit">Reddit</option><option value="facebook_group">Facebook group</option><option value="linkedin">LinkedIn</option>
+        <option value="therapist_counselor">Therapist or counselor</option><option value="researcher_university">Researcher or university</option>
+        <option value="insurance_wellness">Insurance or wellness platform</option><option value="coach_wellness">Coach or wellness professional</option>
+        <option value="workplace_team">Workplace or team</option><option value="church_community">Church or community group</option>
+        <option value="event_workshop">Event or workshop</option><option value="friend_family">Friend or colleague</option>
+        <option value="direct_outreach">Direct invitation from Lusory</option><option value="other">Somewhere else</option>
+      </select>
+    </label>
+    <label class="field" for="betadetail"><span class="lab">Which subreddit, group, organization, account, or event? <span style="text-transform:none;letter-spacing:0">(optional)</span></span>
+      <input id="betadetail" name="detail" type="text" maxlength="160" autocomplete="off" aria-describedby="betarefhelp">
+    </label>
+    <p class="small" id="betarefhelp" style="margin-top:.35rem">A public name is enough; please leave out private details.</p>
+    <label class="honeypot" for="betawebsite">Website<input id="betawebsite" name="website" type="text" tabindex="-1" autocomplete="off"></label>
+    <label class="consent"><input name="consent" type="checkbox" required><span>Yes, send me beta invitations, occasional product updates, and a later Google Play test invitation. I can unsubscribe whenever I like.</span></label>
+    <div class="actions"><button class="btn" id="betabutton" type="submit">Enter the beta</button><button class="quiet" type="button" onclick="go('about')">Why we ask</button></div>
+    <p class="status" id="betastatus" role="status" aria-live="polite"></p>
+  </form>
+  <p class="small boot-title" style="margin-top:1rem">Your email and referral answer go to separate pools. This device keeps only a beta-access flag so you do not have to answer again.</p>
+</section>
+
 <!-- ========== FIRST RUN 1/3 : what this is ========== -->
 <section data-screen="intro">
   <p class="eyebrow boot-title">A field guide</p>
@@ -524,6 +557,11 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <h2 style="margin-top:.4rem">Played.</h2>
   <p class="lede" style="margin-top:.6rem">Nothing about how you played was recorded. The session was yours; keep any of it you like.</p>
   <div id="sendoff"></div>
+  <div class="formcard" id="betatestimonial" hidden>
+    <span class="lab">One voluntary beta question</span>
+    <p style="margin-top:.45rem">If this game gave you something worth saying, would you share a short testimonial? No rating, no score, and no effect on your beta access.</p>
+    <div class="actions" style="margin-top:1rem"><button class="quiet" type="button" onclick="openTestimonial()">Share a short testimonial</button></div>
+  </div>
   <div class="actions">
     <button class="btn" id="copybtn" onclick="copyNote()" style="display:none">Copy my note</button>
     <button class="quiet" onclick="go('shelf')">The whole shelf is here</button>
@@ -579,7 +617,8 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <p>This is play, preventative and formative — not treatment. If you're in real difficulty, a clinician beats a game, and we'd rather you had the clinician.</p>
   <h3>Privacy</h3>
   <p>No player profile or individual activity history is created. One date is kept on this device once you have played a game: the day you last opened this. When you choose a game, Lusory sends its number and whether it came from the first deal, the randomizer, or the shelf; the server adds one to a weekly total and keeps no raw event, player ID, session ID, referrer, or fingerprint. These totals never personalize anyone&rsquo;s shelf.</p>
-  <p>If you explicitly join the update list, Lusory keeps your email and consent. The referral question and usability-test answers are stored in separate anonymous pools, with no shared identifier linking them to your email, game choices, or each other. The usability test records answers you submit, never a clickstream or replay. Your private reflection on a game stays in the page and evaporates when you close it.</p>
+  <p>During the private beta, access requires an email and an answer about where the beta link was found. They are stored in separate pools with no shared identifier. This device keeps a beta-access flag so it does not ask again. After the beta gate is removed, email signup returns to being optional.</p>
+  <p>Usability answers and explicitly submitted testimonials are also kept in separate pools. A testimonial is stored only with the public-use permission and attribution choice submitted with it. None of these forms records a clickstream, route, player history, referrer, fingerprint, or private reflection.</p>
   <div class="actions"><button class="quiet" id="introreplay" type="button" onclick="replayIntroduction()" hidden>Replay the introduction</button><button class="quiet" onclick="go('join')">Occasional updates</button><button class="quiet" id="aboutback" onclick="go(homeScreen())">Back to the shelf</button></div>
 </section>
 
@@ -615,6 +654,26 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
     <label class="honeypot" for="utwebsite">Website<input id="utwebsite" name="website" type="text" tabindex="-1" autocomplete="off"></label>
     <div class="actions"><button class="btn" id="utbutton" type="submit">Send answers</button><button class="quiet" type="button" onclick="closeUsability()">Keep testing</button></div>
     <p class="status" id="utstatus" role="status" aria-live="polite"></p>
+  </form>
+</dialog>
+
+<dialog id="testimonialdialog" aria-labelledby="testimonialtitle">
+  <div class="dialog-head"><div><p class="eyebrow">After one game</p><h2 id="testimonialtitle" style="margin-top:.3rem">What would you tell someone about Lusory?</h2></div>
+    <button class="dialog-close" type="button" onclick="closeTestimonial()" aria-label="Close testimonial form">Close</button></div>
+  <p class="small" style="margin-top:.7rem">This is separate from your email, referral answer, game choice, and private reflection. Submit only words you are comfortable letting Lusory quote publicly.</p>
+  <form id="testimonialform" class="formcard" onsubmit="submitTestimonial(event)">
+    <label class="field" for="testimonialquote"><span class="lab">Your words</span>
+      <textarea id="testimonialquote" name="quote" minlength="40" maxlength="600" required></textarea></label>
+    <label class="field" for="testimonialrole"><span class="lab">Your perspective <span style="text-transform:none;letter-spacing:0">(optional)</span></span>
+      <select id="testimonialrole" name="role"><option value="">Choose one</option><option value="player">Player</option><option value="therapist">Therapist or counselor</option><option value="researcher">Researcher</option><option value="coach">Coach or wellness professional</option><option value="wellness_buyer">Wellness-platform buyer</option><option value="employer_benefits">Employer or benefits lead</option><option value="other">Another perspective</option></select></label>
+    <label class="field" for="testimonialname"><span class="lab">Name or initials <span style="text-transform:none;letter-spacing:0">(optional if anonymous)</span></span>
+      <input id="testimonialname" name="display_name" type="text" maxlength="80" autocomplete="name"></label>
+    <label class="field" for="testimonialattribution"><span class="lab">How may we attribute it?</span>
+      <select id="testimonialattribution" name="attribution" required><option value="">Choose one</option><option value="anonymous">Anonymous beta tester</option><option value="first_name">Name or initials above</option><option value="name_and_role">Name and professional perspective above</option></select></label>
+    <label class="honeypot" for="testimonialwebsite">Website<input id="testimonialwebsite" name="website" type="text" tabindex="-1" autocomplete="off"></label>
+    <label class="consent"><input name="public_consent" type="checkbox" required><span>Yes, Lusory may quote these words publicly using the attribution I selected.</span></label>
+    <div class="actions"><button class="btn" id="testimonialbutton" type="submit">Send testimonial</button><button class="quiet" type="button" onclick="closeTestimonial()">Not now</button></div>
+    <p class="status" id="testimonialstatus" role="status" aria-live="polite"></p>
   </form>
 </dialog>
 <script>
@@ -716,9 +775,18 @@ var POSTURES=[
  {k:"player",name:"The true player",d:"Took the goal seriously, and took the rules' long way round, freely."}
 ];
 
-/* ============ the one stored fact ============
-   Exactly one key. Read before written, so first-run derives from it.
-   Falls back to memory when localStorage throws (private mode, blocked). */
+/* ============ device-only state ============
+   The beta gate adds one temporary access flag. It contains no address or
+   referral answer and can be retired by setting BETA_GATED to false. */
+var BETA_GATED=!/^(localhost|127\.0\.0\.1)$/.test(window.location.hostname);
+var BETA_KEY="lusory.betaAccess.v1", betaMemo=false;
+function readBetaAccess(){try{return localStorage.getItem(BETA_KEY)==="yes"||betaMemo;}catch(e){return betaMemo;}}
+function writeBetaAccess(){betaMemo=true;try{localStorage.setItem(BETA_KEY,"yes");}catch(e){}}
+var betaAccess=!BETA_GATED||readBetaAccess();
+function betaBlocked(){return BETA_GATED&&!betaAccess;}
+
+/* Last-open remains the only player-state fact. Read before written, so
+   first-run derives from it. Falls back to memory when storage is blocked. */
 var KEY="lusory.lastOpen", memo=null;
 function readLastOpen(){try{var v=localStorage.getItem(KEY);return v===null?memo:v;}catch(e){return memo;}}
 function writeLastOpen(v){memo=v;try{localStorage.setItem(KEY,v);}catch(e){}}
@@ -796,10 +864,13 @@ function hopperNote(line){
 /* ================= state machine ================= */
 var axis="type", currentGame=null, currentTier=null, chosenPosture=null, sessionDone=false, sessionActive=false;
 var chooserSource="first", offerBag=[], currentOffers=[], selectionSource="shelf", firstChoiceReported=false;
-var replayingIntro=false;
+var replayingIntro=false, testimonialPrompted=false;
 
 function render(screen,param){
  document.body.dataset.boot="0";
+ /* The gate is a route guard, not just a hidden button: the wordmark, browser
+    history, and hand-written calls cannot expose a game before intake. */
+ if(betaBlocked()&&screen!=="beta"&&screen!=="about")screen="beta";
  /* The three first-run screens are unreachable once the introduction is behind
     you — history from an earlier visit must not replay the introduction slot
     to someone who is not on their introduction day. */
@@ -821,7 +892,7 @@ function render(screen,param){
  if(screen==="done")renderDone();
  if(screen==="about"){ var ab=document.getElementById("aboutback"), replay=document.getElementById("introreplay");
   if(ab)ab.textContent=(homeScreen()==="first")?"Back":"Back to the shelf";
-  if(replay)replay.hidden=firstRun&&!sessionDone; }
+  if(replay)replay.hidden=betaBlocked()||(firstRun&&!sessionDone); }
  var el=document.querySelector('section[data-screen="'+screen+'"]');
  (el||document.querySelector('section[data-screen="shelf"]')).classList.add("on");
  window.scrollTo({top:0});
@@ -834,14 +905,16 @@ function enterMeet(){
  var marg=document.getElementById("meetmarg");
  var next=document.getElementById("meetcontinue");
  if(next)next.textContent=replayingIntro?"Back to About":"Continue";
- if(!meetSpent&&hopperBudget>0){
+ /* A deliberate replay is reference material, not a second allocated character
+    moment. It neither spends the budget nor re-renders the first-run aside. */
+ if(!replayingIntro&&!meetSpent&&hopperBudget>0){
   meetSpent=true;hopperBudget--;
   if(!reducedMotion){
    var m=document.getElementById("meetmark");
    if(m){m.classList.add("hop-once");setTimeout(function(){m.classList.remove("hop-once");},1400);}
   }
  }
- if(marg)marg.style.display=meetSpent?"":"none";
+ if(marg)marg.style.display=!replayingIntro&&meetSpent?"":"none";
  startFable();
 }
 function tierBtn(k,name,desc){
@@ -932,6 +1005,26 @@ function postJSON(url,payload){
    if(!response.ok)throw new Error("request failed");return response;
   });
 }
+function submitBeta(event){
+ event.preventDefault();
+ var form=event.currentTarget, data=new FormData(form);
+ var button=document.getElementById("betabutton"),status=document.getElementById("betastatus");
+ var website=data.get("website")||"";
+ button.disabled=true;status.textContent="Opening the shelf…";
+ Promise.all([
+  postJSON("/api/subscribe",{email:data.get("email"),consent:data.get("consent")==="on",cohort:"beta",website:website}),
+  postJSON("/api/referral",{source:data.get("source"),detail:data.get("detail"),context:"beta_gate",website:website})
+ ]).then(function(){
+ betaAccess=true;writeBetaAccess();form.reset();
+ var destination=firstRun?"intro":"shelf";
+ if(!firstRun)document.body.dataset.nav="on";
+  if(testMode)document.getElementById("testbar").hidden=false;
+  render(destination);
+  try{history.replaceState({s:destination,p:null},"");}catch(e){}
+ }).catch(function(){
+  button.disabled=false;status.textContent="That did not reach us. Please check the two required answers and try again.";
+ });
+}
 function submitJoin(event){
  event.preventDefault();
  var form=event.currentTarget, button=document.getElementById("joinbutton");
@@ -939,8 +1032,8 @@ function submitJoin(event){
  var data=new FormData(form), website=data.get("website")||"";
  button.disabled=true;status.textContent="Sending…";
  Promise.all([
-  postJSON("/api/subscribe",{email:data.get("email"),consent:data.get("consent")==="on",website:website}),
-  postJSON("/api/referral",{source:data.get("source"),detail:data.get("detail"),website:website})
+  postJSON("/api/subscribe",{email:data.get("email"),consent:data.get("consent")==="on",cohort:"updates",website:website}),
+  postJSON("/api/referral",{source:data.get("source"),detail:data.get("detail"),context:"signup",website:website})
  ]).then(function(){
   form.reset();button.textContent="You’re on the list";status.textContent="Thank you. The referral answer was stored separately from your email.";
  }).catch(function(){
@@ -972,6 +1065,31 @@ function submitUsability(event){
   setTimeout(closeUsability,900);
  }).catch(function(){
   button.disabled=false;status.textContent="Those answers didn’t reach us. Please try once more.";
+ });
+}
+function openTestimonial(){
+ var dialog=document.getElementById("testimonialdialog");
+ if(dialog.showModal)dialog.showModal();else dialog.setAttribute("open","");
+}
+function closeTestimonial(){
+ var dialog=document.getElementById("testimonialdialog");
+ if(dialog.close)dialog.close();else dialog.removeAttribute("open");
+}
+function submitTestimonial(event){
+ event.preventDefault();
+ var form=event.currentTarget,data=new FormData(form);
+ var button=document.getElementById("testimonialbutton"),status=document.getElementById("testimonialstatus");
+ button.disabled=true;status.textContent="Sending…";
+ postJSON("/api/testimonial",{
+  quote:data.get("quote"),role:data.get("role"),display_name:data.get("display_name"),
+  attribution:data.get("attribution"),public_consent:data.get("public_consent")==="on",
+  website:data.get("website")||""
+ }).then(function(){
+  form.reset();status.textContent="Received. Thank you for lending Lusory your words.";
+  document.getElementById("betatestimonial").hidden=true;
+  setTimeout(closeTestimonial,1100);
+ }).catch(function(){
+  button.disabled=false;status.textContent="That did not reach us. Please check the attribution choice and try once more.";
  });
 }
 function renderShelf(){
@@ -1054,6 +1172,10 @@ function renderDone(){
  document.getElementById("copybtn").style.display=note?"inline-flex":"none";
  if(!sendoffHTML&&sendoffLine&&hopperBudget>0){ hopperBudget--; sendoffHTML=hopperNote(sendoffLine); }
  document.getElementById("sendoff").innerHTML=sendoffHTML;
+ var testimonial=document.getElementById("betatestimonial");
+ var invite=BETA_GATED&&firstRun&&!testimonialPrompted;
+ if(invite)testimonialPrompted=true;
+ if(testimonial)testimonial.hidden=!invite;
 }
 function legacyCopy(text){
  try{
@@ -1149,10 +1271,10 @@ function twitchMark(){
 }
 
 /* ---- boot ---- */
-var startScreen=firstRun?"intro":"shelf";
+var startScreen=betaBlocked()?"beta":(firstRun?"intro":"shelf");
 if(!firstRun)sessionDone=true;  /* a returning visitor is already past the reveal gate */
-if(!firstRun)document.body.dataset.nav="on";
-if(testMode)document.getElementById("testbar").hidden=false;
+if(!firstRun&&!betaBlocked())document.body.dataset.nav="on";
+if(testMode&&!betaBlocked())document.getElementById("testbar").hidden=false;
 render(startScreen);
 try{history.replaceState({s:startScreen,p:null},"");}catch(e){}
 document.body.dataset.boot="1";

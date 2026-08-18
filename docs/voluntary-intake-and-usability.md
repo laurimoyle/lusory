@@ -5,19 +5,21 @@ Status: implementation note, 2026-08-17.
 This is the “asked, never sensed” research boundary. It permits useful product learning
 without creating a behavioral record of a player.
 
-## Three separate pools
+## Separate pools
 
-1. `email_subscribers` stores a normalized email, explicit consent time, and future
-   unsubscribe state. It is for occasional substantive product updates only—not reminders,
-   streaks, digests, or pressure to return.
-2. `referral_responses` stores an asked source category plus a voluntary public organization,
+1. `email_subscribers` stores a normalized email, cohort label, explicit consent time, and
+   future unsubscribe state. The temporary beta cohort permits beta and Google Play testing
+   invitations; the updates cohort remains for occasional substantive product updates.
+2. `referral_responses` stores an intake-context label, asked source category, and voluntary public organization,
    social account, group, or event name of at most 160 characters.
 3. `usability_responses` stores the answers submitted from the explicit `?test=1` layer and
    the test version needed to interpret those answers after the interface changes.
+4. `beta_testimonials` stores only words the participant explicitly submits after a completed
+   first game, their attribution choice, optional name/role, and affirmative public-use consent.
 
-There is no player, account, session, email, or other join key in the referral or usability
-tables. The browser sends the three submissions through separate endpoints. Do not infer a
-join from submission time.
+There is no player, account, session, email, or other join key in the referral, usability,
+or testimonial tables. The browser sends submissions through separate endpoints. Do not
+infer a join from submission time.
 
 ## Test mode
 
