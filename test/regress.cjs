@@ -50,6 +50,18 @@ const b=await chromium.launch({executablePath:EXE});
  const budget=await p.evaluate(()=>hopperBudget);
  ok(s!=='meet'&&s!=='intro','BF-B back-history cannot replay the introduction (landed on '+s+')');
  ok(budget>=0,'BF-B budget never goes negative via history: '+budget);
+ await p.getByRole('button',{name:'About'}).click();
+ const replay=p.getByRole('button',{name:'Replay the introduction'});
+ ok(await replay.isVisible(),'BF-B About offers a deliberate introduction replay');
+ await replay.click();
+ ok(await scr(p)==='intro','BF-B replay begins with the field-guide introduction');
+ await p.click('section[data-screen="intro"] .btn');
+ ok(await scr(p)==='meet','BF-B replay continues to the old story');
+ await p.click('#skipfable');
+ await p.click('#meetcontinue');
+ ok(await scr(p)==='about','BF-B replay returns to About instead of reopening onboarding');
+ const returning=await p.evaluate(()=>({first:firstRun,stored:localStorage.getItem('lusory.lastOpen')}));
+ ok(returning.first===false&&!!returning.stored,'BF-B replay preserves returning-player state');
  await c.close();}
 
 /* BUG-FINDER MAJOR — refresh on screen 1 must not delete the introduction */
