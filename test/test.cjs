@@ -23,8 +23,8 @@ const browser=await chromium.launch({executablePath:EXE});
 let {ctx,page,errs}=await newPage(browser);
 await page.goto(URL,{waitUntil:'networkidle'});
 ok(await screen(page)==='intro','WP1 first run lands on intro');
-ok(await page.locator('.navlinks button[data-nav-shelf]').isHidden(),'WP1 Shelf gated during first run');
-ok(await page.locator('.navlinks button').nth(1).isVisible(),'WP1 About stays reachable (safety is not progressively revealed)');
+ok(await page.locator('.navlinks button[data-nav-shelf]').evaluateAll(bs=>bs.every(b=>getComputedStyle(b).visibility==='hidden')),'WP1 Shelf and Updates gated during first run');
+ok(await page.getByRole('button',{name:'About'}).isVisible(),'WP1 About stays reachable (safety is not progressively revealed)');
 const k=await keys(page);
 ok(k.length===0,'WP4 nothing written at first load: '+JSON.stringify(k));
 
@@ -105,6 +105,19 @@ ok(await screen(page)==='shelf','WP2 done -> shelf');
 ok(await page.locator('.navlinks').isVisible(),'WP1 shelf reachable + nav revealed after first session');
 ok(await page.locator('#shelfbody .entry').count()===15,'WP2 fifteen games on the shelf');
 ok(await page.locator('.shelf-tools .quiet').textContent()==='Three at random','WP2 shelf offers the reusable three-game randomizer');
+await page.route('**/api/subscribe',r=>r.fulfill({status:202,contentType:'application/json',body:'{"ok":true}'}));
+await page.route('**/api/referral',r=>r.fulfill({status:202,contentType:'application/json',body:'{"ok":true}'}));
+await page.getByRole('button',{name:'Updates'}).click();
+ok(await screen(page)==='join','WP2 Updates opens the voluntary signup form');
+ok(await page.locator('#refdetail').getAttribute('maxlength')==='160','WP4 voluntary referral detail is bounded');
+await page.fill('#joinemail','tester@example.com');
+await page.selectOption('#refsource','event_workshop');
+await page.fill('#refdetail','Chattanooga Play Workshop');
+await page.check('#joinform input[name="consent"]');
+await page.click('#joinbutton');
+await page.waitForFunction(()=>document.querySelector('#joinbutton').textContent.includes('on the list'));
+ok(/stored separately/.test(await page.textContent('#joinstatus')),'WP4 signup confirms referral/email separation');
+await page.evaluate(()=>go('shelf'));
 const firstGroup=await page.locator('#shelfbody .group').first().textContent();
 const firstMeta=await page.locator('#shelfbody .entry .gmeta').first().textContent();
 ok(!firstMeta.includes(firstGroup.trim()),'WP2 shelf entry omits metadata repeated by its group heading');
@@ -132,6 +145,23 @@ await page.locator('#firstcards .entry').first().click();
 await page.click('#gamebody .actions .quiet');
 ok(await screen(page)==='first','WP2 randomizer game returns to the same chooser');
 await ctx.close();
+
+/* ---------- 5B. EXPLICIT USABILITY-TEST LAYER ---------- */
+{const c=await browser.newContext();const p=await c.newPage();
+ await p.route('**/api/usability',r=>r.fulfill({status:202,contentType:'application/json',body:'{"ok":true}'}));
+ await p.goto(URL+'?test=1',{waitUntil:'networkidle'});
+ ok(await p.locator('#testbar').isVisible(),'WP4 ?test=1 reveals the question layer control');
+ await p.click('#testbarbutton');
+ ok(await p.locator('#usabilitydialog').isVisible(),'WP4 test layer opens over the real product');
+ await p.fill('#utexpect','A shelf of small real-world games');
+ await p.check('input[name="choice_amount"][value="about_right"]');
+ await p.check('input[name="doors_read"][value="equal"]');
+ await p.fill('#utchange','Make the first instruction shorter');
+ await p.selectOption('#utreturn','probably');
+ await p.click('#utbutton');
+ await p.waitForFunction(()=>document.querySelector('#testbarbutton').textContent==='Answers sent');
+ ok((await p.evaluate(()=>Object.keys(localStorage))).length===0,'WP4 test layer writes no new device state');
+ await c.close();}
 
 /* ---------- 6. MID-SESSION REFRESH ---------- */
 let s2=await newPage(browser); 

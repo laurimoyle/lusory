@@ -10,8 +10,8 @@ Single-file, local-first, no framework, no build system, no dependencies.
 These are build failures, not style notes. Full text in `docs/invariants.md`.
 
 - No streaks, scores, badges, stored progress, or user-facing metrics of any kind.
-- One stored fact only: last-open date, for the grasshopper's indifference.
-- Local-first; no individual telemetry. Game selections increment anonymous weekly aggregate counters only.
+- One device-stored fact only: last-open date, for the grasshopper's indifference.
+- Local-first; no behavioral telemetry. Game choices are aggregate-only. Email consent, referral answers, and usability answers are explicitly asked for and stored in separate pools.
 - Difficulty prompt is symmetric (harder/same/gentler), fresh each session, never ranked.
 - Grasshopper: max one moment per session (two on introduction day), five sanctioned
   slots only, never reactive, never in reflection or safety text.
@@ -22,9 +22,10 @@ These are build failures, not style notes. Full text in `docs/invariants.md`.
 
 | Invariant | Enforcement |
 |---|---|
-| One stored fact | A single `localStorage` key, `lusory.lastOpen`. One `getItem`, one `setItem`, memory fallback when storage throws. Verified by grep and by browser test. |
+| One device-stored fact | A single `localStorage` key, `lusory.lastOpen`. One `getItem`, one `setItem`, memory fallback when storage throws. Verified by grep and by browser test. |
 | No player metrics | The free-write never leaves the DOM; no player history is created and no counters or timers are shown. |
-| Aggregate choice signal | `connect-src 'self'` permits one disclosed same-origin call. The server increments a week/game/source counter and stores no raw event or player identifier. |
+| Same-origin requests only | `connect-src 'self'` permits the disclosed choice counter and voluntary forms. The server stores no raw play event or player identifier. |
+| Asked, separate intake | Update consent stores only email. Referral and usability answers occupy separate anonymous tables with no shared identifier. Test mode records answers only—never clicks, route, referrer, UTM, replay, or fingerprint. |
 | Symmetric difficulty | Each tier button carries its own obstacle text, so the choice reads as three variants rather than three rank words. Equal width and height, nothing preselected, never persisted. |
 | Grasshopper budget | A per-visit counter gates every slot. The visit is the unit, not the play-through, so replaying cannot farm him. A third of ordinary visits are silent. |
 | Never reactive | Idle motion is timer-only (50–140s, randomised). The settle-hop is a one-shot JS latch, not a CSS rule that re-arms on navigation. The mark does not exist in the DOM on play or reflect. |
@@ -36,6 +37,7 @@ These are build failures, not style notes. Full text in `docs/invariants.md`.
 node test/serve.cjs &          # static server on :8123
 node test/test.cjs             # the loop, chooser, storage, budget, phone widths
 node test/choice-reporting.cjs # endpoint validation + privacy boundary
+node test/intake-usability.cjs # opt-in, separation, limits, and test-answer validation
 node test/regress.cjs          # 22 assertions: one per verification-pass finding
 node test/csp-test.cjs         # full loop under the production CSP headers (:8124)
 node test/netcheck.cjs         # proves zero browser-side third-party requests

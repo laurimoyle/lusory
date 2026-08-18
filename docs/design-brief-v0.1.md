@@ -1,6 +1,6 @@
 # Brief for the UX/UI pass — Lusory v0.1
 
-**Status:** v1.1, amended 2026-08-17 after the first-deal and aggregate-choice ruling.
+**Status:** v1.2, amended 2026-08-17 after the first-deal, aggregate-choice, and asked-intake rulings.
 **Classification:** internal working doc. Lives in `docs/`, so `.vercelignore` keeps it off
 the served site. Illustrated version (with the nine screens captured at 390px):
 https://claude.ai/code/artifact/8511acec-87d6-4024-b48a-75614608a499
@@ -80,7 +80,7 @@ Not preferences. A proposal violating one cannot ship in this architecture.
 | Single file, no build, no dependencies | Component libraries, icon packs, CSS frameworks | architecture |
 | `default-src 'self'` | Every CDN asset. **Google Fonts cannot load.** A custom face must be inlined as a data URI or not used | `vercel.json` |
 | `img-src 'self' data:` | Remote imagery. Illustration must be inline SVG or data URI, and it lands in page weight | `vercel.json` |
-| `connect-src 'self'` | Browser calls may reach Lusory's own origin only. The sole reporting call increments an anonymous weekly choice counter | `vercel.json` + endpoint tests |
+| `connect-src 'self'` | Browser calls may reach Lusory's own origin only. Disclosed calls cover the aggregate choice counter and explicitly submitted forms | `vercel.json` + endpoint tests |
 | One `localStorage` key | Preferences, dismissed-tip flags, onboarding state, theme choice, saved notes | test + grep |
 | 44px minimum tap targets | Dense toolbars, small icon buttons | `test.cjs` |
 | 390 / 430 / 820px, no horizontal overflow | Layouts needing a wide viewport | `test.cjs` |
@@ -193,18 +193,21 @@ real width, not by reading the CSS.
   wellness app has failed, however clean the result.
 - **Every proposal ships in one file with no dependencies** — inline CSS, inline SVG, data
   URIs; redlines and pasteable code, not component specs.
-- **No individual history is stored or counted.** A proposal needing a second
-  `localStorage` key, a raw event, or a player-linked counter is out of scope by definition.
-  Anonymous weekly game/source totals are the only permitted product signal.
+- **No individual play history is stored or counted.** A proposal needing a second
+  `localStorage` key, a raw play event, or a player-linked counter is out of scope by definition.
+  Anonymous weekly game/source totals are the only permitted behavioral signal. Separately,
+  Lusory may store an explicitly consented update email, asked referral answers, and asked
+  usability answers. Those pools must not share an identifier or feed personalization.
 - **The three tiers read as three doors, not three rungs.**
 - **Leaving still feels clean.** The last screen should make closing the app easy, not tug.
 - **Accessibility holds at 100**, tap targets stay ≥44px, reduced-motion still silences
   everything.
 
-**The standing signal.** The earlier proposal to correlate grasshopper appearances with
-re-opens is retired because it requires session linkage. The only permitted signal is the
-weekly aggregate game-choice count. The grasshopper's adjustment still runs toward less:
-he is working when people quote him occasionally and forget him mostly.
+**The standing signals.** The earlier proposal to correlate grasshopper appearances with
+re-opens is retired because it requires session linkage. Permitted signals are weekly aggregate
+game choices plus voluntary, explicitly asked referral and usability answers. Test mode is a
+question layer over the real product, never a clickstream or replay. The grasshopper's adjustment
+still runs toward less: he is working when people quote him occasionally and forget him mostly.
 
 ---
 
