@@ -1265,5 +1265,9 @@ try{history.replaceState({s:startScreen,p:null},"");}catch(e){}
 document.body.dataset.boot="1";
 scheduleIdle();
 </script>
+<script type="module">
+import { inject } from '/analytics/vercel-analytics.js';
+inject();
+</script>
 </body>
 </html>
