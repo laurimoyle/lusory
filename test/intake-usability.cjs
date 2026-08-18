@@ -27,29 +27,33 @@ function res() {
 const subscribe = require('../api/subscribe.js');
 const referral = require('../api/referral.js');
 const usability = require('../api/usability.js');
+const testimonial = require('../api/testimonial.js');
 
 (async () => {
   calls = []; responses = [{ ok: true, status: 201 }];
   let out = res();
   await subscribe({ method: 'POST', headers: { 'sec-fetch-site': 'same-origin' }, body: {
-    email: '  Person@Example.com ', consent: true,
+    email: '  Person@Example.com ', consent: true, cohort: 'beta',
   } }, out);
   assert.strictEqual(out.statusCode, 202);
   assert.match(calls[0].url, /email_subscribers\?on_conflict=email$/);
   const emailRow = JSON.parse(calls[0].init.body)[0];
   assert.strictEqual(emailRow.email, 'person@example.com');
   assert.ok(emailRow.consented_at);
+  assert.strictEqual(emailRow.cohort, 'beta');
   assert.ok(!('source' in emailRow) && !('detail' in emailRow));
 
   calls = []; responses = [{ ok: true, status: 201 }];
   out = res();
   await referral({ method: 'POST', headers: { 'sec-fetch-site': 'same-origin' }, body: {
-    source: 'event_workshop', detail: 'Chattanooga Play Workshop',
+    source: 'reddit', detail: 'r/SampleSize', context: 'beta_gate',
   } }, out);
   assert.strictEqual(out.statusCode, 202);
   assert.match(calls[0].url, /referral_responses$/);
   const referralRow = JSON.parse(calls[0].init.body)[0];
-  assert.deepStrictEqual(referralRow, { source: 'event_workshop', detail: 'Chattanooga Play Workshop' });
+  assert.deepStrictEqual(referralRow, {
+    source: 'reddit', detail: 'r/SampleSize', intake_context: 'beta_gate',
+  });
   assert.ok(!('email' in referralRow));
 
   calls = []; responses = [{ ok: true, status: 201 }];
@@ -66,10 +70,31 @@ const usability = require('../api/usability.js');
   assert.strictEqual(testRow.confusion, null);
   assert.ok(!/email|session|referrer|fingerprint|utm|click/i.test(JSON.stringify(testRow)));
 
+  calls = []; responses = [{ ok: true, status: 201 }];
+  out = res();
+  await testimonial({ method: 'POST', headers: { 'sec-fetch-site': 'same-origin' }, body: {
+    quote: 'Lusory made a familiar walk feel newly strange, and I wanted another game afterward.',
+    display_name: 'Mara', role: 'therapist', attribution: 'first_name', public_consent: true,
+  } }, out);
+  assert.strictEqual(out.statusCode, 202);
+  assert.match(calls[0].url, /beta_testimonials$/);
+  const testimonialRow = JSON.parse(calls[0].init.body)[0];
+  assert.strictEqual(testimonialRow.display_name, 'Mara');
+  assert.strictEqual(testimonialRow.role, 'therapist');
+  assert.ok(!/game_id|session|referrer|fingerprint|utm|click/i.test(JSON.stringify(testimonialRow)));
+
   calls = [];
   out = res();
   await referral({ method: 'POST', headers: {}, body: {
     source: 'social_media', detail: 'x'.repeat(161),
+  } }, out);
+  assert.strictEqual(out.statusCode, 400);
+  assert.strictEqual(calls.length, 0);
+
+  calls = [];
+  out = res();
+  await testimonial({ method: 'POST', headers: {}, body: {
+    quote: 'Too short', attribution: 'anonymous', public_consent: true,
   } }, out);
   assert.strictEqual(out.statusCode, 400);
   assert.strictEqual(calls.length, 0);

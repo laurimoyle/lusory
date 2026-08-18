@@ -1,6 +1,6 @@
 # Brief for the UX/UI pass — Lusory v0.1
 
-**Status:** v1.2, amended 2026-08-17 after the first-deal, aggregate-choice, and asked-intake rulings.
+**Status:** v1.3, amended 2026-08-17 after the first-deal, aggregate-choice, asked-intake, and temporary beta-gate rulings.
 **Classification:** internal working doc. Lives in `docs/`, so `.vercelignore` keeps it off
 the served site. Illustrated version (with the nine screens captured at 390px):
 https://claude.ai/code/artifact/8511acec-87d6-4024-b48a-75614608a499
@@ -37,8 +37,10 @@ prohibitions. Scarcity is the mechanism — he is a moral image, not a mascot.
 
 ## §2 The screens
 
-Nine: intro, the telling (fable), the introduction, game plate, play, reflect, done,
-shelf, about. See the illustrated version for captures.
+The core nine remain intro, the telling (fable), the introduction, game plate, play,
+reflect, done, shelf, and about. During the private web beta, a temporary intake screen
+sits before them and a voluntary testimonial dialog may be offered only after a first
+completed game. See the illustrated version for the core-screen captures.
 
 One structural note invisible in screenshots: **the shelf is unreachable until a first
 session completes** — refused at the destination, including a direct call to the shelf
@@ -81,7 +83,7 @@ Not preferences. A proposal violating one cannot ship in this architecture.
 | `default-src 'self'` | Every CDN asset. **Google Fonts cannot load.** A custom face must be inlined as a data URI or not used | `vercel.json` |
 | `img-src 'self' data:` | Remote imagery. Illustration must be inline SVG or data URI, and it lands in page weight | `vercel.json` |
 | `connect-src 'self'` | Browser calls may reach Lusory's own origin only. Disclosed calls cover the aggregate choice counter and explicitly submitted forms | `vercel.json` + endpoint tests |
-| One `localStorage` key | Preferences, dismissed-tip flags, onboarding state, theme choice, saved notes | test + grep |
+| One player-state `localStorage` key, plus one temporary beta-access boolean | Preferences, dismissed-tip flags, theme choice, saved notes, email or referral data on-device | test + grep |
 | 44px minimum tap targets | Dense toolbars, small icon buttons | `test.cjs` |
 | 390 / 430 / 820px, no horizontal overflow | Layouts needing a wide viewport | `test.cjs` |
 | Graceful with JS disabled | Anything that leaves a blank page without JS | `attack.cjs` |

@@ -12,6 +12,7 @@ These are build failures, not style notes. Full text in `docs/invariants.md`.
 - No streaks, scores, badges, stored progress, or user-facing metrics of any kind.
 - One device-stored fact only: last-open date, for the grasshopper's indifference.
 - Local-first; no behavioral telemetry. Game choices are aggregate-only. Email consent, referral answers, and usability answers are explicitly asked for and stored in separate pools.
+- Private-beta mode requires an email and asked referral source before entry, stores only a device-local access flag, and can be retired with one configuration switch. See `docs/beta-gate-and-go-to-market.md`.
 - Difficulty prompt is symmetric (harder/same/gentler), fresh each session, never ranked.
 - Grasshopper: max one moment per session (two on introduction day), five sanctioned
   slots only, never reactive, never in reflection or safety text.
