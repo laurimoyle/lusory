@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A shelf of games that ask you to do something the hard way, on purpose.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data:; connect-src 'self' https://formspree.io;">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2072%2048'%3E%3Cg%20fill='none'%20stroke='%234A6636'%20stroke-width='4.5'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M8%2031%20Q%2026%2014%2052%2024'/%3E%3Cpath%20d='M12%2031%20Q%2030%2036%2049%2028'/%3E%3Ccircle%20cx='55'%20cy='25'%20r='3.4'/%3E%3Cpath%20d='M57%2022%20Q%2063%2012%2070%209'/%3E%3Cpath%20d='M40%2030%20L%2053%2039%20L%2063%2022'/%3E%3C/g%3E%3C/svg%3E">
 <title>Lusory — a field guide to unnecessary obstacles</title>
 <style>
@@ -350,7 +351,6 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   </div>
 </noscript>
 
-<!-- ========== TEMPORARY BETA GATE ========== -->
 <section data-screen="beta">
   <p class="eyebrow boot-title">Private beta</p>
   <h1 class="boot-title" style="margin:.3rem 0 1.1rem">Before the shelf opens</h1>
@@ -382,7 +382,6 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <p class="small boot-title" style="margin-top:1rem">Your email and referral answer go to separate pools. This device keeps only a beta-access flag so you do not have to answer again.</p>
 </section>
 
-<!-- ========== FIRST RUN 1/3 : what this is ========== -->
 <section data-screen="intro">
   <p class="eyebrow boot-title">A field guide</p>
   <h1 class="boot-title" style="margin:.3rem 0 1.3rem">Lusory</h1>
@@ -395,7 +394,6 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <p class="small footnote boot-title">After your first game, one date will be kept on this device. Game choices add to anonymous weekly totals; they are never tied to you.</p>
 </section>
 
-<!-- ========== FIRST RUN 2/3 : introducing the grasshopper ========== -->
 <section data-screen="meet">
   <p class="eyebrow">The old story</p>
 
@@ -510,7 +508,6 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <div class="actions"><button class="btn" id="meetcontinue" onclick="leaveIntroduction()">Continue</button></div>
 </section>
 
-<!-- ========== FIRST RUN 3/3 + RETURNING RANDOMIZER ========== -->
 <section data-screen="first">
   <p class="eyebrow" id="chooserlabel">To begin</p>
   <h2 id="choosertitle" style="margin-top:.4rem">Three games, to start</h2>
@@ -519,7 +516,6 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <div class="actions"><button class="quiet" onclick="dealOffers()">Show me three others</button></div>
 </section>
 
-<!-- ========== SHELF ========== -->
 <section data-screen="shelf">
   <p class="eyebrow">The shelf</p>
   <h2 style="margin-top:.4rem">Fifteen unnecessary obstacles</h2>
@@ -533,13 +529,10 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <p class="small shelf-foot">Take one, or don't. The shelf keeps no record of who chose what.</p>
 </section>
 
-<!-- ========== GAME PLATE ========== -->
 <section data-screen="game"><div id="gamebody"></div></section>
 
-<!-- ========== PLAY ========== -->
 <section data-screen="play"><div id="playbody"></div></section>
 
-<!-- ========== REFLECT ========== -->
 <section data-screen="reflect">
   <p class="eyebrow">Afterward</p>
   <h2 style="margin-top:.4rem">Who were you in there?</h2>
@@ -551,7 +544,6 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <div class="actions"><button class="btn" onclick="finish()">Done</button></div>
 </section>
 
-<!-- ========== DONE ========== -->
 <section data-screen="done">
   <p class="eyebrow">Closed</p>
   <h2 style="margin-top:.4rem">Played.</h2>
@@ -569,7 +561,6 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   </div>
 </section>
 
-<!-- ========== OPTIONAL EMAIL + ASKED REFERRAL ========== -->
 <section data-screen="join">
   <p class="eyebrow">Stay in the loop</p>
   <h2 style="margin-top:.4rem">Occasional notes from Lusory</h2>
@@ -605,7 +596,6 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <p class="small" style="margin-top:1rem">Your email, referral answer, and game choices are stored in separate pools with no shared player or session identifier.</p>
 </section>
 
-<!-- ========== ABOUT ========== -->
 <section data-screen="about" class="about">
   <p class="eyebrow">About</p>
   <h2 style="margin-top:.4rem">What this is</h2>
@@ -844,15 +834,11 @@ var marginaliaPick=pick(MARGINALIA);
 var sendoffLine=null, returnLine=null, allowMarginalia=false;
 if(firstRun){ allowMarginalia=true; }
 else if(gapDays>=LONG_ABSENCE){
- /* The return slot rolls like every other. Firing on every long-absence visit would
-    hand a weekly returner a moment 100% of the time while a daily visitor gets ~2/3
-    — rewarding absence and teaching "come back Sunday and he speaks", which is what
-    the Etkin test exists to catch. */
  if(Math.random()<1/3) returnLine=pick(RETURNS); }
 else { var roll=Math.random();
  if(roll<1/3){ sendoffLine=pick(SENDOFFS); }
  else if(roll<2/3){ allowMarginalia=true; }
- /* the remaining third is silence: the cap is a ceiling, not a quota */ }
+ }
 
 var meetSpent=false, shelfNoteSpent=false, returnSpent=false, sendoffHTML="";
 
@@ -868,16 +854,8 @@ var replayingIntro=false, testimonialPrompted=false;
 
 function render(screen,param){
  document.body.dataset.boot="0";
- /* The gate is a route guard, not just a hidden button: the wordmark, browser
-    history, and hand-written calls cannot expose a game before intake. */
  if(betaBlocked()&&screen!=="beta"&&screen!=="about")screen="beta";
- /* The three first-run screens are unreachable once the introduction is behind
-    you — history from an earlier visit must not replay the introduction slot
-    to someone who is not on their introduction day. */
  if((screen==="intro"||screen==="meet")&&!firstRun&&!replayingIntro) screen="shelf";
- /* FINDING A: the shelf is structurally unreachable until the first session
-    completes. Gating individual controls left the wordmark open; gating the
-    destination cannot be bypassed by adding a control later. */
  if(screen==="shelf"&&firstRun&&!sessionDone) screen="first";
  document.querySelectorAll("section[data-screen]").forEach(function(s){s.classList.remove("on");});
  if(screen==="meet"){ enterMeet(); }
@@ -899,14 +877,11 @@ function render(screen,param){
  scheduleIdle();
  return screen;
 }
-/* The introduction is a budgeted slot like any other: if there is nothing left
-   to spend, his line does not render. Belt and braces alongside the guard above. */
+
 function enterMeet(){
  var marg=document.getElementById("meetmarg");
  var next=document.getElementById("meetcontinue");
  if(next)next.textContent=replayingIntro?"Back to About":"Continue";
- /* A deliberate replay is reference material, not a second allocated character
-    moment. It neither spends the budget nor re-renders the first-run aside. */
  if(!replayingIntro&&!meetSpent&&hopperBudget>0){
   meetSpent=true;hopperBudget--;
   if(!reducedMotion){
@@ -921,8 +896,6 @@ function tierBtn(k,name,desc){
  return '<button class="tierbtn" onclick="pickTier(\''+k+'\')">'
   +'<span class="tname">'+name+'</span><span class="tdesc">'+desc+'</span></button>';
 }
-/* During the first run the shelf is not yet revealed, so back-links land on the
-   game offer rather than exposing all fifteen early. */
 function homeScreen(){ return (firstRun&&!sessionDone)?"first":"shelf"; }
 function choiceBackScreen(){return (firstRun&&!sessionDone)||selectionSource==="randomizer"?"first":"shelf";}
 function resetFable(){
@@ -988,58 +961,80 @@ function startChooser(source){
 function recordChoice(n,source){
  var isFirst=source==="first"&&!firstChoiceReported;
  if(isFirst)firstChoiceReported=true;
- if(!window.fetch)return;
- try{
-  fetch("/api/choice",{method:"POST",headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({game:n,source:source,first:isFirst}),keepalive:true}).catch(function(){});
- }catch(e){}
 }
 function chooseGame(n,source){selectionSource=source||"shelf";recordChoice(n,selectionSource);go("game",n);}
 
-/* ================= voluntary intake =================
-   Email, referral, and test answers use separate requests and separate tables.
-   There is deliberately no identifier with which to join them later. */
-function postJSON(url,payload){
- return fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},
-  body:JSON.stringify(payload)}).then(function(response){
-   if(!response.ok)throw new Error("request failed");return response;
-  });
+/* ================= voluntary intake (Formspree) ================= */
+function postFormspree(endpoint, payload){
+ var formData = new FormData();
+ Object.keys(payload).forEach(function(k){
+  formData.append(k, payload[k]);
+ });
+ return fetch('https://formspree.io/f/' + endpoint, {
+  method: 'POST',
+  body: formData,
+  headers: { 'Accept': 'application/json' }
+ }).then(function(res){
+  if(!res.ok) throw new Error('Formspree submit failed');
+  return res;
+ });
 }
+
 function submitBeta(event){
  event.preventDefault();
  var form=event.currentTarget, data=new FormData(form);
  var button=document.getElementById("betabutton"),status=document.getElementById("betastatus");
  var website=data.get("website")||"";
- button.disabled=true;status.textContent="Opening the shelf…";
- Promise.all([
-  postJSON("/api/subscribe",{email:data.get("email"),consent:data.get("consent")==="on",cohort:"beta",website:website}),
-  postJSON("/api/referral",{source:data.get("source"),detail:data.get("detail"),context:"beta_gate",website:website})
- ]).then(function(){
- betaAccess=true;writeBetaAccess();form.reset();
- var destination=firstRun?"intro":"shelf";
- if(!firstRun)document.body.dataset.nav="on";
+ if(website) return; // Honeypot check
+
+ button.disabled=true; status.textContent="Opening the shelf…";
+
+ postFormspree('xjybpblj', {
+  email: data.get("email"),
+  source: data.get("source"),
+  detail: data.get("detail"),
+  consent: data.get("consent") === "on" ? "yes" : "no",
+  cohort: "beta"
+ }).then(function(){
+  betaAccess=true;
+  writeBetaAccess();
+  form.reset();
+  var destination=firstRun?"intro":"shelf";
+  if(!firstRun)document.body.dataset.nav="on";
   if(testMode)document.getElementById("testbar").hidden=false;
   render(destination);
   try{history.replaceState({s:destination,p:null},"");}catch(e){}
  }).catch(function(){
-  button.disabled=false;status.textContent="That did not reach us. Please check the two required answers and try again.";
+  button.disabled=false;
+  status.textContent="That did not reach us. Please check your network and try again.";
  });
 }
+
 function submitJoin(event){
  event.preventDefault();
  var form=event.currentTarget, button=document.getElementById("joinbutton");
  var status=document.getElementById("joinstatus");
  var data=new FormData(form), website=data.get("website")||"";
- button.disabled=true;status.textContent="Sending…";
- Promise.all([
-  postJSON("/api/subscribe",{email:data.get("email"),consent:data.get("consent")==="on",cohort:"updates",website:website}),
-  postJSON("/api/referral",{source:data.get("source"),detail:data.get("detail"),context:"signup",website:website})
- ]).then(function(){
-  form.reset();button.textContent="You’re on the list";status.textContent="Thank you. The referral answer was stored separately from your email.";
+ if(website) return; // Honeypot check
+
+ button.disabled=true; status.textContent="Sending…";
+
+ postFormspree('xwlewngw', {
+  email: data.get("email"),
+  source: data.get("source"),
+  detail: data.get("detail"),
+  consent: data.get("consent") === "on" ? "yes" : "no",
+  cohort: "updates"
+ }).then(function(){
+  form.reset();
+  button.textContent="You’re on the list";
+  status.textContent="Thank you. Your updates response was received.";
  }).catch(function(){
-  button.disabled=false;status.textContent="That didn’t reach us. Nothing here is required—try again when you like.";
+  button.disabled=false;
+  status.textContent="That didn’t reach us. Try again when you like.";
  });
 }
+
 function openUsability(){
  var dialog=document.getElementById("usabilitydialog");
  if(dialog.showModal)dialog.showModal();else dialog.setAttribute("open","");
@@ -1053,11 +1048,11 @@ function submitUsability(event){
  var form=event.currentTarget, data=new FormData(form), button=document.getElementById("utbutton");
  var status=document.getElementById("utstatus");
  button.disabled=true;status.textContent="Sending…";
- postJSON("/api/usability",{
+ postFormspree('xwlewngw', {
   expectation:data.get("expectation"),confusion:data.get("confusion"),
   choice_amount:data.get("choice_amount"),doors_read:data.get("doors_read"),
   keep_text:data.get("keep_text"),change_text:data.get("change_text"),
-  return_clarity:data.get("return_clarity"),website:data.get("website")||""
+  return_clarity:data.get("return_clarity")
  }).then(function(){
   form.reset();status.textContent="Answers received. Thank you.";
   var testButton=document.getElementById("testbarbutton");
@@ -1080,10 +1075,9 @@ function submitTestimonial(event){
  var form=event.currentTarget,data=new FormData(form);
  var button=document.getElementById("testimonialbutton"),status=document.getElementById("testimonialstatus");
  button.disabled=true;status.textContent="Sending…";
- postJSON("/api/testimonial",{
+ postFormspree('xjybpblj', {
   quote:data.get("quote"),role:data.get("role"),display_name:data.get("display_name"),
-  attribution:data.get("attribution"),public_consent:data.get("public_consent")==="on",
-  website:data.get("website")||""
+  attribution:data.get("attribution"),public_consent:data.get("public_consent")==="on"
  }).then(function(){
   form.reset();status.textContent="Received. Thank you for lending Lusory your words.";
   document.getElementById("betatestimonial").hidden=true;
@@ -1135,8 +1129,6 @@ function renderGame(){
 }
 function pickTier(t){
  currentTier=t;
- /* Only a genuinely new session clears the free-write. Re-reading the rules and
-    re-picking a tier mid-session must not destroy what you have written. */
  if(!sessionActive){ sessionActive=true; chosenPosture=null; document.getElementById("note").value=""; }
  go("play");
 }
@@ -1165,7 +1157,6 @@ function finish(){go("done");}
 
 function renderDone(){
  sessionDone=true; sessionActive=false;
- /* R1: the first completed session is what opens the shelf on later visits. */
  if(firstRun&&!introStamped){ introStamped=true; writeLastOpen(today); }
  document.body.dataset.nav="on";
  var note=document.getElementById("note").value.trim();
@@ -1236,7 +1227,7 @@ function startFable(){
   return;
  }
  document.getElementById("fabletext").style.display="none";
- stepFable();  /* resumes where navigation interrupted it, rather than truncating */
+ stepFable();
 }
 function pauseFable(){ clearTimeout(fableTimer); fableTimer=null; }
 function skipFable(){clearTimeout(fableTimer);endFable();}
@@ -1248,17 +1239,11 @@ function endFable(){
  var sk=document.getElementById("skipfable");if(sk)sk.style.display="none";
 }
 
-/* ---- rare randomized idle motion ----
-   Never reactive: driven only by a timer, never by input. Never on a
-   learnable schedule. Absent by architecture on play and reflect,
-   which carry no mark at all. Silent under reduced motion. */
+/* ---- rare randomized idle motion ---- */
 var idleTimer=null;
 function scheduleIdle(){
  clearTimeout(idleTimer);
  if(reducedMotion)return;
- /* R5: the interval is re-drawn on every screen entry, so a twitch can never
-    fire immediately after you come back from play or reflect and read as
-    coupled to what you just finished. The twitch is weather, not speech. */
  idleTimer=setTimeout(function(){twitchMark();scheduleIdle();},50000+Math.random()*90000);
 }
 function twitchMark(){
@@ -1272,7 +1257,7 @@ function twitchMark(){
 
 /* ---- boot ---- */
 var startScreen=betaBlocked()?"beta":(firstRun?"intro":"shelf");
-if(!firstRun)sessionDone=true;  /* a returning visitor is already past the reveal gate */
+if(!firstRun)sessionDone=true;
 if(!firstRun&&!betaBlocked())document.body.dataset.nav="on";
 if(testMode&&!betaBlocked())document.getElementById("testbar").hidden=false;
 render(startScreen);
