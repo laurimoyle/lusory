@@ -55,7 +55,7 @@ header{padding:1.15rem 0 0}
 .masthead{max-width:29.5rem;margin:0 auto;padding:0 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:.6rem}
 .wordmark{font-family:var(--disp);font-size:1.25rem;background:none;border:0;cursor:pointer;color:var(--ink);
   padding:.3rem 0;min-height:var(--tap);display:inline-flex;align-items:center}
-.navlinks{display:flex;gap:1.1rem}
+.navlinks{display:flex;gap:.7rem}
 .navlinks button{background:none;border:0;cursor:pointer;font-family:var(--body);font-size:.78rem;letter-spacing:.14em;
   text-transform:uppercase;color:var(--ink-soft);padding:.2rem .1rem;min-height:var(--tap);display:inline-flex;align-items:center}
 .navlinks button:hover{color:var(--ink)}
@@ -162,6 +162,35 @@ textarea{width:100%;min-height:7.5rem;font-family:var(--body);font-size:1rem;lin
   background:var(--plate);border:1px solid var(--rule);border-radius:3px;padding:.85rem .95rem;resize:vertical}
 textarea:focus{outline:2px dashed var(--leaf);outline-offset:2px}
 textarea::placeholder{color:var(--ink-soft);font-style:italic}
+
+/* ---------- voluntary forms ---------- */
+.formcard{margin-top:1.25rem;padding:1.15rem;background:var(--plate);border:1px solid var(--rule);border-radius:3px}
+.field{display:block;margin-top:1.05rem}
+.field:first-child{margin-top:0}
+input[type="email"],input[type="text"],select{width:100%;min-height:var(--tap);font-family:var(--body);font-size:1rem;color:var(--ink);
+  background:var(--paper);border:1px solid var(--rule);border-radius:3px;padding:.6rem .7rem}
+input:focus,select:focus{outline:2px dashed var(--leaf);outline-offset:2px}
+.consent{display:grid;grid-template-columns:1.2rem 1fr;gap:.6rem;align-items:start;margin-top:1.15rem;font-size:.92rem}
+.consent input{width:1.1rem;height:1.1rem;margin-top:.18rem;accent-color:var(--leaf)}
+.honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.status{min-height:1.4rem;margin-top:.75rem;font-size:.88rem;color:var(--leaf)}
+fieldset{border:0;margin-top:1.1rem}
+fieldset legend{margin-bottom:.35rem}
+.choices{display:grid;gap:.4rem}
+.choices label{display:grid;grid-template-columns:1.15rem 1fr;gap:.55rem;align-items:start;padding:.25rem 0}
+.choices input{width:1rem;height:1rem;margin-top:.28rem;accent-color:var(--leaf)}
+
+/* ---------- explicit usability-test layer ---------- */
+.testbar{position:fixed;right:.8rem;bottom:.8rem;z-index:20;background:var(--ink);color:var(--paper);
+  border:1px solid var(--paper);border-radius:3px;padding:.35rem .45rem;box-shadow:0 4px 18px rgba(0,0,0,.2)}
+.testbar button{font-family:var(--body);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;background:none;
+  color:inherit;border:0;min-height:var(--tap);padding:.2rem .45rem;cursor:pointer}
+dialog{width:min(39rem,calc(100% - 1.5rem));max-height:calc(100vh - 1.5rem);overflow:auto;margin:auto;
+  color:var(--ink);background:var(--paper);border:1.5px solid var(--ink);border-radius:3px;padding:1.2rem}
+dialog::backdrop{background:rgba(24,23,21,.58)}
+.dialog-head{display:flex;justify-content:space-between;gap:1rem;align-items:start}
+.dialog-close{background:none;border:0;color:var(--ink-soft);font-family:var(--body);font-size:.9rem;cursor:pointer;
+  min-width:var(--tap);min-height:var(--tap)}
 
 /* ---------- fable ---------- */
 .fableblock{border-left:2px solid var(--rule);padding-left:1rem;margin:1.25rem 0 1.6rem}
@@ -301,6 +330,7 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
     <button class="wordmark" onclick="go(homeScreen())">Lusory</button>
     <nav class="navlinks" aria-label="Main">
       <button data-nav-shelf onclick="go(homeScreen())">Shelf</button>
+      <button data-nav-shelf onclick="go('join')">Updates</button>
       <button onclick="go('about')">About</button>
     </nav>
   </div>
@@ -329,7 +359,7 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
     <p>There are no streaks here, no scores, no history. Leave for a month and nothing will have noticed, and everything will be where you left it.</p>
   </div>
   <div class="actions boot-title"><button class="btn" onclick="go('meet')">Continue</button></div>
-  <p class="small footnote boot-title">One date is kept on this device. Game choices add to anonymous weekly totals; they are never tied to you.</p>
+  <p class="small footnote boot-title">After your first game, one date will be kept on this device. Game choices add to anonymous weekly totals; they are never tied to you.</p>
 </section>
 
 <!-- ========== FIRST RUN 2/3 : introducing the grasshopper ========== -->
@@ -497,7 +527,44 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <div class="actions">
     <button class="btn" id="copybtn" onclick="copyNote()" style="display:none">Copy my note</button>
     <button class="quiet" onclick="go('shelf')">The whole shelf is here</button>
+    <button class="quiet" onclick="go('join')">Occasional updates</button>
   </div>
+</section>
+
+<!-- ========== OPTIONAL EMAIL + ASKED REFERRAL ========== -->
+<section data-screen="join">
+  <p class="eyebrow">Stay in the loop</p>
+  <h2 style="margin-top:.4rem">Occasional notes from Lusory</h2>
+  <p class="lede" style="margin-top:.6rem">New games, substantial changes, and invitations to test what comes next. No streaks, reminders, or pressure to return.</p>
+  <form id="joinform" class="formcard" onsubmit="submitJoin(event)">
+    <label class="field" for="joinemail"><span class="lab">Email</span>
+      <input id="joinemail" name="email" type="email" autocomplete="email" maxlength="254" required>
+    </label>
+    <label class="field" for="refsource"><span class="lab">How did Lusory find you?</span>
+      <select id="refsource" name="source" required>
+        <option value="">Choose one</option>
+        <option value="friend_family">Friend or family</option>
+        <option value="therapist_counselor">Therapist or counselor</option>
+        <option value="coach_wellness">Coach or wellness professional</option>
+        <option value="church_community">Church or community group</option>
+        <option value="workplace_team">Workplace or team</option>
+        <option value="social_media">Social media</option>
+        <option value="search">Search</option>
+        <option value="event_workshop">Event or workshop</option>
+        <option value="other">Something else</option>
+      </select>
+    </label>
+    <label class="field" for="refdetail"><span class="lab">Which organization, social account, group, or event? <span style="text-transform:none;letter-spacing:0">(optional)</span></span>
+      <input id="refdetail" name="detail" type="text" maxlength="160" autocomplete="off" aria-describedby="refhelp">
+    </label>
+    <p class="small" id="refhelp" style="margin-top:.35rem">A public name is enough; please leave out private details.</p>
+    <label class="honeypot" for="joinwebsite">Website<input id="joinwebsite" name="website" type="text" tabindex="-1" autocomplete="off"></label>
+    <label class="consent"><input name="consent" type="checkbox" required><span>Yes, send me occasional Lusory product updates. I can unsubscribe whenever I like.</span></label>
+    <div class="actions"><button class="btn" id="joinbutton" type="submit">Join the list</button>
+      <button class="quiet" type="button" onclick="go(homeScreen())">Not today</button></div>
+    <p class="status" id="joinstatus" role="status" aria-live="polite"></p>
+  </form>
+  <p class="small" style="margin-top:1rem">Your email, referral answer, and game choices are stored in separate pools with no shared player or session identifier.</p>
 </section>
 
 <!-- ========== ABOUT ========== -->
@@ -508,14 +575,48 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <p>That makes them games in the old, strict sense — a goal, some rules against the shortcut, and your free agreement to play anyway. The philosopher Bernard Suits called this <em>"the voluntary attempt to overcome unnecessary obstacles"</em> and argued that it, not usefulness, is what a good life is made of. Josef Pieper said something near it about leisure: useless on purpose, and formative because of it.</p>
   <h3>About the science, briefly</h3>
   <p>These games draw on, and adapt, practices with peer-reviewed support — paying attention, giving thanks, being kind on purpose, writing things down, moving, talking to strangers, breathing slowly. The honest summary of that research: effects are real and mostly small to moderate. This app's contribution isn't bigger effects; it's a form people freely return to.</p>
-  <p>One finding shaped the whole design: measuring an enjoyable activity tends to make it feel like work. So Lusory never scores, ranks, times, praises, or shows your activity back to you. The only product signal is an anonymous aggregate count of which games are chosen.</p>
+  <p>One finding shaped the whole design: measuring an enjoyable activity tends to make it feel like work. So Lusory never scores, ranks, times, praises, or shows your activity back to you. The only behavioral signal is an anonymous aggregate count of which games are chosen; email consent and research answers exist only when someone explicitly submits them.</p>
   <p>This is play, preventative and formative — not treatment. If you're in real difficulty, a clinician beats a game, and we'd rather you had the clinician.</p>
   <h3>Privacy</h3>
-  <p>No player profile or individual activity history is created. One date is kept on this device once you have played a game: the day you last opened this. When you choose a game, Lusory sends its number and whether it came from the first deal, the randomizer, or the shelf; the server adds one to a weekly total and keeps no raw event, player ID, email, session ID, referrer, or fingerprint. These totals never personalize anyone&rsquo;s shelf. Your reflections stay in the page and evaporate when you close it.</p>
-  <div class="actions"><button class="quiet" id="aboutback" onclick="go(homeScreen())">Back to the shelf</button></div>
+  <p>No player profile or individual activity history is created. One date is kept on this device once you have played a game: the day you last opened this. When you choose a game, Lusory sends its number and whether it came from the first deal, the randomizer, or the shelf; the server adds one to a weekly total and keeps no raw event, player ID, session ID, referrer, or fingerprint. These totals never personalize anyone&rsquo;s shelf.</p>
+  <p>If you explicitly join the update list, Lusory keeps your email and consent. The referral question and usability-test answers are stored in separate anonymous pools, with no shared identifier linking them to your email, game choices, or each other. The usability test records answers you submit, never a clickstream or replay. Your private reflection on a game stays in the page and evaporates when you close it.</p>
+  <div class="actions"><button class="quiet" onclick="go('join')">Occasional updates</button><button class="quiet" id="aboutback" onclick="go(homeScreen())">Back to the shelf</button></div>
 </section>
 
 </main>
+
+<div class="testbar" id="testbar" hidden><button type="button" id="testbarbutton" onclick="openUsability()">Finish usability test</button></div>
+
+<dialog id="usabilitydialog" aria-labelledby="usabilitytitle">
+  <div class="dialog-head"><div><p class="eyebrow">Usability test · version 1</p><h2 id="usabilitytitle" style="margin-top:.3rem">Tell us what the product did—not what it meant to do</h2></div>
+    <button class="dialog-close" type="button" onclick="closeUsability()" aria-label="Close usability test">Close</button></div>
+  <p class="small" style="margin-top:.7rem">This form records only the answers you submit. Lusory has not recorded your clicks, route through the app, reflection, or identity.</p>
+  <form id="usabilityform" class="formcard" onsubmit="submitUsability(event)">
+    <label class="field" for="utexpect"><span class="lab">1. Before you began, what did you think Lusory was for?</span>
+      <textarea id="utexpect" name="expectation" maxlength="800" required></textarea></label>
+    <label class="field" for="utconfusion"><span class="lab">2. What, if anything, was confusing or hard to find? <span style="text-transform:none;letter-spacing:0">(optional)</span></span>
+      <textarea id="utconfusion" name="confusion" maxlength="800"></textarea></label>
+    <fieldset><legend class="lab">3. How did the first choice of three games feel?</legend><div class="choices">
+      <label><input type="radio" name="choice_amount" value="too_few" required><span>Too little choice</span></label>
+      <label><input type="radio" name="choice_amount" value="about_right"><span>About right</span></label>
+      <label><input type="radio" name="choice_amount" value="too_many"><span>Too much choice</span></label>
+    </div></fieldset>
+    <fieldset><legend class="lab">4. How did the three difficulty doors read?</legend><div class="choices">
+      <label><input type="radio" name="doors_read" value="equal" required><span>Equal alternatives</span></label>
+      <label><input type="radio" name="doors_read" value="ranked"><span>Ranked levels from easy to hard</span></label>
+      <label><input type="radio" name="doors_read" value="unsure"><span>I&rsquo;m not sure</span></label>
+    </div></fieldset>
+    <label class="field" for="utkeep"><span class="lab">5. What should Lusory definitely keep? <span style="text-transform:none;letter-spacing:0">(optional)</span></span>
+      <textarea id="utkeep" name="keep_text" maxlength="500"></textarea></label>
+    <label class="field" for="utchange"><span class="lab">6. What should Lusory change first?</span>
+      <textarea id="utchange" name="change_text" maxlength="500" required></textarea></label>
+    <label class="field" for="utreturn"><span class="lab">7. If you came back tomorrow, would you know what to do?</span>
+      <select id="utreturn" name="return_clarity" required><option value="">Choose one</option><option value="yes">Yes</option><option value="probably">Probably</option><option value="not_sure">Not sure</option><option value="no">No</option></select></label>
+    <label class="honeypot" for="utwebsite">Website<input id="utwebsite" name="website" type="text" tabindex="-1" autocomplete="off"></label>
+    <div class="actions"><button class="btn" id="utbutton" type="submit">Send answers</button><button class="quiet" type="button" onclick="closeUsability()">Keep testing</button></div>
+    <p class="status" id="utstatus" role="status" aria-live="polite"></p>
+  </form>
+</dialog>
 <script>
 /* ================= data: the fifteen =================
    `prac` carries the metaphor label, never the family name (WP6).
@@ -631,6 +732,9 @@ var today=stamp(new Date());
 var lastOpen=readLastOpen();
 var firstRun=!lastOpen||!/^\d{4}-\d{2}-\d{2}$/.test(lastOpen);
 var gapDays=firstRun?0:Math.max(0,daysBetween(lastOpen,today));
+/* Test mode is explicit in the URL and held in memory only. No query parameter,
+   route, click, or interaction is recorded. */
+var testMode=/(^|[?&])test=1(?:&|$)/.test(window.location.search);
 /* A returning visitor is stamped at load — "last open" means what it says, so a
    daily visitor who never finishes a session is never mistaken for absent.
    A first-run visitor is stamped only when the FIRST SESSION COMPLETES, so
@@ -797,6 +901,58 @@ function recordChoice(n,source){
  }catch(e){}
 }
 function chooseGame(n,source){selectionSource=source||"shelf";recordChoice(n,selectionSource);go("game",n);}
+
+/* ================= voluntary intake =================
+   Email, referral, and test answers use separate requests and separate tables.
+   There is deliberately no identifier with which to join them later. */
+function postJSON(url,payload){
+ return fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},
+  body:JSON.stringify(payload)}).then(function(response){
+   if(!response.ok)throw new Error("request failed");return response;
+  });
+}
+function submitJoin(event){
+ event.preventDefault();
+ var form=event.currentTarget, button=document.getElementById("joinbutton");
+ var status=document.getElementById("joinstatus");
+ var data=new FormData(form), website=data.get("website")||"";
+ button.disabled=true;status.textContent="Sending…";
+ Promise.all([
+  postJSON("/api/subscribe",{email:data.get("email"),consent:data.get("consent")==="on",website:website}),
+  postJSON("/api/referral",{source:data.get("source"),detail:data.get("detail"),website:website})
+ ]).then(function(){
+  form.reset();button.textContent="You’re on the list";status.textContent="Thank you. The referral answer was stored separately from your email.";
+ }).catch(function(){
+  button.disabled=false;status.textContent="That didn’t reach us. Nothing here is required—try again when you like.";
+ });
+}
+function openUsability(){
+ var dialog=document.getElementById("usabilitydialog");
+ if(dialog.showModal)dialog.showModal();else dialog.setAttribute("open","");
+}
+function closeUsability(){
+ var dialog=document.getElementById("usabilitydialog");
+ if(dialog.close)dialog.close();else dialog.removeAttribute("open");
+}
+function submitUsability(event){
+ event.preventDefault();
+ var form=event.currentTarget, data=new FormData(form), button=document.getElementById("utbutton");
+ var status=document.getElementById("utstatus");
+ button.disabled=true;status.textContent="Sending…";
+ postJSON("/api/usability",{
+  expectation:data.get("expectation"),confusion:data.get("confusion"),
+  choice_amount:data.get("choice_amount"),doors_read:data.get("doors_read"),
+  keep_text:data.get("keep_text"),change_text:data.get("change_text"),
+  return_clarity:data.get("return_clarity"),website:data.get("website")||""
+ }).then(function(){
+  form.reset();status.textContent="Answers received. Thank you.";
+  var testButton=document.getElementById("testbarbutton");
+  testButton.textContent="Answers sent";testButton.disabled=true;
+  setTimeout(closeUsability,900);
+ }).catch(function(){
+  button.disabled=false;status.textContent="Those answers didn’t reach us. Please try once more.";
+ });
+}
 function renderShelf(){
  var key=axis, groups={}, order=[];
  GAMES.forEach(function(g){ if(!groups[g[key]]){groups[g[key]]=[];order.push(g[key]);} groups[g[key]].push(g); });
@@ -975,6 +1131,7 @@ function twitchMark(){
 var startScreen=firstRun?"intro":"shelf";
 if(!firstRun)sessionDone=true;  /* a returning visitor is already past the reveal gate */
 if(!firstRun)document.body.dataset.nav="on";
+if(testMode)document.getElementById("testbar").hidden=false;
 render(startScreen);
 try{history.replaceState({s:startScreen,p:null},"");}catch(e){}
 document.body.dataset.boot="1";

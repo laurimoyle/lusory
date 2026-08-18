@@ -19,12 +19,12 @@ const b=await chromium.launch({executablePath:EXE});
 
 /* BLOCKER 1 — clinician handrail reachable on first run */
 {const {c,p}=await np(b); await p.goto(URL,{waitUntil:'networkidle'});
- const aboutBtn=p.locator('.navlinks button').nth(1);
+ const aboutBtn=p.getByRole('button',{name:'About'});
  ok(await aboutBtn.isVisible(),'B1 About reachable on the very first screen');
  await aboutBtn.click();
  const t=await p.textContent('section[data-screen="about"]');
  ok(await scr(p)==='about'&&t.includes('a clinician beats a game'),'B1 clinician referral line reachable on first run');
- ok(await p.locator('.navlinks button[data-nav-shelf]').isHidden(),'B1 Shelf still gated during first run');
+ ok(await p.locator('.navlinks button[data-nav-shelf]').evaluateAll(bs=>bs.every(b=>getComputedStyle(b).visibility==='hidden')),'B1 Shelf and Updates still gated during first run');
  await c.close();}
 
 /* BLOCKER 2 — settle-hop must not re-arm on navigation */
@@ -195,7 +195,7 @@ const b=await chromium.launch({executablePath:EXE});
  const shelfVisible=await p.locator('#shelfbody .entry').count();
  ok2(paths.every(x=>x.endsWith('first')),'11 no first-run path exposes the shelf: '+paths.join(' | '));
  ok2(shelfVisible===0,'11 shelf never rendered during first run (entries: '+shelfVisible+')');
- ok2(await p.locator('.navlinks button[data-nav-shelf]').isHidden(),'11 Shelf nav still gated');
+ ok2(await p.locator('.navlinks button[data-nav-shelf]').evaluateAll(bs=>bs.every(b=>getComputedStyle(b).visibility==='hidden')),'11 Shelf and Updates nav still gated');
  await c.close();}
 
 /* R5 — idle interval re-drawn on screen entry; twitch never coupled to completion */
@@ -429,7 +429,7 @@ const b=await chromium.launch({executablePath:EXE});
 
 /* F — the About exit label must match its destination */
 {const c=await b.newContext();const p=await c.newPage();await p.goto(URL,{waitUntil:'networkidle'});
- await p.locator('.navlinks button').nth(1).click();
+ await p.getByRole('button',{name:'About'}).click();
  ok((await p.textContent('#aboutback')).trim()==='Back','F About exit reads "Back" during first run');
  await p.click('#aboutback');
  ok(await scr(p)==='first','F About exit lands where its label promises');
@@ -437,7 +437,7 @@ const b=await chromium.launch({executablePath:EXE});
  await p.locator('.tierbtn').nth(1).click();
  await p.click('section[data-screen="play"] .actions .btn');
  await p.click('section[data-screen="reflect"] .actions .btn');
- await p.locator('.navlinks button').nth(1).click();
+ await p.getByRole('button',{name:'About'}).click();
  ok((await p.textContent('#aboutback')).trim()==='Back to the shelf','F label becomes "Back to the shelf" once revealed');
  await p.click('#aboutback');
  ok(await scr(p)==='shelf','F and it goes there');

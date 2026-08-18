@@ -9,8 +9,7 @@ module.exports = async function handler(req, res) {
     return R.json(res, 405, { error: 'method not allowed' });
   }
 
-  const fetchSite = req.headers && req.headers['sec-fetch-site'];
-  if (fetchSite && fetchSite !== 'same-origin') {
+  if (!R.sameOrigin(req)) {
     return R.json(res, 403, { error: 'same origin only' });
   }
   if (!R.configured()) return R.json(res, 503, { error: 'reporting unavailable' });

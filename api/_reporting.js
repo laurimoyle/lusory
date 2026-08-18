@@ -15,6 +15,18 @@ function body(req) {
   return {};
 }
 
+function sameOrigin(req) {
+  const fetchSite = req.headers && req.headers['sec-fetch-site'];
+  return !fetchSite || fetchSite === 'same-origin';
+}
+
+function text(value, limit) {
+  if (typeof value !== 'string') return null;
+  const clean = value.trim();
+  if (!clean || clean.length > limit) return null;
+  return clean;
+}
+
 function configured() {
   return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
@@ -31,4 +43,4 @@ async function supabase(path, init) {
   return fetch(`${base}/rest/v1/${path}`, opts);
 }
 
-module.exports = { json, body, configured, supabase };
+module.exports = { json, body, sameOrigin, text, configured, supabase };

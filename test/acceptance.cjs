@@ -38,7 +38,8 @@ console.log('\n--- non-goals: no PWA / manifest / notifications (WP8) ---');
  say('no beforeinstallprompt',!/beforeinstallprompt/i.test(h));
  say('no link/fetch to the translation table',!/(href|src)=["'][^"']*(science-axis|translation-table|docs\/)/i.test(h)
        && !/fetch\([^)]*(science-axis|translation-table|docs\/)/i.test(h));
- say('the only browser report is the disclosed same-origin choice call',/fetch\("\/api\/choice"/.test(h)
+ say('browser writes are disclosed same-origin calls only',/fetch\("\/api\/choice"/.test(h)
+       && /\/api\/subscribe/.test(h)&&/\/api\/referral/.test(h)&&/\/api\/usability/.test(h)
        && !/fetch\(["']https?:/i.test(h));
  say('translation table not named in shipped source',!/science-axis-translation-table/i.test(h));
  const ig=fs.readFileSync(__dirname+'/../.vercelignore','utf8');
