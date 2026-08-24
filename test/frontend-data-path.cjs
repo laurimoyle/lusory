@@ -20,17 +20,26 @@ assert.match(choice, /fetch\("\/api\/choice"/);
 assert.match(choice, /source:source,first:isFirst/);
 
 const beta = block('function submitBeta(', 'function submitJoin(');
-assert.match(beta, /Promise\.all\(\[/);
-assert.match(beta, /postJSON\("\/api\/subscribe"/);
+assert.doesNotMatch(beta, /Promise\.all/);
+assert.match(beta, /postJSON\("\/api\/intake"/);
+assert.match(beta, /request_token:intakeToken\("beta_gate"\)/);
 assert.match(beta, /cohort:"beta"/);
-assert.match(beta, /postJSON\("\/api\/referral"/);
+assert.match(beta, /source:data\.get\("source"\)/);
 assert.match(beta, /context:"beta_gate"/);
+assert.match(beta, /clearIntakeToken\("beta_gate"\)/);
 
 const join = block('function submitJoin(', 'function openUsability(');
-assert.match(join, /postJSON\("\/api\/subscribe"/);
+assert.doesNotMatch(join, /Promise\.all/);
+assert.match(join, /postJSON\("\/api\/intake"/);
+assert.match(join, /request_token:intakeToken\("signup"\)/);
 assert.match(join, /cohort:"updates"/);
-assert.match(join, /postJSON\("\/api\/referral"/);
+assert.match(join, /source:data\.get\("source"\)/);
 assert.match(join, /context:"signup"/);
+assert.match(join, /clearIntakeToken\("signup"\)/);
+
+assert.match(html, /sessionStorage\.getItem\(key\)/);
+assert.match(html, /sessionStorage\.removeItem\(key\)/);
+assert.doesNotMatch(html, /postJSON\("\/api\/(?:subscribe|referral)"/);
 
 const usability = block('function submitUsability(', 'function openTestimonial(');
 assert.match(usability, /postJSON\("\/api\/usability"/);
