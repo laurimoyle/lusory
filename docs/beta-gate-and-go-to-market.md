@@ -1,5 +1,7 @@
 # Lusory beta gate and go-to-market baseline
 
+Execution checklist and outreach cadence: [`web-beta-recruitment-plan.md`](web-beta-recruitment-plan.md).
+
 ## Release mode
 
 The web beta is temporarily gated. A visitor must provide:
@@ -80,4 +82,3 @@ Do not build three products at once. After the first 30–40 entrants, conduct 1
 4. A reserve of at least 18 confirmed Android testers with Google accounts before starting the 14-day closed test.
 5. One primary route-to-market selected from interview and behavior evidence.
 6. Turn `BETA_GATED` off, restore optional email capture, and retain the beta cohort label for follow-up invitations.
-
