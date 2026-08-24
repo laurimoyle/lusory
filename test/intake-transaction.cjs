@@ -1,6 +1,28 @@
 'use strict';
 
 const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+
+const root = path.join(__dirname, '..');
+const sourceContracts = [
+  fs.readFileSync(path.join(root, 'api', 'intake.js'), 'utf8'),
+  fs.readFileSync(path.join(root, 'api', 'referral.js'), 'utf8'),
+  fs.readFileSync(path.join(root, 'docs', 'beta-data-schema.sql'), 'utf8'),
+  fs.readFileSync(path.join(root, 'index.html'), 'utf8'),
+];
+const expectedSources = [
+  'friend_family', 'therapist_counselor', 'coach_wellness',
+  'church_community', 'workplace_team', 'social_media',
+  'search', 'event_workshop', 'reddit', 'facebook_group',
+  'linkedin', 'researcher_university', 'insurance_wellness',
+  'direct_outreach', 'other',
+];
+for (const source of expectedSources) {
+  for (const contract of sourceContracts) {
+    assert.ok(contract.includes(source), `${source} is missing from an intake contract`);
+  }
+}
 
 process.env.SUPABASE_URL = 'https://test.supabase.invalid';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'service-role-test';
