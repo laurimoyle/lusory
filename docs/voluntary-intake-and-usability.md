@@ -17,9 +17,11 @@ without creating a behavioral record of a player.
 4. `beta_testimonials` stores only words the participant explicitly submits after a completed
    first game, their attribution choice, optional name/role, and affirmative public-use consent.
 
-There is no player, account, session, email, or other join key in the referral, usability,
-or testimonial tables. The browser sends submissions through separate endpoints. Do not
-infer a join from submission time.
+There is no player, account, session, email, or other person join key in the referral,
+usability, or testimonial tables. Email and referral intake use one atomic endpoint so a
+partial submission cannot occur. Its random retry token is stored only on the referral row,
+never with the email or play data. Usability and testimonial submissions use their own
+endpoints. Do not infer a join from submission time.
 
 ## Test mode
 

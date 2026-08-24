@@ -1,5 +1,7 @@
 # Lusory beta gate and go-to-market baseline
 
+Execution checklist and outreach cadence: [`web-beta-recruitment-plan.md`](web-beta-recruitment-plan.md).
+
 ## Release mode
 
 The web beta is temporarily gated. A visitor must provide:
@@ -8,7 +10,7 @@ The web beta is temporarily gated. A visitor must provide:
 2. where they found the beta link;
 3. optional public detail naming the subreddit, Facebook group, organization, account, or event.
 
-The email and referral answer are sent in separate requests and stored in separate tables with no shared identifier. The browser stores `lusory.betaAccess.v1=yes`; it stores no email or referral answer. Set `BETA_GATED` to `false` in `index.html` to retire the gate and restore the optional signup model without deleting any beta data.
+The email and referral answer are submitted once and committed in one database transaction, while remaining in separate tables with no shared person identifier. A random request token is kept temporarily in the browser and stored only with the anonymous referral row so a lost response can be retried without creating a duplicate; it is never stored with the email or any play data. The browser stores `lusory.betaAccess.v1=yes`; it stores no email or referral answer. Set `BETA_GATED` to `false` in `index.html` to retire the gate and restore the optional signup model without deleting any beta data.
 
 The gate does not create an account or login. It does not collect referrer headers, UTM parameters, fingerprints, routes, clickstreams, or player histories.
 
@@ -80,4 +82,3 @@ Do not build three products at once. After the first 30–40 entrants, conduct 1
 4. A reserve of at least 18 confirmed Android testers with Google accounts before starting the 14-day closed test.
 5. One primary route-to-market selected from interview and behavior evidence.
 6. Turn `BETA_GATED` off, restore optional email capture, and retain the beta cohort label for follow-up invitations.
-
