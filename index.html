@@ -997,13 +997,35 @@ function recordChoice(n,source){
 function chooseGame(n,source){selectionSource=source||"shelf";recordChoice(n,selectionSource);go("game",n);}
 
 /* ================= voluntary intake =================
-   Email, referral, and test answers use separate requests and separate tables.
-   There is deliberately no identifier with which to join them later. */
+   Email and referral are committed together but remain in separate tables.
+   The temporary request token deduplicates referral retries; it is never stored
+   with the email or used for gameplay, usability, or testimonial data. */
 function postJSON(url,payload){
  return fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},
   body:JSON.stringify(payload)}).then(function(response){
    if(!response.ok)throw new Error("request failed");return response;
   });
+}
+var intakeTokenMemory={};
+function createIntakeToken(){
+ if(window.crypto&&typeof window.crypto.randomUUID==="function")return window.crypto.randomUUID();
+ var bytes=new Uint8Array(16),i;
+ if(window.crypto&&window.crypto.getRandomValues)window.crypto.getRandomValues(bytes);
+ else for(i=0;i<16;i++)bytes[i]=Math.floor(Math.random()*256);
+ bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;
+ var hex=[];for(i=0;i<16;i++)hex.push((bytes[i]+256).toString(16).slice(1));
+ return hex.slice(0,4).join("")+"-"+hex.slice(4,6).join("")+"-"+hex.slice(6,8).join("")+"-"+
+  hex.slice(8,10).join("")+"-"+hex.slice(10).join("");
+}
+function intakeToken(context){
+ var key="lusory.intake."+context+".v1",token=intakeTokenMemory[key]||"";
+ if(!token)try{token=sessionStorage.getItem(key)||"";}catch(e){}
+ if(!token){token=createIntakeToken();try{sessionStorage.setItem(key,token);}catch(e){}}
+ intakeTokenMemory[key]=token;return token;
+}
+function clearIntakeToken(context){
+ var key="lusory.intake."+context+".v1";delete intakeTokenMemory[key];
+ try{sessionStorage.removeItem(key);}catch(e){}
 }
 function submitBeta(event){
  event.preventDefault();
@@ -1011,10 +1033,10 @@ function submitBeta(event){
  var button=document.getElementById("betabutton"),status=document.getElementById("betastatus");
  var website=data.get("website")||"";
  button.disabled=true;status.textContent="Opening the shelf…";
- Promise.all([
-  postJSON("/api/subscribe",{email:data.get("email"),consent:data.get("consent")==="on",cohort:"beta",website:website}),
-  postJSON("/api/referral",{source:data.get("source"),detail:data.get("detail"),context:"beta_gate",website:website})
- ]).then(function(){
+ postJSON("/api/intake",{request_token:intakeToken("beta_gate"),email:data.get("email"),
+  consent:data.get("consent")==="on",cohort:"beta",source:data.get("source"),
+  detail:data.get("detail"),context:"beta_gate",website:website}).then(function(){
+ clearIntakeToken("beta_gate");
  betaAccess=true;writeBetaAccess();form.reset();
  var destination=firstRun?"intro":"shelf";
  if(!firstRun)document.body.dataset.nav="on";
@@ -1031,10 +1053,10 @@ function submitJoin(event){
  var status=document.getElementById("joinstatus");
  var data=new FormData(form), website=data.get("website")||"";
  button.disabled=true;status.textContent="Sending…";
- Promise.all([
-  postJSON("/api/subscribe",{email:data.get("email"),consent:data.get("consent")==="on",cohort:"updates",website:website}),
-  postJSON("/api/referral",{source:data.get("source"),detail:data.get("detail"),context:"signup",website:website})
- ]).then(function(){
+ postJSON("/api/intake",{request_token:intakeToken("signup"),email:data.get("email"),
+  consent:data.get("consent")==="on",cohort:"updates",source:data.get("source"),
+  detail:data.get("detail"),context:"signup",website:website}).then(function(){
+  clearIntakeToken("signup");
   form.reset();button.textContent="You’re on the list";status.textContent="Thank you. The referral answer was stored separately from your email.";
  }).catch(function(){
   button.disabled=false;status.textContent="That didn’t reach us. Nothing here is required—try again when you like.";
