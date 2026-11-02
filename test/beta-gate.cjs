@@ -26,4 +26,12 @@ assert.match(meet, /if\(marg\)marg\.style\.display=!replayingIntro&&meetSpent\?"
 
 assert.match(html, /if\(testMode&&!betaBlocked\(\)\)document\.getElementById\("testbar"\)\.hidden=false/);
 
+// R41: the gate follows the hostname. beta.* and vercel.app are gated; app.* and localhost are open.
+const gh = html.match(/function gatedHost\(h\)\{return ([^}]*);\}/);
+assert.ok(gh, 'gatedHost not found');
+const gatedHost = new Function('h', 'return ' + gh[1] + ';');
+for (const h of ['beta.lusoryplay.com', 'lusory-pied.vercel.app', 'lusory-abc123-lauri-moyle-s-projects.vercel.app']) assert.strictEqual(gatedHost(h), true, h + ' should be gated');
+for (const h of ['app.lusoryplay.com', 'lusoryplay.com', 'localhost', '127.0.0.1', 'notbeta.example.com']) assert.strictEqual(gatedHost(h), false, h + ' should be open');
+assert.match(html, /var BETA_GATED=gatedHost\(window\.location\.hostname\);/);
+
 console.log('beta gate tests: all green');

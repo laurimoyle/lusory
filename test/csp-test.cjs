@@ -13,7 +13,7 @@ await p.locator('#firstcards .entry').first().click();
 await p.locator('.tierbtn').nth(1).click();
 await p.click('section[data-screen="play"] .actions .btn');
 await p.click('section[data-screen="reflect"] .actions .btn');
-await p.click('section[data-screen="done"] .quiet');
+await p.click('section[data-screen="done"] > .actions .quiet');
 const scr=await p.evaluate(()=>document.querySelector('section[data-screen].on').dataset.screen);
 const bg=await p.evaluate(()=>getComputedStyle(document.body).backgroundImage.includes('data:image/svg')); 
 const keys=await p.evaluate(()=>Object.keys(localStorage));

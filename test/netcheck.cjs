@@ -9,7 +9,7 @@ await p.locator('#firstcards .entry').first().click();
 await p.locator('.tierbtn').nth(0).click();
 await p.click('section[data-screen="play"] .actions .btn');
 await p.click('section[data-screen="reflect"] .actions .btn');
-await p.click('section[data-screen="done"] .quiet');
+await p.click('section[data-screen="done"] > .actions .quiet');
 console.log('total network requests across the whole loop:',reqs.length);
 reqs.forEach(u=>console.log('  '+u));
 const ext=reqs.filter(u=>!u.startsWith('http://127.0.0.1:8123'));

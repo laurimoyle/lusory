@@ -19,7 +19,7 @@ for(let t=0;t<12;t++){
  await page.locator('.tierbtn').nth(1).click();
  await page.click('section[data-screen="play"] .actions .btn');
  await page.click('section[data-screen="reflect"] .actions .btn');
- await page.click('section[data-screen="done"] .quiet');
+ await page.click('section[data-screen="done"] > .actions .quiet');
  await page.reload({waitUntil:'networkidle'});          // <- second visit, SAME DAY
  /* Harness repair (R15): seed in-document history so 12 backs cannot walk out
     of the document to about:blank (which crashed the hopperBudget evaluate). */

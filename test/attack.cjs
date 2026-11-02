@@ -38,7 +38,7 @@ const browser=await chromium.launch({executablePath:EXE});
  await page.locator('.tierbtn').nth(1).click();
  await page.click('section[data-screen="play"] .actions .btn');
  await page.click('section[data-screen="reflect"] .actions .btn');
- await page.click('section[data-screen="done"] .quiet');
+ await page.click('section[data-screen="done"] > .actions .quiet');
  // now simulate the *next* visit in the same tab: set yesterday, reload
  await page.evaluate(()=>localStorage.setItem('lusory.lastOpen','2020-01-02'));
  await page.reload({waitUntil:'networkidle'});
@@ -75,7 +75,7 @@ const browser=await chromium.launch({executablePath:EXE});
  await page.click('section[data-screen="play"] .actions .btn');
  await page.click('section[data-screen="reflect"] .actions .btn');
  let total=await moments(page); // done screen
- await page.click('section[data-screen="done"] .quiet');
+ await page.click('section[data-screen="done"] > .actions .quiet');
  total+=await moments(page);   // shelf
  for(let i=0;i<10;i++){
    await page.locator('#shelfbody .entry').nth(i%15).click();
@@ -83,7 +83,7 @@ const browser=await chromium.launch({executablePath:EXE});
    await page.click('section[data-screen="play"] .actions .btn');
    await page.click('section[data-screen="reflect"] .actions .btn');
    total+=await moments(page);
-   await page.click('section[data-screen="done"] .quiet');
+   await page.click('section[data-screen="done"] > .actions .quiet');
    total+=await moments(page);
  }
  const b=await page.evaluate(()=>hopperBudget);
@@ -199,7 +199,7 @@ for(const seed of seeds){
  await page.locator('.posture').nth(0).click();
  await page.click('section[data-screen="reflect"] .actions .btn');
  say(await screen(page)==='done','A7 loop completes under reduced motion');
- await page.click('section[data-screen="done"] .quiet');
+ await page.click('section[data-screen="done"] > .actions .quiet');
  say(await screen(page)==='shelf','A7 shelf reachable under reduced motion');
  const anims=await page.evaluate(()=>[...document.querySelectorAll('*')].filter(e=>{const s=getComputedStyle(e);return s.animationName!=='none'||s.transitionDuration!=='0s';}).length);
  say(anims===0,'A7 zero animations/transitions under reduced motion: '+anims);
