@@ -1,10 +1,19 @@
 # Anonymous game-choice reporting
 
-Status: implementation note, 2026-08-17.
+Status: implementation note, 2026-08-17. **Amended 2026-11-02 (R31): the tally is opt-in.**
 
 This is the deliberately narrow exception to Lusory's former “no network calls” rule.
 It exists to answer two product questions: which game is chosen first, and which games
 are chosen most often overall.
+
+## Opt-in (R31)
+
+Nothing is sent unless the player says yes. The question is asked once, on the done
+screen after the first completed game; it defaults to off and the answer is kept only on
+the device (`lusory.tallyOptIn.v1`). The About page shows the current setting and can
+change it. `TALLY_ENABLED` in `index.html` disables the request entirely. Because the
+question comes after the first choice, first-choice counts now come only from people who
+later replay the first deal; treat them as indicative, not representative.
 
 ## Data boundary
 

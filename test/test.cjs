@@ -124,6 +124,9 @@ const margCount=await page.locator('#shelfbody .marg, #returnnote .marg').count(
 ok(margCount<=1,'WP5 at most one marginalia note per visit: '+margCount);
 
 /* ---------- 4. BACK BUTTON ---------- */
+/* PR #7 added a shelf -> Updates -> shelf detour to this walk; step back through it first. */
+await page.goBack(); ok(await screen(page)==='join','WP2 back: shelf -> join');
+await page.goBack(); ok(await screen(page)==='shelf','WP2 back: join -> shelf');
 await page.goBack(); ok(await screen(page)==='done','WP2 back: shelf -> done');
 await page.goBack(); ok(await screen(page)==='reflect','WP2 back: done -> reflect');
 const noteKept=await page.inputValue('#note');

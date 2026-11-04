@@ -10,9 +10,9 @@ Single-file, local-first, no framework, no build system, no dependencies.
 These are build failures, not style notes. Full text in `docs/invariants.md`.
 
 - No streaks, scores, badges, stored progress, or user-facing metrics of any kind.
-- One device-stored fact only: last-open date, for the grasshopper's indifference.
-- Local-first; no behavioral telemetry. Game choices are aggregate-only. Email consent, referral answers, and usability answers are explicitly asked for and stored in separate pools.
-- Private-beta mode requires an email and asked referral source before entry, stores only a device-local access flag, and can be retired with one configuration switch. See `docs/beta-gate-and-go-to-market.md`.
+- Device storage: the last-open date; during the beta, a gate-passed flag; and the player's yes/no to the game tally. Nothing else.
+- No behavioral telemetry. Game choices are counted only from players who opt in (asked once, default off), and only as anonymous weekly totals. Email consent, referral answers, and usability answers are explicitly asked for and stored in separate, dated (never timestamped) pools.
+- Private-beta mode requires an email and asked referral source before entry. It applies on `beta.*` and `*.vercel.app` hosts and is off on `app.*`. See `docs/beta-gate-and-go-to-market.md`.
 - Difficulty prompt is symmetric (harder/same/gentler), fresh each session, never ranked.
 - Grasshopper: max one moment per session (two on introduction day), five sanctioned
   slots only, never reactive, never in reflection or safety text.
@@ -25,7 +25,7 @@ These are build failures, not style notes. Full text in `docs/invariants.md`.
 |---|---|
 | One device-stored fact | A single `localStorage` key, `lusory.lastOpen`. One `getItem`, one `setItem`, memory fallback when storage throws. Verified by grep and by browser test. |
 | No player metrics | The free-write never leaves the DOM; no player history is created and no counters or timers are shown. |
-| Same-origin requests only | `connect-src 'self'` permits the disclosed choice counter and voluntary forms. The server stores no raw play event or player identifier. |
+| Same-origin requests only | `connect-src 'self'` permits the opt-in choice counter and voluntary forms. The server stores no raw play event or player identifier. |
 | Asked, separate intake | One atomic request prevents partial email/referral submission while the records remain in separate pools. A referral-only retry token prevents duplicates without joining the email to referral or play data. Test mode records answers only—never clicks, route, referrer, UTM, replay, or fingerprint. |
 | Symmetric difficulty | Each tier button carries its own obstacle text, so the choice reads as three variants rather than three rank words. Equal width and height, nothing preselected, never persisted. |
 | Grasshopper budget | A per-visit counter gates every slot. The visit is the unit, not the play-through, so replaying cannot farm him. A third of ordinary visits are silent. |

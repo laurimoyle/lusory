@@ -19,8 +19,11 @@ create table if not exists public.intake_tokens (
 comment on table public.intake_tokens is
   'R32: retry-idempotency for /api/intake only. Holds a random token and a date. No email, referral, or play column; nothing references it.';
 alter table public.intake_tokens enable row level security;
-revoke all on table public.intake_tokens from anon, authenticated, public;
-grant select, insert, delete on table public.intake_tokens to service_role;
+-- Grants stated explicitly (Supabase stopped auto-granting 2026-10-30). No anon
+-- grant: nothing public reads this. RLS on with zero policies keeps every row
+-- unreachable except through the service role.
+revoke all on table public.intake_tokens from anon, public;
+grant select, insert, update, delete on table public.intake_tokens to authenticated, service_role;
 
 insert into public.intake_tokens (token, used_on)
   select request_token, submitted_at::date
