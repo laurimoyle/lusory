@@ -1,3 +1,4 @@
+-- Applied 2026-11-04 as r32_intake_pools_dates_not_timestamps; cohort-keep fix applied the same day as r32b_keep_beta_cohort.
 -- R32 (drift audit 2026-08-31): intake pools carry dates, never timestamps,
 -- and no column joins one pool to another.
 --
@@ -123,7 +124,9 @@ begin
   insert into public.email_subscribers (email, cohort, consented_on, unsubscribed_on)
   values (lower(p_email), p_cohort, current_date, null)
   on conflict (email) do update set
-    cohort = excluded.cohort,
+    -- A beta entrant who later joins the updates list stays counted as beta
+    -- (the R33 exit checklist counts beta emails).
+    cohort = case when public.email_subscribers.cohort = 'beta' then 'beta' else excluded.cohort end,
     consented_on = excluded.consented_on,
     unsubscribed_on = null;
 end;

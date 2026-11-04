@@ -12,8 +12,9 @@ Nothing is sent unless the player says yes. The question is asked once, on the d
 screen after the first completed game; it defaults to off and the answer is kept only on
 the device (`lusory.tallyOptIn.v1`). The About page shows the current setting and can
 change it. `TALLY_ENABLED` in `index.html` disables the request entirely. Because the
-question comes after the first choice, first-choice counts now come only from people who
-later replay the first deal; treat them as indicative, not representative.
+question comes after the first completed game, the first choice of a first visit is never
+sent, so `first_choices` no longer accumulates. Which game people pick first is a question
+for the usability test, not the tally.
 
 ## Data boundary
 
