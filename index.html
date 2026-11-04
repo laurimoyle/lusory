@@ -343,7 +343,7 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
 <noscript>
   <div class="ns">
     <h1>Lusory</h1>
-    <p class="lede">This shelf needs JavaScript to deal its games. It does not build a player history; it sends only an anonymous tally when a game is chosen.</p>
+    <p class="lede">This shelf needs JavaScript to deal its games. It does not build a player history.</p>
     <p>Switch it on and come back, or play the first game from here as it is written:</p>
     <p><strong>The Awe Route.</strong> Walk a familiar route. Finish it having found five things older than you, taller than you, or too big to own. Eyes up and out — nothing that fits in a pocket may be looked at. You are not going anywhere; you are being somewhere.</p>
     <p class="small">How you play is never counted.</p>
@@ -387,17 +387,17 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <p class="eyebrow boot-title">A field guide</p>
   <h1 class="boot-title" style="margin:.3rem 0 1.3rem">Lusory</h1>
   <div class="lede boot-title">
-    <p>A shelf of games. Each one asks you to do something the hard way, on purpose, for no profit anyone could bank.</p>
-    <p>A philosopher called this <em>"the voluntary attempt to overcome unnecessary obstacles"</em> — his definition of a game. We mean it as a way to spend the spare corners of a life.</p>
-    <p>There are no streaks here, no scores, no history. Leave for a month and nothing will have noticed, and everything will be where you left it.</p>
+    <p>A shelf of small games you play away from the screen. Each one asks you to do something ordinary the hard way, on purpose.</p>
+    <p>Pick a game here, then put the phone down and play it out there &mdash; on a walk, at a meal, in a conversation. Come back afterward if you&rsquo;d like to note how it went.</p>
+    <p>No streaks, no scores, no history. Leave for a month and nothing will have noticed, and everything will be where you left it.</p>
   </div>
   <div class="actions boot-title"><button class="btn" onclick="go('meet')">Continue</button></div>
-  <p class="small footnote boot-title">After your first game, one date will be kept on this device. Game choices add to anonymous weekly totals; they are never tied to you.</p>
+  <p class="small footnote boot-title">After your first game, one date will be kept on this device. How you play is never recorded.</p>
 </section>
 
 <!-- ========== FIRST RUN 2/3 : introducing the grasshopper ========== -->
 <section data-screen="meet">
-  <p class="eyebrow">The old story</p>
+  <p class="eyebrow">An old story, by Aesop</p>
 
   <div id="fablestage" role="img" aria-label="The fable of the ant and the grasshopper, continued through spring and summer in four drawings">
 
@@ -495,18 +495,16 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
     <p class="small">Aesop stopped at the door. The seasons did not.</p>
   </div>
   <h2 style="margin:1.5rem 0 .3rem">That grasshopper lives here.</h2>
-  <p class="lede">The fable&rsquo;s loser is this shelf&rsquo;s one character — kept on because the whole app takes his side of the case.</p>
 
   <div class="plate" id="meetmarg" style="margin-top:1.2rem">
     <span class="mark mark-margin" id="meetmark" style="top:.2rem"><svg viewBox="0 0 72 48" width="46"><use href="#hopper"/></svg></span>
-    <p style="font-style:italic;color:var(--leaf);font-size:1.08rem">"That&rsquo;s the story. Aesop reported the ending and missed the point. Nobody ever asks about the summer."</p>
+    <p style="font-style:italic;color:var(--leaf);font-size:1.08rem">&ldquo;That&rsquo;s the story. Aesop reported the ending and missed the point. Nobody ever asks about the summer.&rdquo;</p>
     <p class="small" style="color:var(--leaf);margin-top:.4rem">— the grasshopper</p>
   </div>
   <div class="lede" style="margin-top:1.6rem">
-    <p>He keeps to the margins. He speaks rarely, and never about your progress — he doesn&rsquo;t believe in progress.</p>
-    <p>You can ignore him completely. He'd respect that.</p>
+    <p>In Aesop&rsquo;s telling he is the warning. Centuries later, a philosopher named Bernard Suits took his side. He defined a game as &ldquo;the voluntary attempt to overcome unnecessary obstacles,&rdquo; and argued that a summer of it was the point, not the mistake. This shelf is built on that idea.</p>
+    <p>He lives in the margins here. He speaks rarely, and never about your progress &mdash; he doesn&rsquo;t believe in progress. You can ignore him completely; he&rsquo;d respect that.</p>
   </div>
-  <p class="small" style="margin-top:1rem">A philosopher reopened the case in 1978. This shelf is the appeal.</p>
   <div class="actions"><button class="btn" id="meetcontinue" onclick="leaveIntroduction()">Continue</button></div>
 </section>
 
@@ -557,10 +555,10 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <h2 style="margin-top:.4rem">Played.</h2>
   <p class="lede" style="margin-top:.6rem">Nothing about how you played was recorded. The session was yours; keep any of it you like.</p>
   <div id="sendoff"></div>
-  <div class="formcard" id="betatestimonial" hidden>
-    <span class="lab">One voluntary beta question</span>
-    <p style="margin-top:.45rem">If this game gave you something worth saying, would you share a short testimonial? No rating, no score, and no effect on your beta access.</p>
-    <div class="actions" style="margin-top:1rem"><button class="quiet" type="button" onclick="openTestimonial()">Share a short testimonial</button></div>
+  <div class="formcard" id="tallyask" hidden>
+    <span class="lab">One question, asked once</span>
+    <p style="margin-top:.45rem">May this device add the games you choose to anonymous weekly totals? It sends the game&rsquo;s number and whether it came from the shelf or a random deal &mdash; nothing about you or how you played. The answer stays on this device, and you can change it on the About page.</p>
+    <div class="actions" style="margin-top:1rem"><button class="quiet" type="button" id="tallyyes" onclick="answerTally(true)">Yes, count my choices</button><button class="quiet" type="button" id="tallyno" onclick="answerTally(false)">No, thanks</button></div>
   </div>
   <div class="actions">
     <button class="btn" id="copybtn" onclick="copyNote()" style="display:none">Copy my note</button>
@@ -602,7 +600,7 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
       <button class="quiet" type="button" onclick="go(homeScreen())">Not today</button></div>
     <p class="status" id="joinstatus" role="status" aria-live="polite"></p>
   </form>
-  <p class="small" style="margin-top:1rem">Your email, referral answer, and game choices are stored in separate pools with no shared player or session identifier.</p>
+  <p class="small" style="margin-top:1rem">Your email, your referral answer, and any game choices you agreed to have counted are stored in separate tables, dated by day, with no column that links them, and no report ever joins them.</p>
 </section>
 
 <!-- ========== ABOUT ========== -->
@@ -610,15 +608,21 @@ body[data-boot="1"] .boot-title{animation:rise .6s .35s ease-out backwards}
   <p class="eyebrow">About</p>
   <h2 style="margin-top:.4rem">What this is</h2>
   <p>Lusory is a shelf of fifteen games, played out in the world rather than on this screen. Each one sets a goal and then forbids the easiest way of reaching it: walk a familiar route with your eyes rationed, eat one good thing slower than anyone else at the table, do someone a kindness without getting caught. The app holds the rules. The game happens out there.</p>
-  <p>That makes them games in the old, strict sense — a goal, some rules against the shortcut, and your free agreement to play anyway. The philosopher Bernard Suits called this <em>"the voluntary attempt to overcome unnecessary obstacles"</em> and argued that it, not usefulness, is what a good life is made of. Josef Pieper said something near it about leisure: useless on purpose, and formative because of it.</p>
+  <p>That makes them games in the old, strict sense — a goal, some rules against the shortcut, and your free agreement to play anyway. The philosopher Bernard Suits called this <em>&ldquo;the voluntary attempt to overcome unnecessary obstacles&rdquo;</em> and argued that it, not usefulness, is what a good life is made of. Josef Pieper said something near it about leisure: useless on purpose, and formative because of it.</p>
   <h3>About the science, briefly</h3>
   <p>These games draw on, and adapt, practices with peer-reviewed support — paying attention, giving thanks, being kind on purpose, writing things down, moving, talking to strangers, breathing slowly. The honest summary of that research: effects are real and mostly small to moderate. This app's contribution isn't bigger effects; it's a form people freely return to.</p>
-  <p>One finding shaped the whole design: measuring an enjoyable activity tends to make it feel like work. So Lusory never scores, ranks, times, praises, or shows your activity back to you. The only behavioral signal is an anonymous aggregate count of which games are chosen; email consent and research answers exist only when someone explicitly submits them.</p>
+  <p>One finding shaped the whole design: measuring an enjoyable activity tends to make it feel like work. So Lusory never scores, ranks, times, praises, or shows your activity back to you. The only behavioral signal is an anonymous weekly count of which games are chosen, and only from people who said yes to it; email consent and research answers exist only when someone explicitly submits them.</p>
   <p>This is play, preventative and formative — not treatment. If you're in real difficulty, a clinician beats a game, and we'd rather you had the clinician.</p>
   <h3>Privacy</h3>
-  <p>No player profile or individual activity history is created. One date is kept on this device once you have played a game: the day you last opened this. When you choose a game, Lusory sends its number and whether it came from the first deal, the randomizer, or the shelf; the server adds one to a weekly total and keeps no raw event, player ID, session ID, referrer, or fingerprint. These totals never personalize anyone&rsquo;s shelf.</p>
-  <p>During the private beta, access requires an email and an answer about where the beta link was found. They are stored in separate pools with no shared identifier. This device keeps a beta-access flag so it does not ask again. After the beta gate is removed, email signup returns to being optional.</p>
+  <p>No player profile or individual activity history is created. One date is kept on this device once you have played a game: the day you last opened this. Game choices are counted only if you say yes. If you do, choosing a game sends its number and whether it came from the first deal, the randomizer, or the shelf; the server adds one to a weekly total and keeps no raw event, player ID, session ID, referrer, or fingerprint. These totals never personalize anyone&rsquo;s shelf.</p>
+  <p class="small" id="tallysetting" hidden>Counting game choices: <span id="tallystate">Off. Game choices are not sent anywhere.</span> <button class="quiet" type="button" id="tallytoggle" onclick="toggleTally()">Count my choices</button></p>
+  <p>During the private beta, access requires an email and an answer about where the beta link was found. They are stored in separate tables, dated by day, with no column that links them, and no report ever joins them. This device keeps a beta-access flag so it does not ask again. After the beta gate is removed, email signup returns to being optional.</p>
   <p>Usability answers and explicitly submitted testimonials are also kept in separate pools. A testimonial is stored only with the public-use permission and attribution choice submitted with it. None of these forms records a clickstream, route, player history, referrer, fingerprint, or private reflection.</p>
+  <div class="formcard" id="betatestimonial" hidden>
+    <span class="lab">During the beta</span>
+    <p style="margin-top:.45rem">If Lusory has given you something worth saying, you can leave a short testimonial. No rating, no score, and no effect on your beta access.</p>
+    <div class="actions" style="margin-top:1rem"><button class="quiet" type="button" onclick="openTestimonial()">Share a short testimonial</button></div>
+  </div>
   <div class="actions"><button class="quiet" id="introreplay" type="button" onclick="replayIntroduction()" hidden>Replay the introduction</button><button class="quiet" onclick="go('join')">Occasional updates</button><button class="quiet" id="aboutback" onclick="go(homeScreen())">Back to the shelf</button></div>
 </section>
 
@@ -777,8 +781,13 @@ var POSTURES=[
 
 /* ============ device-only state ============
    The beta gate adds one temporary access flag. It contains no address or
-   referral answer and can be retired by setting BETA_GATED to false. */
-var BETA_GATED=!/^(localhost|127\.0\.0\.1)$/.test(window.location.hostname);
+   referral answer. R41: gated on beta.* hosts and on vercel.app deploys;
+   app.* and localhost are open, so retiring the beta is a link change.
+   R33: the gate retires when the beta exit checklist is met (30 valid
+   emails + 12 usability responses); lusory.betaAccess.v1 is then deleted
+   from the product, and the A13 key-list pin updates in the same commit. */
+function gatedHost(h){h=String(h).replace(/\.+$/,"");return /^beta\./.test(h)||/\.vercel\.app$/.test(h);}
+var BETA_GATED=gatedHost(window.location.hostname);
 var BETA_KEY="lusory.betaAccess.v1", betaMemo=false;
 function readBetaAccess(){try{return localStorage.getItem(BETA_KEY)==="yes"||betaMemo;}catch(e){return betaMemo;}}
 function writeBetaAccess(){betaMemo=true;try{localStorage.setItem(BETA_KEY,"yes");}catch(e){}}
@@ -828,13 +837,13 @@ var MARGINALIA=[
 var SENDOFFS=[
  "Almost entirely useless. Marvelous.",
  "The ant would call that wasted time. The ant says that about everything.",
- "Winter is coming, I'm told. It always is. Meanwhile.",
- "I'd have played it worse. I usually do."
+ "Winter is coming, I’m told. It always is. Meanwhile.",
+ "I’d have played it worse. I usually do."
 ];
 var RETURNS=[
- "Were you gone? I've been watching this leaf. Riveting.",
- "I don't count days. Counting is how the trouble starts.",
- "You're back. I never doubted, because I never wondered."
+ "Were you gone? I’ve been watching this leaf. Riveting.",
+ "I don’t count days. Counting is how the trouble starts.",
+ "You’re back. I never doubted, because I never wondered."
 ];
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
 
@@ -858,13 +867,13 @@ var meetSpent=false, shelfNoteSpent=false, returnSpent=false, sendoffHTML="";
 
 function hopperNote(line){
  return '<div class="marg"><span class="mark"><svg viewBox="0 0 72 48" width="22" aria-hidden="true"><use href="#hopper"/></svg></span>'
-   +'"'+line+'"<span class="sig">— the grasshopper</span></div>';
+   +'“'+line+'”<span class="sig">— the grasshopper</span></div>';
 }
 
 /* ================= state machine ================= */
 var axis="type", currentGame=null, currentTier=null, chosenPosture=null, sessionDone=false, sessionActive=false;
 var chooserSource="first", offerBag=[], currentOffers=[], selectionSource="shelf", firstChoiceReported=false;
-var replayingIntro=false, testimonialPrompted=false;
+var replayingIntro=false, tallyAsked=false;
 
 function render(screen,param){
  document.body.dataset.boot="0";
@@ -890,7 +899,9 @@ function render(screen,param){
  if(screen==="play"){ if(!currentGame||!currentTier){screen="shelf";renderShelf();} else renderPlay(); }
  if(screen==="reflect")renderPostures();
  if(screen==="done")renderDone();
- if(screen==="about"){ var ab=document.getElementById("aboutback"), replay=document.getElementById("introreplay");
+ if(screen==="about"){ renderTallySetting();
+  var tc=document.getElementById("betatestimonial");
+  if(tc)tc.hidden=!(BETA_GATED&&!betaBlocked()&&!(firstRun&&!sessionDone)); var ab=document.getElementById("aboutback"), replay=document.getElementById("introreplay");
   if(ab)ab.textContent=(homeScreen()==="first")?"Back":"Back to the shelf";
   if(replay)replay.hidden=betaBlocked()||(firstRun&&!sessionDone); }
  var el=document.querySelector('section[data-screen="'+screen+'"]');
@@ -985,9 +996,35 @@ function renderFirst(){
 function startChooser(source){
  chooserSource=source||"randomizer";offerBag=[];currentOffers=[];go("first");
 }
+/* R31: the weekly game tally is opt-in. One question, asked once (first
+   completed session), default off. The answer lives on this device only.
+   TALLY_ENABLED is the single switch that disables the request entirely. */
+var TALLY_ENABLED=true;
+var TALLY_KEY="lusory.tallyOptIn.v1", tallyMemo=null;
+function readTally(){try{var v=localStorage.getItem(TALLY_KEY);return v===null?tallyMemo:v;}catch(e){return tallyMemo;}}
+function writeTally(v){tallyMemo=v;try{localStorage.setItem(TALLY_KEY,v);}catch(e){}}
+function tallyOn(){return TALLY_ENABLED&&readTally()==="yes";}
+function answerTally(yes){
+ if(!TALLY_ENABLED||(firstRun&&!sessionDone))return;
+ writeTally(yes?"yes":"no");
+ var ask=document.getElementById("tallyask");if(ask)ask.hidden=true;
+ renderTallySetting();
+}
+/* F1/F3: the setting exists only once the first game is finished (nothing is
+   stored before then) and only while the tally exists at all. */
+function tallySettingOpen(){return TALLY_ENABLED&&!(firstRun&&!sessionDone)&&!betaBlocked();}
+function renderTallySetting(){
+ var row=document.getElementById("tallysetting");if(row)row.hidden=!tallySettingOpen();
+ var el=document.getElementById("tallystate");if(!el)return;
+ var on=readTally()==="yes";
+ el.textContent=on?"On. Your game choices add to anonymous weekly totals.":"Off. Game choices are not sent anywhere.";
+ var b=document.getElementById("tallytoggle");if(b)b.textContent=on?"Stop counting my choices":"Count my choices";
+}
+function toggleTally(){if(!tallySettingOpen())return;answerTally(readTally()!=="yes");}
 function recordChoice(n,source){
  var isFirst=source==="first"&&!firstChoiceReported;
  if(isFirst)firstChoiceReported=true;
+ if(!tallyOn())return;
  if(!window.fetch)return;
  try{
   fetch("/api/choice",{method:"POST",headers:{"Content-Type":"application/json"},
@@ -1003,7 +1040,7 @@ function chooseGame(n,source){selectionSource=source||"shelf";recordChoice(n,sel
 function postJSON(url,payload){
  return fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},
   body:JSON.stringify(payload)}).then(function(response){
-   if(!response.ok)throw new Error("request failed");return response;
+   if(!response.ok){var e=new Error("request failed");e.status=response.status;throw e;}return response;
   });
 }
 var intakeTokenMemory={};
@@ -1043,8 +1080,13 @@ function submitBeta(event){
   if(testMode)document.getElementById("testbar").hidden=false;
   render(destination);
   try{history.replaceState({s:destination,p:null},"");}catch(e){}
- }).catch(function(){
-  button.disabled=false;status.textContent="That did not reach us. Please check the two required answers and try again.";
+ }).catch(function(err){
+  /* F7: only a 400 is about the answers. Anything else is on our side, so say
+     so plainly rather than sending the visitor back to re-check their email. */
+  button.disabled=false;
+  status.textContent=(err&&err.status===400)
+   ?"Those answers didn’t go through. Please check the email address and the referral question, then try again."
+   :"The beta sign-up isn’t answering right now. That’s on our side, not yours, and nothing was saved. Please try again a little later.";
  });
 }
 function submitJoin(event){
@@ -1194,10 +1236,13 @@ function renderDone(){
  document.getElementById("copybtn").style.display=note?"inline-flex":"none";
  if(!sendoffHTML&&sendoffLine&&hopperBudget>0){ hopperBudget--; sendoffHTML=hopperNote(sendoffLine); }
  document.getElementById("sendoff").innerHTML=sendoffHTML;
- var testimonial=document.getElementById("betatestimonial");
- var invite=BETA_GATED&&firstRun&&!testimonialPrompted;
- if(invite)testimonialPrompted=true;
- if(testimonial)testimonial.hidden=!invite;
+ /* R31: the tally question is the only ask on the done screen. It appears on
+    the first completed game of the first visit, once, and never again in
+    that visit whether or not it was answered. */
+ var ask=document.getElementById("tallyask");
+ var showAsk=TALLY_ENABLED&&firstRun&&!tallyAsked&&readTally()===null;
+ if(showAsk)tallyAsked=true;
+ if(ask)ask.hidden=!showAsk;
 }
 function legacyCopy(text){
  try{

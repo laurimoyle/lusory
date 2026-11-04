@@ -1,3 +1,5 @@
+-- Historical (08-18/08-24). Superseded in part by migrations/2026-11-02-r32-dates-not-timestamps.sql:
+-- timestamps are now dates, and request_token lives in intake_tokens.
 -- Beta cohort labels preserve separate email and referral pools.
 alter table public.email_subscribers
   add column if not exists cohort text not null default 'updates';

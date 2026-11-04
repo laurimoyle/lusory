@@ -7,7 +7,6 @@ const path = require('path');
 const root = path.join(__dirname, '..');
 const sourceContracts = [
   fs.readFileSync(path.join(root, 'api', 'intake.js'), 'utf8'),
-  fs.readFileSync(path.join(root, 'api', 'referral.js'), 'utf8'),
   fs.readFileSync(path.join(root, 'docs', 'beta-data-schema.sql'), 'utf8'),
   fs.readFileSync(path.join(root, 'index.html'), 'utf8'),
 ];

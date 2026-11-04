@@ -100,13 +100,12 @@ ok(introDayMoments<=2,'WP5 intro day spent <=2 moments (spent '+introDayMoments+
 ok(await page.locator('section[data-screen="done"] .marg').count()===0,
    'WP5 no sendoff on introduction day (plan: intro + marginalia only)');
 
-await page.click('section[data-screen="done"] .quiet');
+await page.click('section[data-screen="done"] > .actions .quiet');
 ok(await screen(page)==='shelf','WP2 done -> shelf');
 ok(await page.locator('.navlinks').isVisible(),'WP1 shelf reachable + nav revealed after first session');
 ok(await page.locator('#shelfbody .entry').count()===15,'WP2 fifteen games on the shelf');
 ok(await page.locator('.shelf-tools .quiet').textContent()==='Three at random','WP2 shelf offers the reusable three-game randomizer');
-await page.route('**/api/subscribe',r=>r.fulfill({status:202,contentType:'application/json',body:'{"ok":true}'}));
-await page.route('**/api/referral',r=>r.fulfill({status:202,contentType:'application/json',body:'{"ok":true}'}));
+await page.route('**/api/intake',r=>r.fulfill({status:202,contentType:'application/json',body:'{"ok":true}'}));
 await page.getByRole('button',{name:'Updates'}).click();
 ok(await screen(page)==='join','WP2 Updates opens the voluntary signup form');
 ok(await page.locator('#refdetail').getAttribute('maxlength')==='160','WP4 voluntary referral detail is bounded');
@@ -125,6 +124,9 @@ const margCount=await page.locator('#shelfbody .marg, #returnnote .marg').count(
 ok(margCount<=1,'WP5 at most one marginalia note per visit: '+margCount);
 
 /* ---------- 4. BACK BUTTON ---------- */
+/* PR #7 added a shelf -> Updates -> shelf detour to this walk; step back through it first. */
+await page.goBack(); ok(await screen(page)==='join','WP2 back: shelf -> join');
+await page.goBack(); ok(await screen(page)==='shelf','WP2 back: join -> shelf');
 await page.goBack(); ok(await screen(page)==='done','WP2 back: shelf -> done');
 await page.goBack(); ok(await screen(page)==='reflect','WP2 back: done -> reflect');
 const noteKept=await page.inputValue('#note');
@@ -207,7 +209,7 @@ for(const width of [360,390,430,820]){
   await s.page.locator('.tierbtn').first().click();
   await s.page.click('section[data-screen="play"] .actions .btn');
   await s.page.click('section[data-screen="reflect"] .actions .btn');
-  await s.page.click('section[data-screen="done"] .quiet');
+  await s.page.click('section[data-screen="done"] > .actions .quiet');
   const over=await s.page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
   ok(over<=0,'WP7 no horizontal overflow at '+width+'px (overflow '+over+'px)');
   const small=await s.page.evaluate(()=>[...document.querySelectorAll('section.on button, header button:not([style*="hidden"])')]

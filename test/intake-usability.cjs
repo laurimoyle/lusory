@@ -24,38 +24,18 @@ function res() {
   };
 }
 
-const subscribe = require('../api/subscribe.js');
-const referral = require('../api/referral.js');
+const fs = require('fs');
+const path = require('path');
+// R37: the pre-transaction /api/subscribe and /api/referral writers are retired;
+// all email + referral intake goes through the atomic /api/intake.
+for (const gone of ['subscribe.js', 'referral.js']) {
+  assert.ok(!fs.existsSync(path.join(__dirname, '..', 'api', gone)), gone + ' must not be deployed');
+}
 const usability = require('../api/usability.js');
 const testimonial = require('../api/testimonial.js');
 
 (async () => {
-  calls = []; responses = [{ ok: true, status: 201 }];
-  let out = res();
-  await subscribe({ method: 'POST', headers: { 'sec-fetch-site': 'same-origin' }, body: {
-    email: '  Person@Example.com ', consent: true, cohort: 'beta',
-  } }, out);
-  assert.strictEqual(out.statusCode, 202);
-  assert.match(calls[0].url, /email_subscribers\?on_conflict=email$/);
-  const emailRow = JSON.parse(calls[0].init.body)[0];
-  assert.strictEqual(emailRow.email, 'person@example.com');
-  assert.ok(emailRow.consented_at);
-  assert.strictEqual(emailRow.cohort, 'beta');
-  assert.ok(!('source' in emailRow) && !('detail' in emailRow));
-
-  calls = []; responses = [{ ok: true, status: 201 }];
-  out = res();
-  await referral({ method: 'POST', headers: { 'sec-fetch-site': 'same-origin' }, body: {
-    source: 'reddit', detail: 'r/SampleSize', context: 'beta_gate',
-  } }, out);
-  assert.strictEqual(out.statusCode, 202);
-  assert.match(calls[0].url, /referral_responses$/);
-  const referralRow = JSON.parse(calls[0].init.body)[0];
-  assert.deepStrictEqual(referralRow, {
-    source: 'reddit', detail: 'r/SampleSize', intake_context: 'beta_gate',
-  });
-  assert.ok(!('email' in referralRow));
-
+  let out;
   calls = []; responses = [{ ok: true, status: 201 }];
   out = res();
   await usability({ method: 'POST', headers: { 'sec-fetch-site': 'same-origin' }, body: {
@@ -85,14 +65,6 @@ const testimonial = require('../api/testimonial.js');
 
   calls = [];
   out = res();
-  await referral({ method: 'POST', headers: {}, body: {
-    source: 'social_media', detail: 'x'.repeat(161),
-  } }, out);
-  assert.strictEqual(out.statusCode, 400);
-  assert.strictEqual(calls.length, 0);
-
-  calls = [];
-  out = res();
   await testimonial({ method: 'POST', headers: {}, body: {
     quote: 'Too short', attribution: 'anonymous', public_consent: true,
   } }, out);
@@ -106,22 +78,6 @@ const testimonial = require('../api/testimonial.js');
     change_text: '', return_clarity: 'yes',
   } }, out);
   assert.strictEqual(out.statusCode, 400);
-  assert.strictEqual(calls.length, 0);
-
-  calls = [];
-  out = res();
-  await subscribe({ method: 'POST', headers: { 'sec-fetch-site': 'cross-site' }, body: {
-    email: 'person@example.com', consent: true,
-  } }, out);
-  assert.strictEqual(out.statusCode, 403);
-  assert.strictEqual(calls.length, 0);
-
-  calls = [];
-  out = res();
-  await subscribe({ method: 'POST', headers: {}, body: {
-    email: 'bot@example.com', consent: true, website: 'https://spam.invalid',
-  } }, out);
-  assert.strictEqual(out.statusCode, 202);
   assert.strictEqual(calls.length, 0);
 
   console.log('intake + usability tests: all green');

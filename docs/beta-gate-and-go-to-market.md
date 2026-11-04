@@ -10,7 +10,7 @@ The web beta is temporarily gated. A visitor must provide:
 2. where they found the beta link;
 3. optional public detail naming the subreddit, Facebook group, organization, account, or event.
 
-The email and referral answer are submitted once and committed in one database transaction, while remaining in separate tables with no shared person identifier. A random request token is kept temporarily in the browser and stored only with the anonymous referral row so a lost response can be retried without creating a duplicate; it is never stored with the email or any play data. The browser stores `lusory.betaAccess.v1=yes`; it stores no email or referral answer. Set `BETA_GATED` to `false` in `index.html` to retire the gate and restore the optional signup model without deleting any beta data.
+The email and referral answer are submitted once and committed in one database transaction, while remaining in separate tables with no shared person identifier. Both pools record a date, never a time (R32). A random request token is kept temporarily in the browser and held server-side in its own `intake_tokens` table for seven days so a lost response can be retried without creating a duplicate; it is never stored on the referral row, with the email, or with any play data. The browser stores `lusory.betaAccess.v1=yes`; it stores no email or referral answer. The gate follows the hostname (R41): `beta.*` and `*.vercel.app` are gated, `app.*` is open. It retires when the exit checklist below is met (R33, owner decision 2026-11-02); at that point `lusory.betaAccess.v1` is deleted from the product and the A13 key-list pin updates in the same commit.
 
 The gate does not create an account or login. It does not collect referrer headers, UTM parameters, fingerprints, routes, clickstreams, or player histories.
 
@@ -81,4 +81,4 @@ Do not build three products at once. After the first 30–40 entrants, conduct 1
 3. At least 6 usable, explicitly consented testimonials, with no target for positive sentiment.
 4. A reserve of at least 18 confirmed Android testers with Google accounts before starting the 14-day closed test.
 5. One primary route-to-market selected from interview and behavior evidence.
-6. Turn `BETA_GATED` off, restore optional email capture, and retain the beta cohort label for follow-up invitations.
+6. Point players at `app.*` (the gate is off there), delete the gate code and the `lusory.betaAccess.v1` key, restore optional email capture, and retain the beta cohort label for follow-up invitations.

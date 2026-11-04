@@ -39,7 +39,7 @@ const b=await chromium.launch({executablePath:EXE});
 
 /* BUG-FINDER BLOCKER — intro slot cannot be replayed on a non-intro day */
 {const {c,p}=await np(b); await p.goto(URL,{waitUntil:'networkidle'});
- await firstSession(p); await p.click('section[data-screen="done"] .quiet');
+ await firstSession(p); await p.click('section[data-screen="done"] > .actions .quiet');
  await p.reload({waitUntil:'networkidle'});
  for(let i=0;i<8;i++){
    if(!p.url().startsWith('http://127.0.0.1:8123'))break;
@@ -77,7 +77,8 @@ const b=await chromium.launch({executablePath:EXE});
 {const {c,p}=await np(b); await p.goto(URL,{waitUntil:'networkidle'});
  await p.click('section[data-screen="intro"] .btn'); await p.click('#skipfable');
  await p.click('section[data-screen="meet"] .actions .btn');
- await p.locator('#firstcards .entry').first().click();
+ /* The first run deals three random games (PR #6); M3 pins the Awe Route's tiers, so open it directly. */
+ await p.evaluate(()=>chooseGame(1,'first'));
  const txt=await p.locator('.tierbtn').allTextContents();
  ok(txt[0].includes('One block, one find'),'M3 Gentler shows its obstacle');
  ok(txt[1].includes('Fifteen minutes, five finds'),'M3 Same shows its obstacle');
@@ -96,7 +97,7 @@ const b=await chromium.launch({executablePath:EXE});
 
 /* MAJOR 5 — safety text is not a duo badge, and is styled apart from whimsy */
 {const {c,p}=await np(b); await p.goto(URL,{waitUntil:'networkidle'});
- await firstSession(p); await p.click('section[data-screen="done"] .quiet');
+ await firstSession(p); await p.click('section[data-screen="done"] > .actions .quiet');
  const g3=await p.locator('#shelfbody .entry').filter({hasText:'No-Delete'}).first().textContent();
  ok(!/together|duo/i.test(g3),'M5 No-Delete no longer badged as a group game');
  await p.locator('#shelfbody .entry').filter({hasText:'No-Delete'}).first().click();
@@ -272,7 +273,7 @@ const b=await chromium.launch({executablePath:EXE});
 {const {c,p}=await np(b); await p.goto(URL,{waitUntil:'networkidle'});
  const axes=await p.locator('.tab').allTextContents();
  ok2(axes.length===2&&!axes.join('|').includes('Practice'),'R7 Practice sort axis dropped: '+axes.join('|'));
- await intro(p); await finishSession(p); await p.click('section[data-screen="done"] .quiet');
+ await intro(p); await finishSession(p); await p.click('section[data-screen="done"] > .actions .quiet');
  let headers=[];
  for(const ax of ['type','dom']){await p.evaluate(a=>setAxis(a),ax);
    headers=headers.concat(await p.locator('#shelfbody .group .eyebrow').allTextContents());}
@@ -472,7 +473,7 @@ const b=await chromium.launch({executablePath:EXE});
  await p.locator('.tierbtn').nth(1).click();
  await p.click('section[data-screen="play"] .actions .btn');
  await p.click('section[data-screen="reflect"] .actions .btn');
- await p.click('section[data-screen="done"] .quiet');
+ await p.click('section[data-screen="done"] > .actions .quiet');
  const bad=await p.evaluate(`[...document.querySelectorAll('section[data-screen="shelf"] .entry')].filter(e=>!(${clears})(e)).length`);
  ok(bad===0,'G all fifteen shelf entries: title clears the numeral (overlapping: '+bad+')');
  await c.close();}
