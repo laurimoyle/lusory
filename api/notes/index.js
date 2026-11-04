@@ -12,7 +12,7 @@
 // feed anything back into the game. They are written for one reader and
 // read by that same reader.
 
-const L = require('./_lib.js');
+const L = require('../_lib.js');
 
 const MAX = 4000;
 

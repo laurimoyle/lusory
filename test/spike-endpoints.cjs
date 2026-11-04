@@ -81,7 +81,9 @@ const L = require('../api/_lib.js');
 const requestH = require('../api/auth/request.js');
 const verifyH = require('../api/auth/verify.js');
 const signoutH = require('../api/auth/signout.js');
-const notesH = require('../api/notes.js');
+const notesH = require('../api/notes/index.js');
+const exportH = require('../api/notes/export.js');
+const accountH = require('../api/account.js');
 const intakeH = require('../api/intake.js');
 const oracleH = require('../api/spike-otp.js');
 
@@ -466,6 +468,96 @@ check('an expired cookie is rejected', () => {
     reset([{ status: 500, json: { msg: `signups not allowed for ${EMAIL}` } }]);
     await requestH(mockReq('POST', { email: EMAIL }), mockRes());
     assert.deepStrictEqual(logged, ['lusory:request:upstream-500']);
+  });
+
+  // --- R26: deletion ------------------------------------------------------
+  await acheck('account: signed out is 401 and sends nothing', async () => {
+    reset([]);
+    const res = mockRes();
+    await accountH(mockReq('DELETE', {}), res);
+    assert.strictEqual(res.code, 401);
+    assert.strictEqual(sent.length, 0);
+  });
+
+  await acheck('account: deletes the auth user, then the player row, then clears the cookie', async () => {
+    reset([{ status: 200, json: [{ auth_user_id: USER }] }, { status: 200, json: {} }, { status: 204, json: null }]);
+    const res = mockRes();
+    await accountH(mockReq('DELETE', {}, cookieFor(PLAYER)), res);
+    assert.strictEqual(res.code, 200);
+    assert.match(sent[0].url, new RegExp(`players\\?id=eq\\.${PLAYER}&select=auth_user_id$`));
+    assert.strictEqual(sent[1].method, 'DELETE');
+    assert.match(sent[1].url, new RegExp(`/auth/v1/admin/users/${USER}$`));
+    assert.strictEqual(sent[2].method, 'DELETE');
+    assert.match(sent[2].url, new RegExp(`/rest/v1/players\\?id=eq\\.${PLAYER}$`));
+    assert.match(res.headers['set-cookie'], /Max-Age=0/);
+  });
+
+  await acheck('account: an auth user already gone (404) still finishes the deletion', async () => {
+    reset([{ status: 200, json: [{ auth_user_id: USER }] }, { status: 404, json: {} }, { status: 204, json: null }]);
+    const res = mockRes();
+    await accountH(mockReq('DELETE', {}, cookieFor(PLAYER)), res);
+    assert.strictEqual(res.code, 200);
+    assert.strictEqual(sent.length, 3);
+  });
+
+  await acheck('account: a failed auth delete stops before the player row and asks for a retry', async () => {
+    reset([{ status: 200, json: [{ auth_user_id: USER }] }, { status: 500, json: {} }]);
+    const res = mockRes();
+    await accountH(mockReq('DELETE', {}, cookieFor(PLAYER)), res);
+    assert.strictEqual(res.code, 502);
+    assert.strictEqual(sent.length, 2);
+    assert.ok(!res.headers['set-cookie'], 'cookie must survive so the retry can find the row');
+  });
+
+  await acheck('account: only DELETE is accepted', async () => {
+    reset([]);
+    const res = mockRes();
+    await accountH(mockReq('POST', {}, cookieFor(PLAYER)), res);
+    assert.strictEqual(res.code, 405);
+    assert.strictEqual(sent.length, 0);
+  });
+
+  // --- R26: export --------------------------------------------------------
+  await acheck('export: returns only the note text and its date, as an attachment', async () => {
+    reset([{ status: 200, json: [{ body: NOTE, created_on: '2026-08-14' }] }]);
+    const res = mockRes();
+    await exportH(mockReq('GET', {}, cookieFor(PLAYER)), res);
+    assert.strictEqual(res.code, 200);
+    assert.match(res.headers['content-disposition'], /attachment; filename="lusory-notes.json"/);
+    const out = res.json();
+    assert.deepStrictEqual(Object.keys(out).sort(), ['exported_on', 'notes']);
+    assert.deepStrictEqual(out.notes, [{ written_on: '2026-08-14', note: NOTE }]);
+    assert.ok(!JSON.stringify(out).includes(PLAYER), 'player id must not appear in the export');
+    assert.match(sent[0].url, new RegExp(`notes\\?player_id=eq\\.${PLAYER}&select=body,created_on`));
+  });
+
+  await acheck('export: signed out is 401', async () => {
+    reset([]);
+    const res = mockRes();
+    await exportH(mockReq('GET', {}), res);
+    assert.strictEqual(res.code, 401);
+    assert.strictEqual(sent.length, 0);
+  });
+
+  // --- R28: dedicated session secret --------------------------------------
+  check('R28: _lib signs cookies with SESSION_SECRET, never directly with the service key', () => {
+    const src = require('fs').readFileSync(require('path').join(__dirname, '..', 'api', '_lib.js'), 'utf8');
+    assert.match(src, /createHmac\('sha256', SESSION_SECRET\)/);
+    assert.match(src, /process\.env\.VERCEL_ENV === 'production' \? null : SERVICE_KEY/);
+    assert.match(src, /SUPABASE_URL && SERVICE_KEY && SESSION_SECRET/);
+  });
+
+  await acheck('R28: in production without SESSION_SECRET the endpoints report not configured', async () => {
+    const { execFileSync } = require('child_process');
+    const out = execFileSync(process.execPath, ['-e', `
+      process.env.SUPABASE_URL='https://test.invalid';
+      process.env.SUPABASE_SERVICE_ROLE_KEY='k';
+      process.env.VERCEL_ENV='production';
+      delete process.env.SESSION_SECRET;
+      const L=require(${JSON.stringify(require('path').join(__dirname, '..', 'api', '_lib.js'))});
+      process.stdout.write(String(L.configured()));
+    `]).toString();
+    assert.strictEqual(out, 'false');
   });
 
   console.log = realLog;

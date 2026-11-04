@@ -15,6 +15,11 @@ const crypto = require('crypto');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// R28: the session cookie is signed with its own secret, never the database
+// key. Outside production the service key stands in so the spike preview
+// keeps working; in production a missing SESSION_SECRET means not configured.
+const SESSION_SECRET = process.env.SESSION_SECRET
+  || (process.env.VERCEL_ENV === 'production' ? null : SERVICE_KEY);
 
 const COOKIE = 'lusory_session';
 const SESSION_DAYS = 30;
@@ -58,7 +63,7 @@ function body(req) {
 // is never requested, stored, or used.
 
 function hmac(payload) {
-  return crypto.createHmac('sha256', SERVICE_KEY).update(payload).digest('base64url');
+  return crypto.createHmac('sha256', SESSION_SECRET).update(payload).digest('base64url');
 }
 
 function issue(playerId) {
@@ -118,6 +123,14 @@ async function rest(path, init) {
   });
 }
 
+// Admin calls (R26 deletion). Path is built from a structural id only.
+async function admin(method, path) {
+  return fetch(`${SUPABASE_URL}/auth/v1/admin/${path}`, {
+    method,
+    headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
+  });
+}
+
 async function auth(path, payload) {
   return fetch(`${SUPABASE_URL}/auth/v1/${path}`, {
     method: 'POST',
@@ -154,11 +167,11 @@ function isoYearWeek(now) {
 }
 
 function configured() {
-  return Boolean(SUPABASE_URL && SERVICE_KEY);
+  return Boolean(SUPABASE_URL && SERVICE_KEY && SESSION_SECRET);
 }
 
 module.exports = {
   log, json, methodGate, body,
   setSession, clearSession, playerFrom,
-  rest, auth, today, isoYearWeek, configured,
+  rest, auth, admin, today, isoYearWeek, configured,
 };
