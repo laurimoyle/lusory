@@ -23,10 +23,12 @@ module.exports = async function handler(req, res) {
     return L.json(res, 400, { error: 'need the address and the code' });
   }
 
-  // A six-digit code is the token the player reads out of the email. The
-  // longer form is the hash a mail client's link carries, kept working so
-  // the exchange still happens here rather than in the player's browser.
-  const claim = /^\d{6}$/.test(code)
+  // An all-digit code is the token the player reads out of the email. This
+  // project's GoTrue mints 8-digit codes (R30); 6–10 digits are accepted so a
+  // length change in Auth settings does not silently break sign-in. The
+  // longer non-numeric form is the hash a mail client's link carries, kept
+  // working so the exchange still happens here rather than in the browser.
+  const claim = /^\d{6,10}$/.test(code)
     ? { type: 'email', email, token: code }
     : { type: 'email', token_hash: code };
 

@@ -197,6 +197,19 @@ check('an expired cookie is rejected', () => {
     assert.ok(!('token_hash' in sent[0].body));
   });
 
+  await acheck('verify: an eight-digit code goes as a token (R30: this project mints 8)', async () => {
+    reset([SESSION_OK, { status: 200, json: [{ id: PLAYER }] }]);
+    await verifyH(mockReq('POST', { email: EMAIL, code: '12345678' }), mockRes());
+    assert.strictEqual(sent[0].body.token, '12345678');
+    assert.ok(!('token_hash' in sent[0].body));
+  });
+
+  await acheck('verify: an eleven-digit string is not treated as a code', async () => {
+    reset([SESSION_OK, { status: 200, json: [{ id: PLAYER }] }]);
+    await verifyH(mockReq('POST', { email: EMAIL, code: '12345678901' }), mockRes());
+    assert.ok(!('token' in sent[0].body));
+  });
+
   await acheck('verify: a link hash goes as a token_hash', async () => {
     reset([SESSION_OK, { status: 200, json: [{ id: PLAYER }] }]);
     await verifyH(mockReq('POST', { email: EMAIL, code: 'pkce_abc123def456ghi789' }), mockRes());
